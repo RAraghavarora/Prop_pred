@@ -370,7 +370,7 @@ patience = 500
 current_dir = os.getcwd()
 
 for ii in range(len(train_set)):
-    n_test = len(iY) - train_set[ii] - n_val
+    n_test = len(iY) - int(train_set[ii]) - n_val
     print('Trainset= {:}'.format(train_set[ii]))
     chdir(current_dir)
     os.chdir(current_dir + '/withdft/fchl/')
