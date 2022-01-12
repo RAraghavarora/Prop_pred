@@ -48,7 +48,7 @@ echo "training starts"
 #export DFTB_COMMAND='mpiexec -n 1 /home/medranos/vdftb20/dftb/bin/dftb+'
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
-work=/scratch/ws/1/medranos-DFTB/raghav/code
+work=/scratch/ws/1/medranos-DFTBprojects/raghav/code
 python3 $work/schnet/train_fchl.py
 
 echo "training is over :-)"
