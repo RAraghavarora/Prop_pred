@@ -86,7 +86,7 @@ def prepare_data(op):
         [],
     )
     for i in idx2[:n]:
-        atoms, props = dataset.get_properties(i)
+        atoms, props = dataset.get_properties(int(i))
         AE.append(float(props['EAT']))
         EGAP.append(float(props['EGAP']))
         KSE.append(props['KSE'])
@@ -275,6 +275,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     X_train, Y_train, X_val, Y_val, X_test, Y_test, x_scaler, y_scaler = split_data(
         n_train, n_val, n_test, iX, iY
     )
+    print(X_train.shape)
+    print(Y_train.shape)
 
     train = torch.utils.data.TensorDataset(X_train,Y_train)
     test = torch.utils.data.TensorDataset(X_test,Y_test)
