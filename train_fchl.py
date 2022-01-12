@@ -20,20 +20,6 @@ from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 # monitor the learning rate
-
-
-class LearningRateMonitor(Callback):
-    # start of training
-    def on_train_begin(self, logs={}):
-        self.lrates = list()
-
-    # end of each training epoch
-    def on_epoch_end(self, epoch, logs={}):
-        # get and store the learning rate
-        lrate = float(backend.get_value(self.model.optimizer.lr))
-        self.lrates.append(lrate)
-
-
 def complete_array(Aprop):
     Aprop2 = []
     for ii in range(len(Aprop)):
@@ -139,19 +125,19 @@ def prepare_data(op):
         [],
         [],
     )
-    for nn in idx2:
-        p1b.append(p1[nn])
-        p2b.append(p2[nn])
-        p3b.append(p3[nn])
-        p4b.append(p4[nn])
-        p5b.append(p5[nn])
-        p6b.append(p6[nn])
-        p7b.append(p7[nn])
-        p8b.append(p8[nn])
-        p9b.append(p9[nn].numpy())
-        p10b.append(p10[nn].numpy())
-        p11b.append(p11[nn].numpy())
-        TPROP2.append(TPROP[nn])
+    for nn1 in idx2:
+        p1b.append(p1[nn1])
+        p2b.append(p2[nn1])
+        p3b.append(p3[nn1])
+        p4b.append(p4[nn1])
+        p5b.append(p5[nn1])
+        p6b.append(p6[nn1])
+        p7b.append(p7[nn1])
+        p8b.append(p8[nn1])
+        p9b.append(p9[nn1].numpy())
+        p10b.append(p10[nn1].numpy())
+        p11b.append(p11[nn1].numpy())
+        TPROP2.append(TPROP[nn1])
 
     p11b = complete_array(p11b)
 
@@ -232,13 +218,13 @@ class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(316,4),
+            nn.Linear(316, 4),
             nn.ELU(),
-            nn.Linear(4,32),
+            nn.Linear(4, 32),
             nn.ReLU(),
-            nn.Linear(32,32),
+            nn.Linear(32, 32),
             nn.ReLU(),
-            nn.Linear(32,1)
+            nn.Linear(32, 1)
         )
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
@@ -249,15 +235,16 @@ class NeuralNetwork(nn.Module):
 
 
 def train(dataloader, model, loss_fn, optimizer):
-    size = len(dataloader.dataset)
+    # size = len(dataloader.dataset)
     model.train()
+    device = "cuda"
     for batch, (X, y) in enumerate(dataloader):
         X, y = X.to(device), y.to(device)
 
         # Compute prediction error
         pred = model(X)
         loss = loss_fn(pred, y)
-        mae = float(mean_absolute_error(pred,y))
+        # mae = float(mean_absolute_error(pred,y))
 
         # Backpropagation
         optimizer.zero_grad()
@@ -266,16 +253,17 @@ def train(dataloader, model, loss_fn, optimizer):
 
 
 def test(dataloader, model, loss_fn):
-    size = len(dataloader.dataset)
+    # size = len(dataloader.dataset)
     num_batches = len(dataloader)
     model.eval()
     test_loss, mae = 0, 0
+    device = "cuda"
     with torch.no_grad():
         for batch, X, y in enumerate(dataloader):
             X, y = X.to(device), y.to(device)
             pred = model(X)
             test_loss += loss_fn(pred, y).item()
-            mae += float(mean_absolute_error(pred,y))
+            mae += float(mean_absolute_error(pred, y))
 
     test_loss /= num_batches
     mae /= num_batches
@@ -292,9 +280,9 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     test = torch.utils.data.TensorDataset(X_test,Y_test)
     valid = torch.utils.data.TensorDataset(X_val,Y_val)
     # data loader
-    train_loader = DataLoader(train, batch_size = batch_size, shuffle = False)
-    test_loader = DataLoader(test, batch_size = batch_size, shuffle = False)
-    valid_loader = DataLoader(valid, batch_size = batch_size, shuffle = False)
+    train_loader = DataLoader(train, batch_size=batch_size, shuffle = False)
+    test_loader = DataLoader(test, batch_size=batch_size, shuffle = False)
+    valid_loader = DataLoader(valid, batch_size=batch_size, shuffle = False)
 
     device = "cuda"
     model = NeuralNetwork().to(device)
@@ -331,6 +319,7 @@ def plotting_results(model, test_loader):
     with torch.no_grad():
         pred = model(test_loader.dataset.tensors[0])
         y = test_loader.dataset.tensors[1]
+        loss_fn = nn.MSELoss()
         test_loss = loss_fn(pred, y).item()
         mae = float(mean_absolute_error(pred,y))
 
@@ -412,4 +401,3 @@ for ii in range(len(train_set)):
     
     # Saving results
     plotting_results(model, test_loader)
-    save_plot(n_val)
