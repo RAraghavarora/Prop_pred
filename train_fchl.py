@@ -216,7 +216,7 @@ class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(316, 4),
+            nn.Linear(2685, 4),
             nn.ELU(),
             nn.Linear(4, 32),
             nn.ReLU(),
