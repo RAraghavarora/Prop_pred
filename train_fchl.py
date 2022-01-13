@@ -257,7 +257,7 @@ def test_nn(dataloader, model, loss_fn):
     test_loss, mae = 0, 0
     device = "cuda"
     with torch.no_grad():
-        for batch, X, y in enumerate(dataloader):
+        for batch, (X, y) in enumerate(dataloader):
             X, y = X.to(device), y.to(device)
             pred = model(X)
             test_loss += loss_fn(pred, y).item()
