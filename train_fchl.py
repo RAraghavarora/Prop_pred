@@ -232,7 +232,7 @@ class NeuralNetwork(nn.Module):
         return logits
 
 
-def train(dataloader, model, loss_fn, optimizer):
+def train_nn(dataloader, model, loss_fn, optimizer):
     # size = len(dataloader.dataset)
     model.train()
     device = "cuda"
@@ -250,7 +250,7 @@ def train(dataloader, model, loss_fn, optimizer):
         optimizer.step()
 
 
-def test(dataloader, model, loss_fn):
+def test_nn(dataloader, model, loss_fn):
     # size = len(dataloader.dataset)
     num_batches = len(dataloader)
     model.eval()
@@ -304,15 +304,15 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
-        train(train_loader, model, loss_fn, optimizer)
-        valid_loss, valid_mae = test(valid_loader, model, loss_fn)
+        train_nn(train_loader, model, loss_fn, optimizer)
+        valid_loss, valid_mae = test_nn(valid_loader, model, loss_fn)
         print(f"Validation MAE: {valid_mae}\n")
         scheduler.step(valid_mae)
         val_losses.append(valid_loss)
         val_errors.append(valid_mae)
         lrates.append(optimizer.param_groups[0]['lr'])
 
-    test_mae = test(test_loader, model, loss_fn)
+    test_mae = test_nn(test_loader, model, loss_fn)
     print(f"Finished training on train_size={n_train}\n Testing MAE = {test_mae}")
 
     return (
