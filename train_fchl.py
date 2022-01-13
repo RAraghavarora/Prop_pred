@@ -261,7 +261,7 @@ def test_nn(dataloader, model, loss_fn):
             X, y = X.to(device), y.to(device)
             pred = model(X)
             test_loss += loss_fn(pred, y).item()
-            mae += float(mean_absolute_error(pred, y.cpu()))
+            mae += float(mean_absolute_error(pred.cpu(), y.cpu()))
 
     test_loss /= num_batches
     mae /= num_batches
@@ -331,7 +331,7 @@ def plotting_results(model, test_loader):
         y = test_loader.dataset.tensors[1]
         loss_fn = nn.MSELoss()
         test_loss = loss_fn(pred, y).item()
-        mae = float(mean_absolute_error(pred,y))
+        mae = float(mean_absolute_error(pred.cpu(),y.cpu()))
 
     STD_PROP = float(pred.std())
 
