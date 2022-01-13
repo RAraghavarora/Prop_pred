@@ -196,13 +196,11 @@ def split_data(n_train, n_val, n_test, Repre, Target):
         np.array(Target[-n_test - n_val : -n_test]),
         np.array(Target[-n_test:]),
     )
-    print(X_val.shape)
 
     # Data standardization
     Y_train = Y_train.reshape(-1, 1)
     Y_val = Y_val.reshape(-1, 1)
     Y_test = Y_test.reshape(-1, 1)
-    print(Y_val.shape)
 
     x_scaler = StandardScaler().fit(X_train)
     y_scaler = StandardScaler().fit(Y_train)
@@ -275,8 +273,18 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     X_train, Y_train, X_val, Y_val, X_test, Y_test, x_scaler, y_scaler = split_data(
         n_train, n_val, n_test, iX, iY
     )
-    print(X_train.shape)
-    print(Y_train.shape)
+
+    X_train, X_val, X_test = (
+        torch.from_numpy(X_train).float(),
+        torch.from_numpy(X_val).float(),
+        torch.from_numpy(X_test).float(),
+    )
+
+    Y_train, Y_val, Y_test = (
+        torch.from_numpy(Y_train).float(),
+        torch.from_numpy(Y_val).float(),
+        torch.from_numpy(Y_test).float(),
+    )
 
     train = torch.utils.data.TensorDataset(X_train,Y_train)
     test = torch.utils.data.TensorDataset(X_test,Y_test)
