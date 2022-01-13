@@ -261,7 +261,7 @@ def test_nn(dataloader, model, loss_fn):
             X, y = X.to(device), y.to(device)
             pred = model(X)
             test_loss += loss_fn(pred, y).item()
-            mae_loss = torch.nn.L1loss(reduction='mean')
+            mae_loss = torch.nn.L1Loss(reduction='mean')
             mae += mae_loss(pred,y)
 
     test_loss /= num_batches
@@ -332,7 +332,7 @@ def plotting_results(model, test_loader):
         y = test_loader.dataset.tensors[1]
         loss_fn = nn.MSELoss()
         test_loss = loss_fn(pred, y).item()
-        mae_loss = torch.nn.L1loss(reduction='mean')
+        mae_loss = torch.nn.L1Loss(reduction='mean')
         mae = mae_loss(pred,y)
 
     STD_PROP = float(pred.std())
