@@ -321,7 +321,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(optimizer, factor=0.57, patience = 500, min_lr=1e-6)
 
-    epochs = 50
+    epochs = 20000
     val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
@@ -388,6 +388,7 @@ def plotting_results(model, test_loader):
     plt.xlabel("True EAT")
     plt.ylabel("Predicted EAT")
     plt.savefig('Result.png')
+    plt.close()
 
 
 # prepare dataset
