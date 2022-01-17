@@ -301,7 +301,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     optimizer = torch.optim.SGD(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(optimizer, factor=0.57, patience = 500, min_lr=1e-6)
 
-    epochs = 20000
+    epochs = 2
     val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
@@ -348,7 +348,7 @@ def plotting_results(model, test_loader):
     out2.close()
 
     # writing ouput for comparing values
-    dtest = np.array(pred - y)
+    dtest = np.array(pred.cpu() - y.cpu())
     Y_test = y.reshape(-1, 1)
     format_list1 = ['{:16f}' for item1 in Y_test[0]]
     s = ' '.join(format_list1)
