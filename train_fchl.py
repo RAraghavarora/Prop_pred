@@ -360,7 +360,7 @@ def plotting_results(model, test_loader):
     ctest.close()
 
     #Save as a plot
-    plt.plot(pred,y,'.')
+    plt.plot(pred.cpu(),y.cpu(),'.')
     mini = min(y).item()
     maxi = max(y).item()
     temp = np.arange(mini, maxi, 0.1)
