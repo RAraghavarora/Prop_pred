@@ -348,8 +348,9 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
 def plotting_results(model, test_loader):
     # applying nn model
     with torch.no_grad():
-        pred = model(test_loader.dataset.tensors[0])
-        y = test_loader.dataset.tensors[1]
+        x = test_loader.dataset.tensors[0].cuda()
+        pred = model(x)
+        y = test_loader.dataset.tensors[1].cuda()
         loss_fn = nn.MSELoss()
         test_loss = loss_fn(pred, y).item()
         mae_loss = torch.nn.L1Loss(reduction='mean')
@@ -367,7 +368,7 @@ def plotting_results(model, test_loader):
     out2.close()
 
     # writing ouput for comparing values
-    dtest = np.array(pred - y)
+    dtest = np.array(pred.cpu() - y.cpu())
     Y_test = y.reshape(-1, 1)
     format_list1 = ['{:16f}' for item1 in Y_test[0]]
     s = ' '.join(format_list1)
@@ -379,7 +380,7 @@ def plotting_results(model, test_loader):
     ctest.close()
 
     #Save as a plot
-    plt.plot(pred,y,'.')
+    plt.plot(pred.cpu(),y.cpu(),'.')
     mini = min(y).item()
     maxi = max(y).item()
     temp = np.arange(mini, maxi, 0.1)
