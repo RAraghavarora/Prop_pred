@@ -307,7 +307,6 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     X_train, Y_train, X_val, Y_val, X_test, Y_test = split_data(
         n_train, n_val, n_test, iX, iY
     )
-    pdb.set_trace()
     train = torch.utils.data.TensorDataset(torch.cat(X_train, dim=1),Y_train)
     test = torch.utils.data.TensorDataset(torch.cat(X_test, dim=1),Y_test)
     valid = torch.utils.data.TensorDataset(torch.cat(X_val, dim=1),Y_val)
