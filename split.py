@@ -1,4 +1,3 @@
-# NN model
 import sys
 import os
 import pdb
@@ -38,6 +37,8 @@ def complete_array(Aprop):
 
 def prepare_data(op):
     #  # read dataset
+    data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
+    # data_dir = '../'
     properties = [
         'RMSD',
         'EAT',
@@ -56,17 +57,10 @@ def prepare_data(op):
         'TBeig',
         'TBchg',
     ]
-    logging.info("get dataset")
 
     # data preparation
-    try:
-        data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
-        # data_dir = '../'
-        dataset = spk.data.AtomsData(data_dir + 'totgdb7x_pbe0.db', load_only=properties)
-    except:
-        data_dir = '../'
-        dataset = spk.data.AtomsData(data_dir + 'totgdb7x_pbe0.db', load_only=properties)
-
+    logging.info("get dataset")
+    dataset = spk.data.AtomsData(data_dir + 'totgdb7x_pbe0.db', load_only=properties)
 
     n = len(dataset)
     print(n)
@@ -320,21 +314,12 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     test_loader = DataLoader(test, batch_size=batch_size, shuffle = False)
     valid_loader = DataLoader(valid, batch_size=batch_size, shuffle = False)
 
-    device = "cpu"
-    if torch.cuda.is_available():
-        device = "cuda:0"
+    device = "cuda"
+    # device = "cpu"
     model = NeuralNetwork().to(device)
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(optimizer, factor=0.57, patience = 500, min_lr=1e-6)
-
-
-    net = Net(config["l1"], config["l2"])
-    if torch.cuda.device_count() > 1:
-        net = nn.DataParallel(net)
-    net.to(device)
-
-
 
     epochs = 20000
     val_losses, val_errors, lrates = [], [], []
@@ -347,12 +332,6 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
         val_losses.append(valid_loss)
         val_errors.append(valid_mae)
         lrates.append(optimizer.param_groups[0]['lr'])
-
-        with tune.checkpoint_dir(epoch) as checkpoint_dir:
-            path = os.path.join(checkpoint_dir, "checkpoint")
-            torch.save((net.state_dict(), optimizer.state_dict()), path)
-
-        tune.report(loss=(val_loss / val_steps), accuracy=correct / total)
 
     test_mae = test_nn(test_loader, model, loss_fn)
     print(f"Finished training on train_size={n_train}\n Testing MAE = {test_mae}")
@@ -411,7 +390,7 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['10000']
+train_set = ['1000', '2000', '4000', '8000', '10000', '20000', '30000']
 op = 'EGAP'
 n_val = 5000
 
@@ -434,61 +413,23 @@ for ii in range(len(train_set)):
     os.chdir(current_dir + '/only_dft/egap/' + str(train_set[ii]))
 
 
-    config = {
-        "l1": tune.sample_from(lambda _: 2**np.random.randint(2, 5)),
-        "l2": tune.sample_from(lambda _: 2**np.random.randint(1, 4)),
-        "l3": tune.sample_from(lambda _: 2**np.random.randint(1, 4)),
-        "l4": tune.sample_from(lambda _: 2**np.random.randint(1, 4)),
-        "l5": tune.sample_from(lambda _: 2**np.random.randint(2, 5)),
-        "batch_size": tune.choice([2, 4, 8, 16])
-    }
+    model, lr, loss, mae, test_loader = fit_model_dense(
+        int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
+    )
 
-    data_dir = "./data"
-
-    scheduler = ASHAScheduler(
-        metric="loss",
-        mode="min",
-        max_t=max_num_epochs,
-        grace_period=1,
-        reduction_factor=2)
-
-    reporter = CLIReporter(
-        # parameter_columns=["l1", "l2", "lr", "batch_size"],
-        metric_columns=["loss", "training_iteration"])
-
-    result = tune.run(
-        partial(fit_model_dense, data_dir=data_dir),
-        resources_per_trial={"cpu": 8, "gpu": gpus_per_trial},
-        config=config,
-        num_samples=num_samples,
-        scheduler=scheduler,
-        progress_reporter=reporter,
-        checkpoint_at_end=True)
-
-    best_trial = result.get_best_trial("loss", "min", "last")
-    print("Best trial config: {}".format(best_trial.config))
-    print("Best trial final validation loss: {}".format(
-        best_trial.last_result["loss"]))
-    print("Best trial final validation accuracy: {}".format(
-        best_trial.last_result["accuracy"]))
-
-    # model, lr, loss, mae, test_loader = fit_model_dense(
-    #     int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
-    # )
-
-    # lhis = open('learning-history.dat', 'w')
-    # for ii in range(0, len(lr)):
-    #     lhis.write(
-    #         '{:8d}'.format(ii)
-    #         + '{:16f}'.format(lr[ii])
-    #         + '{:16f}'.format(loss[ii])
-    #         + '{:16f}'.format(mae[ii])
-    #         + '\n'
-    #     )
-    # lhis.close()
+    lhis = open('learning-history.dat', 'w')
+    for ii in range(0, len(lr)):
+        lhis.write(
+            '{:8d}'.format(ii)
+            + '{:16f}'.format(lr[ii])
+            + '{:16f}'.format(loss[ii])
+            + '{:16f}'.format(mae[ii])
+            + '\n'
+        )
+    lhis.close()
 
     # Saving NN model
-    # torch.save(model, 'model.pt')
+    torch.save(model, 'model.pt')
     
     # Saving results
-    # plotting_results(model, test_loader)
+    plotting_results(model, test_loader)
