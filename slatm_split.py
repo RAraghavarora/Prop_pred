@@ -10,7 +10,10 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error
 
-from dscribe.descriptors import SOAP
+from qml.representations import (
+    get_slatm_mbtypes,
+    generate_slatm,
+)
 
 import logging
 import schnetpack as spk
