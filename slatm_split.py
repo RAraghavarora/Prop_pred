@@ -19,10 +19,6 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-from ray import tune
-from ray.tune import CLIReporter
-from ray.tune.schedulers import ASHAScheduler
-from functools import partial
 
 # monitor the learning rate
 def complete_array(Aprop):
@@ -333,12 +329,6 @@ def fit_model_dense(config, n_train, n_val, n_test, iX, iY, patience):
         val_losses.append(valid_loss)
         val_errors.append(valid_mae)
         lrates.append(optimizer.param_groups[0]['lr'])
-
-        with tune.checkpoint_dir(t) as checkpoint_dir:
-            path = os.path.join(checkpoint_dir, "checkpoint")
-            torch.save((net.state_dict(), optimizer.state_dict()), path)
-
-        tune.report(loss=(valid_loss))
 
     test_mae = test_nn(test_loader, model, loss_fn)
     print(f"Finished training on train_size={n_train}\n Testing MAE = {test_mae}")
