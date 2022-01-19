@@ -2,6 +2,23 @@ The following modules were not unloaded:
   (Use "module --force purge" to unload all):
 
   1) modenv/scs5
-Module cuDNN/8.0.4.30-CUDA-11.1.1, Python/3.6.4-intel-2018a and 19 dependencies unloaded.
 Module Python/3.8.6-GCCcore-10.2.0 and 11 dependencies loaded.
 Module cuDNN/8.0.4.30-CUDA-11.1.1 and 1 dependency loaded.
+/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred/split.py:226: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+Traceback (most recent call last):
+  File "/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred/split.py", line 435, in <module>
+    plotting_results(model, test_loader)
+  File "/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred/split.py", line 351, in plotting_results
+    pred = model(test_loader.dataset.tensors[0])
+  File "/home/medranos/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred/split.py", line 246, in forward
+    layer1 = self.lin1(global_features)
+  File "/home/medranos/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/medranos/.local/lib/python3.8/site-packages/torch/nn/modules/linear.py", line 103, in forward
+    return F.linear(input, self.weight, self.bias)
+  File "/home/medranos/.local/lib/python3.8/site-packages/torch/nn/functional.py", line 1848, in linear
+    return torch._C._nn.linear(input, weight, bias)
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat1 in method wrapper_addmm)
