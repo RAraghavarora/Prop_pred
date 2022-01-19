@@ -348,8 +348,9 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
 def plotting_results(model, test_loader):
     # applying nn model
     with torch.no_grad():
-        pred = model(test_loader.dataset.tensors[0])
-        y = test_loader.dataset.tensors[1]
+        x = test_loader.dataset.tensors[0].cpu()
+        pred = model(x).cpu()
+        y = test_loader.dataset.tensors[1].cpu()
         loss_fn = nn.MSELoss()
         test_loss = loss_fn(pred, y).item()
         mae_loss = torch.nn.L1Loss(reduction='mean')
