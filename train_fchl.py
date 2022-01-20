@@ -410,7 +410,9 @@ for ii in range(len(train_set)):
     lhis.close()
 
     # Saving NN model
-    torch.save(model, 'model.pt')
+    print("Saving")
+    logging.info("Saving")
+    torch.save(model, 'model2.pt')
     
     # Saving results
     plotting_results(model, test_loader)
