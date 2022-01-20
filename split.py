@@ -37,8 +37,6 @@ def complete_array(Aprop):
 
 def prepare_data(op):
     #  # read dataset
-    data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
-    # data_dir = '../'
     properties = [
         'RMSD',
         'EAT',
@@ -60,7 +58,13 @@ def prepare_data(op):
 
     # data preparation
     logging.info("get dataset")
-    dataset = spk.data.AtomsData(data_dir + 'totgdb7x_pbe0.db', load_only=properties)
+    try:
+        data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
+        dataset = spk.data.AtomsData(data_dir + 'totgdb7x_pbe0.db', load_only=properties)
+    except:
+        data_dir = '../'
+        dataset = spk.data.AtomsData(data_dir + 'totgdb7x_pbe0.db', load_only=properties)
+        
 
     n = len(dataset)
     print(n)
