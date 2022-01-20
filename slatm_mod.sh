@@ -4,6 +4,7 @@
 #SBATCH --nodes=4                        # request 1 node
 #SBATCH --ntasks=8
 #SBATCH -J slatm-ra
+#SBATCH --ntasks-per-node=4
 #SBATCH --output=slatm.out
 #SBATCH --error=slatm.err
 #SBATCH -A p_biomolecules
