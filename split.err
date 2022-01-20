@@ -2,5 +2,21 @@ The following modules were not unloaded:
   (Use "module --force purge" to unload all):
 
   1) modenv/scs5
+Module cuDNN/8.0.4.30-CUDA-11.1.1, Python/3.6.4-intel-2018a and 19 dependencies unloaded.
 Module Python/3.8.6-GCCcore-10.2.0 and 11 dependencies loaded.
 Module cuDNN/8.0.4.30-CUDA-11.1.1 and 1 dependency loaded.
+slurmstepd: error: *** JOB 23112526 ON taurusi2047 CANCELLED AT 2022-01-20T12:58:57 ***
+/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred/split.py:226: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+Traceback (most recent call last):
+  File "/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred/split.py", line 436, in <module>
+    plotting_results(model, test_loader)
+  File "/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred/split.py", line 355, in plotting_results
+    test_loss = loss_fn(pred, y).item()
+  File "/home/medranos/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/medranos/.local/lib/python3.8/site-packages/torch/nn/modules/loss.py", line 520, in forward
+    return F.mse_loss(input, target, reduction=self.reduction)
+  File "/home/medranos/.local/lib/python3.8/site-packages/torch/nn/functional.py", line 3112, in mse_loss
+    return torch._C._nn.mse_loss(expanded_input, expanded_target, _Reduction.get_enum(reduction))
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu!

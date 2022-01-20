@@ -1,11 +1,11 @@
 Starting Program
 training starts
-*** JOB 'fchl-ra' (ID: 23065107) ***
-*** taurusi2048: 1 node(s),  8 core(s) in total ***
+*** JOB 'fchl-ra' (ID: 23113315) ***
+*** taurusi2046: 1 node(s),  8 core(s) in total ***
 *** Submitted in: /lustre/scratch2/ws/1/medranos-DFTBprojects/raghav/Prop_pred ***
 
-*** [TIMING] start Jan 20, 08:48:55 ***
-*** [TIMING] walltime 3-23:59:46 [95:59:46] ends Jan 24, 08:48:41 ***
+*** [TIMING] start Jan 20, 13:10:54 ***
+*** [TIMING] walltime 3-23:59:39 [95:59:39] ends Jan 24, 13:10:33 ***
 
 
 

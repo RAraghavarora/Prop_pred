@@ -2,5 +2,6 @@ The following modules were not unloaded:
   (Use "module --force purge" to unload all):
 
   1) modenv/scs5
+Module cuDNN/8.0.4.30-CUDA-11.1.1, Python/3.6.4-intel-2018a and 19 dependencies unloaded.
 Module Python/3.6.4-intel-2018a and 18 dependencies loaded.
 Module cuDNN/8.0.4.30-CUDA-11.1.1 and 1 dependency loaded.
