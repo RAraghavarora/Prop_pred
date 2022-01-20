@@ -304,10 +304,11 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     )
     print(trainX.shape)
     print(trainY.shape)
+    print(testX.shape)
+    print(testY.shape)
 
-
-    train = torch.utils.data.TensorDataset(trainX, trainY)
     test = torch.utils.data.TensorDataset(testX, testY)
+    train = torch.utils.data.TensorDataset(trainX, trainY)
     valid = torch.utils.data.TensorDataset(valX, valY)
     # data loader
     train_loader = DataLoader(train, batch_size=batch_size, shuffle=False)
@@ -320,7 +321,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     model = NeuralNetwork().to(device)
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
-    scheduler = ReduceLROnPlateau(optimizer, factor=0.57, patience = 500, min_lr=1e-6)
+    scheduler = ReduceLROnPlateau(optimizer, factor=0.59, patience = 500, min_lr=1e-6)
 
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
