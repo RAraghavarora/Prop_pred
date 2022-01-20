@@ -196,7 +196,7 @@ def prepare_data(op):
             )
         )
 
-    return reps2, TPROP2
+    return np.array(reps2), np.array(TPROP2)
 
 def split_data(n_train, n_val, n_test, Repre, Target):
     # Training
@@ -301,6 +301,9 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     trainX, trainY, valX, valY, testX, testY = split_data(
         n_train, n_val, n_test, iX, iY
     )
+    print(trainX.shape)
+    print(trainY.shape)
+
 
     train = torch.utils.data.TensorDataset(trainX, trainY)
     test = torch.utils.data.TensorDataset(testX, testY)
@@ -395,6 +398,10 @@ op = 'EAT'
 n_val = 5000
 
 iX, iY = prepare_data(op)
+print(iX.shape)
+print(iY.shape)
+
+
 
 # fit model and plot learning curves for a patience
 patience = 500
