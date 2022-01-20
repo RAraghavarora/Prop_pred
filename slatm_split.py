@@ -296,7 +296,7 @@ def test_nn(dataloader, model, loss_fn):
     return test_loss, mae
 
 
-def fit_model_dense(config, n_train, n_val, n_test, iX, iY, patience):
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     batch_size = 16
     trainX, trainY, valX, valY, testX, testY = split_data(
         n_train, n_val, n_test, iX, iY
