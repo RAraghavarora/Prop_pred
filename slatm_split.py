@@ -126,6 +126,7 @@ def prepare_data(op):
         generate_slatm(mbtypes=mbtypes, nuclear_charges=Z[mol], coordinates=xyz[mol])
         for mol in idx2
     ]
+    print(slatm[0].shape)
 
 
     TPROP2 = []
