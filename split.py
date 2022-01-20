@@ -269,8 +269,8 @@ class NeuralNetwork(nn.Module):
 def train_nn(dataloader, model, loss_fn, optimizer):
     # size = len(dataloader.dataset)
     model.train()
-    # device = "cuda"
-    device = "cpu"
+    device = "cuda"
+    # device = "cpu"
     for batch, (X, y) in enumerate(dataloader):
         X, y = X.to(device), y.to(device)
 
@@ -290,8 +290,8 @@ def test_nn(dataloader, model, loss_fn):
     num_batches = len(dataloader)
     model.eval()
     test_loss, mae = 0, 0
-    # device = "cuda"
-    device = "cpu"
+    device = "cuda"
+    # device = "cpu"
     with torch.no_grad():
         for batch, (X, y) in enumerate(dataloader):
             X, y = X.to(device), y.to(device)
@@ -318,8 +318,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     test_loader = DataLoader(test, batch_size=batch_size, shuffle = False)
     valid_loader = DataLoader(valid, batch_size=batch_size, shuffle = False)
 
-    # device = "cuda"
-    device = "cpu"
+    device = "cuda"
+    # device = "cpu"
     model = NeuralNetwork().to(device)
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
@@ -352,9 +352,9 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
 def plotting_results(model, test_loader):
     # applying nn model
     with torch.no_grad():
-        x = test_loader.dataset.tensors[0]
+        x = test_loader.dataset.tensors[0].cuda()
         pred = model(x).cpu()
-        y = test_loader.dataset.tensors[1]
+        y = test_loader.dataset.tensors[1].cuda()
         loss_fn = nn.MSELoss()
         test_loss = loss_fn(pred, y).item()
         mae_loss = torch.nn.L1Loss(reduction='mean')
