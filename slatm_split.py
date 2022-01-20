@@ -302,14 +302,22 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     trainX, trainY, valX, valY, testX, testY = split_data(
         n_train, n_val, n_test, iX, iY
     )
-    print(trainX.shape)
-    print(trainY.shape)
-    print(testX.shape)
-    print(testY.shape)
 
-    test = torch.utils.data.TensorDataset(testX, testY)
-    train = torch.utils.data.TensorDataset(trainX, trainY)
-    valid = torch.utils.data.TensorDataset(valX, valY)
+    X_train, X_val, X_test = (
+        torch.from_numpy(trainX).float(),
+        torch.from_numpy(valX).float(),
+        torch.from_numpy(testX).float(),
+    )
+
+    Y_train, Y_val, Y_test = (
+        torch.from_numpy(trainY).float(),
+        torch.from_numpy(valY).float(),
+        torch.from_numpy(testY).float(),
+    )
+
+    train = torch.utils.data.TensorDataset(X_train, Y_train)
+    test = torch.utils.data.TensorDataset(X_test, Y_test)
+    valid = torch.utils.data.TensorDataset(X_val, Y_val)
     # data loader
     train_loader = DataLoader(train, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
