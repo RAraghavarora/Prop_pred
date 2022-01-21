@@ -321,6 +321,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     device = "cuda"
     # device = "cpu"
     model = NeuralNetwork().to(device)
+    model = nn.DataParallel(model)
+    model.to(device)
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(optimizer, factor=0.57, patience = 500, min_lr=1e-6)
@@ -353,7 +355,7 @@ def plotting_results(model, test_loader):
     # applying nn model
     with torch.no_grad():
         x = test_loader.dataset.tensors[0].cuda()
-        pred = model(x).cpu()
+        pred = model(x)
         y = test_loader.dataset.tensors[1].cuda()
         loss_fn = nn.MSELoss()
         test_loss = loss_fn(pred, y).item()
@@ -393,6 +395,8 @@ def plotting_results(model, test_loader):
     plt.ylabel("Predicted EGAP")
     plt.savefig('Result.png')
 
+
+print("Device count: ", torch.cuda.device_count())
 
 # prepare dataset
 train_set = ['1000', '2000', '4000', '8000', '10000', '20000', '30000']
