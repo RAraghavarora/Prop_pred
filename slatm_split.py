@@ -334,7 +334,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
 
-    epochs = 200
+    epochs = 20000
     val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
