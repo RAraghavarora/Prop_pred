@@ -231,7 +231,7 @@ def init_weights(m):
         m.bias.data.fill_(0.01)
 
 class NeuralNetwork(nn.Module):
-    def __init__(self, l1=4, l2=2, l3=4, l4=6, l5=8):
+    def __init__(self, l1=16, l2=2, l3=16, l4=2, l5=16):
         super(NeuralNetwork, self).__init__()
         
         self.lin1 = nn.Linear(8,l1)
