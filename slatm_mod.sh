@@ -1,16 +1,16 @@
 #!/bin/bash
 #SBATCH --time=96:00:00
 #SBATCH --partition=haswell                        # specify ml partition or gpu2 partition
-#SBATCH --nodes=4                        # request 1 node
-#SBATCH --ntasks=8
-#SBATCH -J slatm-ra
+#SBATCH --nodes=1                        # request 1 node
+#SBATCH --ntasks=4
+#SBATCH -J slatm-ra2
 #SBATCH --ntasks-per-node=4
-#SBATCH --output=slatm.out
-#SBATCH --error=slatm.err
+#SBATCH --output=slatm2.out
+#SBATCH --error=slatm2.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=leonardo.medrano@nano.tu-dresden.de
-#SBATCH --mem-per-cpu=8000MB
+#SBATCH --mem-per-cpu=6000MB
 ulimit -s unlimited
 echo Starting Program
 module purge                                 # purge if you already have modules loaded

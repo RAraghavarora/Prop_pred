@@ -4,4 +4,5 @@ The following modules were not unloaded:
   1) modenv/scs5
 Module Python/3.6.4-intel-2018a and 18 dependencies loaded.
 Module cuDNN/8.0.4.30-CUDA-11.1.1 and 1 dependency loaded.
-slurmstepd: error: *** JOB 23115765 ON taurusi2048 CANCELLED AT 2022-01-20T14:32:44 ***
+/var/spool/slurmd/job23116251/slurm_script: line 51:  6130 Killed                  python3 $work/slatm_split.py
+slurmstepd: error: Detected 1 oom-kill event(s) in step 23116251.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
