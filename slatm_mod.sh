@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --time=96:00:00
 #SBATCH --partition=haswell                        # specify ml partition or gpu2 partition
-#SBATCH --nodes=8                        # request 1 node
+#SBATCH --nodes=4                        # request 1 node
 #SBATCH --ntasks=16
 #SBATCH -J slatm-ra2
-#SBATCH --output=slatm2.out
-#SBATCH --error=slatm2.err
+#SBATCH --output=slatm.out
+#SBATCH --error=slatm.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=raghav.arora@ext.uni.lu
