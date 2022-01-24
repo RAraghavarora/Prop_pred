@@ -1,11 +1,11 @@
 Starting Program
 training starts
-*** JOB 'split-ra' (ID: 23170646) ***
-*** taurusi2091: 1 node(s),  1 core(s) in total ***
+*** JOB 'gen_slatm' (ID: 23189752) ***
+*** taurusi[4213,4222-4228]: 8 node(s),  16 core(s) in total ***
 *** Submitted in: /lustre/scratch2/ws/1/medranos-DFTBprojects/raghav/Prop_pred ***
 
-*** [TIMING] start Jan 23, 16:32:46 ***
-*** [TIMING] walltime 3-23:59:55 [95:59:55] ends Jan 27, 16:32:41 ***
+*** [TIMING] start Jan 24, 11:41:15 ***
+*** [TIMING] walltime 3-23:59:55 [95:59:55] ends Jan 28, 11:41:10 ***
 
 
 

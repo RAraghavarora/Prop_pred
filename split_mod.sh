@@ -1,15 +1,15 @@
 #!/bin/bash
 #SBATCH --time=96:00:00
 #SBATCH --partition=gpu2                        # specify ml partition or gpu2 partition
-#SBATCH --nodes=2                        # request 1 node
-#SBATCH --ntasks=8
+#SBATCH --nodes=1                        # request 1 node
+#SBATCH --ntasks=1
 #SBATCH -J split-ra
 #SBATCH --gres=gpu:2
 #SBATCH --output=split.out
 #SBATCH --error=split.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
-#SBATCH        --mail-user=leonardo.medrano@nano.tu-dresden.de
+#SBATCH        --mail-user=raghav.arora@ext.uni.lu
 #SBATCH --mem-per-gpu=8000MB
 ulimit -s unlimited
 echo Starting Program

@@ -1,11 +1,11 @@
 Starting Program
 training starts
-*** JOB 'slatm-ra' (ID: 23116251) ***
-*** taurusi[4218-4221]: 4 node(s),  8 core(s) in total ***
+*** JOB 'slatm-ra2' (ID: 23161153) ***
+*** taurusi[4190-4192,4228]: 4 node(s),  16 core(s) in total ***
 *** Submitted in: /lustre/scratch2/ws/1/medranos-DFTBprojects/raghav/Prop_pred ***
 
-*** [TIMING] start Jan 20, 20:41:30 ***
-*** [TIMING] walltime 3-23:59:45 [95:59:45] ends Jan 24, 20:41:15 ***
+*** [TIMING] start Jan 22, 12:16:30 ***
+*** [TIMING] walltime 3-23:59:55 [95:59:55] ends Jan 26, 12:16:25 ***
 
 
 
@@ -13,10 +13,3 @@ JOB OUTPUT:
 ###########################################################################
 
 training starts
-training is over :-)
-
-###########################################################################
-
-*** [TIMING] end Jan 20, 20:58:39 ***
-*** [TIMING] duration 17:24[0:17:09] ***
-

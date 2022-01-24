@@ -4,3 +4,4 @@ The following modules were not unloaded:
   1) modenv/scs5
 Module Python/3.6.4-intel-2018a and 18 dependencies loaded.
 Module cuDNN/8.0.4.30-CUDA-11.1.1 and 1 dependency loaded.
+slurmstepd: error: *** JOB 23134152 ON taurusi4195 CANCELLED AT 2022-01-24T14:22:11 ***

@@ -1,15 +1,15 @@
 #!/bin/bash
 #SBATCH --time=96:00:00
 #SBATCH --partition=haswell                        # specify ml partition or gpu2 partition
-#SBATCH --nodes=1                        # request 1 node
-#SBATCH --ntasks=1
+#SBATCH --nodes=8                        # request 1 node
+#SBATCH --ntasks=16
 #SBATCH -J gen_slatm
 #SBATCH --output=gen_slatm.out
 #SBATCH --error=gen_slatm.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=raghav.arora@ext.uni.lu
-#SBATCH --mem-per-cpu=16000MB
+#SBATCH --mem-per-cpu=32000MB
 ulimit -s unlimited
 echo Starting Program
 module purge                                 # purge if you already have modules loaded
@@ -48,7 +48,7 @@ echo "training starts"
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-python3 $work/get_slatm_tensors.py
+python3 $work/slatm_split.py
 
 echo "training is over :-)"
 EXTSTAT=$?
