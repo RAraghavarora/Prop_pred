@@ -13,6 +13,7 @@ from sklearn.metrics import mean_absolute_error
 from qml.representations import (
     get_slatm_mbtypes,
     generate_slatm,
+    generate_bob
 )
 
 import logging
@@ -121,12 +122,18 @@ def prepare_data(op):
     EGAP = np.array(EGAP)
     TPROP = np.array(TPROP)
 
-    mbtypes = get_slatm_mbtypes([Z[mol] for mol in idx2])
-    slatm = [
-        generate_slatm(mbtypes=mbtypes, nuclear_charges=Z[mol], coordinates=xyz[mol])
-        for mol in idx2
-    ]
-    print(slatm[0].shape)
+    # Generate representations
+    bob_repr = np.array(
+        [
+            generate_bob(
+                Z[mol],
+                xyz[mol],
+                atomtypes={'C', 'H', 'N', 'O', 'S', 'Cl'},
+                asize={'C': 7, 'H': 16, 'N': 3, 'O': 3, 'S': 1, 'Cl': 2},
+            )
+            for mol in idx2
+        ]
+    )
 
 
     TPROP2 = []
@@ -180,7 +187,7 @@ def prepare_data(op):
         reps2.append(
             np.concatenate(
                 (
-                    slatm[ii],
+                    bob_repr[ii],
                     p1b[ii],
                     p2b[ii],
                     p3b[ii],
@@ -230,7 +237,7 @@ class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
 
-        self.lin1 = nn.Linear(17895, 16)
+        self.lin1 = nn.Linear(528, 16)
         self.lin2 = nn.Linear(56, 128)
         self.lin3 = nn.Linear(128, 32)
         self.lin4 = nn.Linear(32, 1)
@@ -403,7 +410,7 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['30000']
+train_set = ['4000', '30000']
 op = 'EAT'
 n_val = 5000
 
@@ -422,14 +429,14 @@ for ii in range(len(train_set)):
     n_test = len(iY) - int(train_set[ii]) - n_val
     print('Trainset= {:}'.format(train_set[ii]))
     chdir(current_dir)
-    os.chdir(current_dir + '/withdft/slatm/')
+    os.chdir(current_dir + '/withdft/bob/')
     try:
         os.mkdir('16')
         os.chdir('16')
         os.mkdir(str(train_set[ii]))
     except:
         pass
-    os.chdir(current_dir + '/withdft/slatm/16/' + str(train_set[ii]))
+    os.chdir(current_dir + '/withdft/bob/16/' + str(train_set[ii]))
 
     model, lr, loss, mae, test_loader = fit_model_dense(
         int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
