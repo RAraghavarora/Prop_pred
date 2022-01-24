@@ -9,7 +9,7 @@
 #SBATCH --error=soap.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
-#SBATCH        --mail-user=leonardo.medrano@nano.tu-dresden.de
+#SBATCH        --mail-user=reepicheep-logs@protonmail.com
 #SBATCH --mem-per-gpu=8000MB
 ulimit -s unlimited
 echo Starting Program

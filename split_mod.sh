@@ -9,7 +9,7 @@
 #SBATCH --error=split.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
-#SBATCH        --mail-user=raghav.arora@ext.uni.lu
+#SBATCH        --mail-user=reepicheep_logs@protonmail.com
 #SBATCH --mem-per-gpu=8000MB
 ulimit -s unlimited
 echo Starting Program

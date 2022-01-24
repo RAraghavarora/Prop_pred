@@ -9,7 +9,7 @@
 #SBATCH --error=dip.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
-#SBATCH        --mail-user=leonardo.medrano@nano.tu-dresden.de
+#SBATCH        --mail-user=reepicheep_logs@protonmail.com
 #SBATCH --mem-per-gpu=8000MB
 ulimit -s unlimited
 echo Starting Program
