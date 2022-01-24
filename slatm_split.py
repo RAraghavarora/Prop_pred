@@ -230,8 +230,8 @@ class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
 
-        self.lin1 = nn.Linear(17895, 64)
-        self.lin2 = nn.Linear(104, 128)
+        self.lin1 = nn.Linear(17895, 16)
+        self.lin2 = nn.Linear(56, 128)
         self.lin3 = nn.Linear(128, 32)
         self.lin4 = nn.Linear(32, 1)
         self.apply(init_weights)
@@ -424,12 +424,12 @@ for ii in range(len(train_set)):
     chdir(current_dir)
     os.chdir(current_dir + '/withdft/slatm/')
     try:
-        os.mkdir('32')
-        os.chdir('32')
+        os.mkdir('16')
+        os.chdir('16')
         os.mkdir(str(train_set[ii]))
     except:
         pass
-    os.chdir(current_dir + '/withdft/slatm/32/' + str(train_set[ii]))
+    os.chdir(current_dir + '/withdft/slatm/16/' + str(train_set[ii]))
 
     model, lr, loss, mae, test_loader = fit_model_dense(
         int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
