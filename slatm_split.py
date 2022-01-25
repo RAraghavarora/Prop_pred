@@ -245,8 +245,8 @@ class NeuralNetwork(nn.Module):
         # self.flatten = nn.Flatten(-1,0)
 
     def forward(self, x):
-        slatm = x[:, :17895]
-        elec = x[:, 17895:]
+        slatm = x[:, :528]
+        elec = x[:, 528:]
         layer1 = self.lin1(slatm)
         layer1 = nn.functional.elu(layer1)
 
