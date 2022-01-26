@@ -1,0 +1,29 @@
+Starting Program
+training starts
+*** JOB 'bob' (ID: 23193269) ***
+*** taurusi[4189,4196,4200,4207,4217]: 5 node(s),  80 core(s) in total ***
+*** Submitted in: /lustre/scratch2/ws/1/medranos-DFTBprojects/raghav/Prop_pred ***
+
+*** [TIMING] start Jan 24, 19:01:02 ***
+*** [TIMING] walltime 3-23:59:53 [95:59:53] ends Jan 28, 19:00:55 ***
+
+
+
+JOB OUTPUT:
+###########################################################################
+
+training starts
+41537
+(41537, 568)
+(41537,)
+Trainset= 4000
+Perfoming training
+Epoch 1
+-------------------------------
+training is over :-)
+
+###########################################################################
+
+*** [TIMING] end Jan 24, 19:17:51 ***
+*** [TIMING] duration 16:56[0:16:49] ***
+
