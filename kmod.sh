@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --time=96:00:00
 #SBATCH --partition=haswell
-#SBATCH -J bob
+#SBATCH -J k2
 #SBATCH --output=kbob.out
 #SBATCH --error=kbob.err
 #SBATCH -A p_biomolecules
