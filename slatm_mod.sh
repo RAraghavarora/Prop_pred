@@ -5,10 +5,10 @@
 #SBATCH --output=bob.out
 #SBATCH --error=bob.err
 #SBATCH -A p_phononics
-#SBATCH -N 5
+#SBATCH -N 4
 
-#SBATCH -n 80
-#SBATCH --ntasks-per-node=16
+#SBATCH -n 16
+#SBATCH --ntasks-per-node=4
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
 #SBATCH --mem-per-cpu=8000MB
