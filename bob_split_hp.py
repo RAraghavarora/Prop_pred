@@ -6,6 +6,7 @@ from os import path, mkdir, chdir
 import warnings
 import numpy as np
 import matplotlib.pyplot as plt
+import optuna
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error
@@ -383,10 +384,12 @@ def objective(trial):
     return test_mae[1]
 
 
-import optuna
-
-study = optuna.create_study(direction="minimize", sampler=optuna.samplers.RandomSampler(
-), pruner=optuna.pruners.MedianPruner())
+study = optuna.create_study(
+    direction="minimize",
+    sampler=optuna.samplers.RandomSampler(),
+    pruner=optuna.pruners.MedianPruner(
+        n_startup_trials=5, n_warmup_steps=30, interval_steps=10, n_min_trials=1000)
+)
 study.optimize(objective, n_trials=30)
 
 best_trial = study.best_trial
