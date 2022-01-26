@@ -67,11 +67,12 @@ def prepare_data(op):
     try:
         data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
         # data_dir = '../'
-        dataset = spk.data.AtomsData(data_dir + 'distort.db', load_only=properties)
+        dataset = spk.data.AtomsData(
+            data_dir + 'distort.db', load_only=properties)
     except:
         data_dir = '../'
-        dataset = spk.data.AtomsData(data_dir + 'totgdb7x_pbe0.db', load_only=properties)
-
+        dataset = spk.data.AtomsData(
+            data_dir + 'totgdb7x_pbe0.db', load_only=properties)
 
     n = len(dataset)
     print(n)
@@ -134,7 +135,6 @@ def prepare_data(op):
             for mol in idx2
         ]
     )
-
 
     TPROP2 = []
     p1b, p2b, p11b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b = (
@@ -206,18 +206,19 @@ def prepare_data(op):
 
     return np.array(reps2), np.array(TPROP2)
 
+
 def split_data(n_train, n_val, n_test, Repre, Target):
     # Training
     print("Perfoming training")
 
     X_train, X_val, X_test = (
         np.array(Repre[:n_train]),
-        np.array(Repre[-n_test - n_val : -n_test]),
+        np.array(Repre[-n_test - n_val: -n_test]),
         np.array(Repre[-n_test:]),
     )
     Y_train, Y_val, Y_test = (
         np.array(Target[:n_train]),
-        np.array(Target[-n_test - n_val : -n_test]),
+        np.array(Target[-n_test - n_val: -n_test]),
         np.array(Target[-n_test:]),
     )
 
@@ -226,6 +227,7 @@ def split_data(n_train, n_val, n_test, Repre, Target):
     Y_test = Y_test.reshape(-1, 1)
 
     return X_train, Y_train, X_val, Y_val, X_test, Y_test
+
 
 def init_weights(m):
     if isinstance(m, nn.Linear):
@@ -238,7 +240,7 @@ class NeuralNetwork(nn.Module):
         super(NeuralNetwork, self).__init__()
 
         self.lin1 = nn.Linear(528, params['l1'])
-        self.lin2 = nn.Linear(params['l1']+40, params['l2'])
+        self.lin2 = nn.Linear(params['l1'] + 40, params['l2'])
         # self.lin3 = nn.Linear(128, 32)
         self.lin4 = nn.Linear(32, 1)
         self.apply(init_weights)
@@ -297,7 +299,7 @@ def test_nn(dataloader, model, loss_fn):
             pred = model(X)
             test_loss += loss_fn(pred, y).item()
             mae_loss = torch.nn.L1Loss(reduction='mean')
-            mae += mae_loss(pred,y)
+            mae += mae_loss(pred, y)
 
     test_loss /= num_batches
     mae /= num_batches
@@ -336,7 +338,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model):
     model = NeuralNetwork().to(device)
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
-    scheduler = ReduceLROnPlateau(optimizer, factor=0.59, patience = 500, min_lr=1e-6)
+    scheduler = ReduceLROnPlateau(
+        optimizer, factor=0.59, patience=500, min_lr=1e-6)
 
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
@@ -354,7 +357,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model):
         lrates.append(optimizer.param_groups[0]['lr'])
 
     test_mae = test_nn(test_loader, model, loss_fn)
-    print(f"Finished training on train_size={n_train}\n Testing MAE = {test_mae}")
+    print(
+        f"Finished training on train_size={n_train}\n Testing MAE = {test_mae}")
 
     return test_mae
 
@@ -366,21 +370,23 @@ def objective(trial):
               }
 
     model = NeuralNetwork(params)
-    n_train=10000
-    n_val=5000
-    n_test=41537-10000-5000
+    n_train = 10000
+    n_val = 5000
+    n_test = 41537 - 10000 - 5000
     patience = 700
     op = 'EAT'
     iX, iY = prepare_data(op)
-    
-    test_mae = fit_model_dense(n_train, n_val, n_test, iX, iY, patience, params, model)
+
+    test_mae = fit_model_dense(
+        n_train, n_val, n_test, iX, iY, patience, params, model)
 
     return test_mae[1]
 
 
 import optuna
 
-study = optuna.create_study(direction="minimize", sampler=optuna.samplers.RandomSampler(), pruner=optuna.pruners.MedianPruner())
+study = optuna.create_study(direction="minimize", sampler=optuna.samplers.RandomSampler(
+), pruner=optuna.pruners.MedianPruner())
 study.optimize(objective, n_trials=30)
 
 best_trial = study.best_trial
