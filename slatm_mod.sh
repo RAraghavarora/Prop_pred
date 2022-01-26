@@ -2,8 +2,8 @@
 #SBATCH --time=96:00:00
 #SBATCH --partition=haswell
 #SBATCH -J bob
-#SBATCH --output=bob.out
-#SBATCH --error=bob.err
+#SBATCH --output=bob_hp.out
+#SBATCH --error=bob_hp.err
 #SBATCH -A p_phononics
 #SBATCH -N 4
 
@@ -52,7 +52,7 @@ echo "training starts"
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-python3 $work/slatm_split.py
+python3 $work/bob_split_hp.py
 
 echo "training is over :-)"
 EXTSTAT=$?
