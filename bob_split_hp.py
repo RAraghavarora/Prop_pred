@@ -260,7 +260,7 @@ class NeuralNetwork(nn.Module):
         layer2 = nn.functional.elu(layer2)
         # layer3 = self.lin3(layer2)
         # layer3 = nn.functional.elu(layer3)
-        layer4 = self.lin4(layer3)
+        layer4 = self.lin4(layer2)
 
         return layer4
 
@@ -346,16 +346,16 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model):
         model = nn.DataParallel(model)
 
     epochs = 5000
-    val_losses, val_errors, lrates = [], [], []
+    # val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
         train_nn(train_loader, model, loss_fn, optimizer)
         valid_loss, valid_mae = test_nn(valid_loader, model, loss_fn)
         print(f"Validation MAE: {valid_mae}\n")
         scheduler.step(valid_mae)
-        val_losses.append(valid_loss)
-        val_errors.append(valid_mae)
-        lrates.append(optimizer.param_groups[0]['lr'])
+        # val_losses.append(valid_loss)
+        # val_errors.append(valid_mae)
+        # lrates.append(optimizer.param_groups[0]['lr'])
 
     test_mae = test_nn(test_loader, model, loss_fn)
     print(
