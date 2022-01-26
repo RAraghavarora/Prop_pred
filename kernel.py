@@ -46,7 +46,7 @@ def prepare_data(op):
         'TBchg',
     ]
 
-    dataset = spk.data.AtomsData(data_dir + 'totgdb7x_pbe0.db', load_only=properties)
+    dataset = spk.data.AtomsData(data_dir + 'distort.db', load_only=properties)
 
     n = len(dataset)
     idx = np.arange(n)
