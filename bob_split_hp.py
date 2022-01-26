@@ -366,8 +366,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model):
 
 def objective(trial):
 
-    params = {'l1': trial.categorical("l1", [16, 32, 64, 128]),
-              'l2': trial.suggest_int("l2", [2, 4, 8, 16, 32, 64]),
+    params = {'l1': trial.suggest_categorical("l1", [16, 32, 64, 128]),
+              'l2': trial.suggest_categorical("l2", [2, 4, 8, 16, 32, 64]),
               }
 
     model = NeuralNetwork(params)
