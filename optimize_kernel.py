@@ -24,7 +24,7 @@ def complete_array(Aprop):
 
 def prepare_data(op):
     #  # read dataset
-    data_dir = '../'
+    data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
     properties = [
         'RMSD',
         'EAT',
@@ -44,7 +44,7 @@ def prepare_data(op):
         'TBchg',
     ]
 
-    dataset = spk.data.AtomsData(data_dir + 'totgdb7x_pbe0.db', load_only=properties)
+    dataset = spk.data.AtomsData(data_dir + 'distort.db', load_only=properties)
 
     n = len(dataset)
     idx = np.arange(n)
