@@ -232,7 +232,7 @@ def split_data(n_train, n_val, n_test, Repre, Target):
 
 def init_weights(m):
     if isinstance(m, nn.Linear):
-        torch.nn.init.xavier_uniform(m.weight)
+        torch.nn.init.xavier_uniform_(m.weight)
         m.bias.data.fill_(0.01)
 
 
@@ -243,7 +243,7 @@ class NeuralNetwork(nn.Module):
         self.lin1 = nn.Linear(528, params['l1'])
         self.lin2 = nn.Linear(params['l1'] + 40, params['l2'])
         # self.lin3 = nn.Linear(128, 32)
-        self.lin4 = nn.Linear(32, 1)
+        self.lin4 = nn.Linear(params['l2'], 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
