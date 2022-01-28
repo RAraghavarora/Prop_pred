@@ -1,0 +1,47 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) modenv/scs5
+Module Python/3.6.4-intel-2018a and 18 dependencies loaded.
+Module cuDNN/8.0.4.30-CUDA-11.1.1 and 1 dependency loaded.
+WARNING: You are using pip version 21.0.1; however, version 21.3.1 is available.
+You should consider upgrading via the '/home/h3/medranos/vdftb20/bin/python -m pip install --upgrade pip' command.
+[32m[I 2022-01-27 09:44:24,672][0m A new study created in memory with name: no-name-f43adf4a-c08b-41d1-a7b9-f124e45a4bdd[0m
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/schnetpack/data/atoms.py:327: UserWarning: The given NumPy array is not writeable, and PyTorch does not support non-writeable tensors. This means you can write to the underlying (supposedly non-writeable) NumPy array using the tensor. You may want to copy the array to protect its data or make it writeable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at  /pytorch/torch/csrc/utils/tensor_numpy.cpp:143.)
+  properties[pname] = torch.FloatTensor(prop)
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+[32m[I 2022-01-27 12:07:17,715][0m Trial 0 finished with value: 0.5028268098831177 and parameters: {'l1': 128, 'l2': 16}. Best is trial 0 with value: 0.5028268098831177.[0m
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+[32m[I 2022-01-27 14:05:05,892][0m Trial 1 finished with value: 0.514848530292511 and parameters: {'l1': 16, 'l2': 8}. Best is trial 0 with value: 0.5028268098831177.[0m
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+[32m[I 2022-01-27 16:19:56,548][0m Trial 2 finished with value: 0.4959295690059662 and parameters: {'l1': 64, 'l2': 8}. Best is trial 2 with value: 0.4959295690059662.[0m
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+[32m[I 2022-01-27 18:27:13,361][0m Trial 3 finished with value: 0.49109816551208496 and parameters: {'l1': 32, 'l2': 8}. Best is trial 3 with value: 0.49109816551208496.[0m
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+[32m[I 2022-01-27 20:48:27,562][0m Trial 4 finished with value: 0.47823476791381836 and parameters: {'l1': 64, 'l2': 32}. Best is trial 4 with value: 0.47823476791381836.[0m
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+[32m[I 2022-01-27 23:29:13,356][0m Trial 5 finished with value: 0.5289266705513 and parameters: {'l1': 128, 'l2': 8}. Best is trial 4 with value: 0.47823476791381836.[0m
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+[32m[I 2022-01-28 01:50:39,839][0m Trial 6 finished with value: 0.4700610935688019 and parameters: {'l1': 32, 'l2': 32}. Best is trial 6 with value: 0.4700610935688019.[0m
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+[32m[I 2022-01-28 04:38:31,571][0m Trial 7 finished with value: 0.503636360168457 and parameters: {'l1': 128, 'l2': 16}. Best is trial 6 with value: 0.4700610935688019.[0m
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+[32m[I 2022-01-28 07:33:09,431][0m Trial 8 finished with value: 0.565481424331665 and parameters: {'l1': 128, 'l2': 64}. Best is trial 6 with value: 0.4700610935688019.[0m
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+[32m[I 2022-01-28 10:10:34,466][0m Trial 9 finished with value: 0.49413561820983887 and parameters: {'l1': 64, 'l2': 32}. Best is trial 6 with value: 0.4700610935688019.[0m
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+[32m[I 2022-01-28 13:06:20,978][0m Trial 10 finished with value: 0.5228994488716125 and parameters: {'l1': 128, 'l2': 4}. Best is trial 6 with value: 0.4700610935688019.[0m
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+[32m[I 2022-01-28 16:00:02,595][0m Trial 11 finished with value: 0.5065946578979492 and parameters: {'l1': 128, 'l2': 2}. Best is trial 6 with value: 0.4700610935688019.[0m
