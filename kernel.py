@@ -203,6 +203,7 @@ def objective(params):
     print(res)
     return res
 
-gamma = 9.990000000000001e-06
-sigma= 135.55025590223175
+# gamma = 9.990000000000001e-06
+# sigma= 135.55025590223175
+sigma, gamma = [1.54383770e+02, 4.86297071e-05]
 objective([sigma,gamma])
