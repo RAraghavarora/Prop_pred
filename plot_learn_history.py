@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 # Plot the curve of learning rate
 
-lhis = open('only_dft/egap/10000/learning-history.dat', 'r')
+lhis = open('only_dft/egap/30000/learning-history.dat', 'r')
 
 lines = lhis.readlines()
 x = []
@@ -14,7 +14,7 @@ for line in lines:
     x.append(int(epoch))
     y.append(float(mae))
 
-plt.plot(x[500:], y[500:], '.')
+plt.plot(x[1500:], y[1500:], '.')
 plt.xlabel("Training MAE")
 plt.ylabel("Epoch")
 plt.title('Learning history for conv with size of 10000')

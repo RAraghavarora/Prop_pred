@@ -399,7 +399,7 @@ def plotting_results(model, test_loader):
 print("Device count: ", torch.cuda.device_count())
 
 # prepare dataset
-train_set = ['30000']
+train_set = ['10000']
 op = 'EGAP'
 n_val = 5000
 
