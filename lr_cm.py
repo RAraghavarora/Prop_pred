@@ -252,8 +252,8 @@ for n_train in [1000, 2000, 4000, 8000, 10000, 20000, 30000]:
 
     with torch.no_grad():  # we don't need gradients in the testing phase
         if torch.cuda.is_available():
-            predicted = model(Variable(torch.from_numpy(
-                x_test).cuda()))
+            predicted = model(
+                Variable(torch.from_numpy(x_test).float().cuda()))
         else:
             predicted = model(Variable(torch.from_numpy(x_test).float()))
 
