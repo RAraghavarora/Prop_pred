@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time=240:00:00
+#SBATCH --time=144:00:00
 #SBATCH --partition=haswell
 #SBATCH -J bob
 #SBATCH --output=bob_hp.out
