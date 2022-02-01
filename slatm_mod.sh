@@ -1,17 +1,17 @@
 #!/bin/bash
-#SBATCH --time=96:00:00
+#SBATCH --time=240:00:00
 #SBATCH --partition=haswell
 #SBATCH -J bob
 #SBATCH --output=bob_hp.out
 #SBATCH --error=bob_hp.err
 #SBATCH -A p_phononics
-#SBATCH -N 4
+#SBATCH -N 12
 
-#SBATCH -n 16
+#SBATCH -n 48
 #SBATCH --ntasks-per-node=4
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
-#SBATCH --mem-per-cpu=8000MB
+#SBATCH --mem-per-cpu=6000MB
 
 
 ulimit -s unlimited

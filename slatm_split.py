@@ -238,9 +238,8 @@ class NeuralNetwork(nn.Module):
         super(NeuralNetwork, self).__init__()
 
         self.lin1 = nn.Linear(528, 16)
-        self.lin2 = nn.Linear(56, 128)
-        self.lin3 = nn.Linear(128, 32)
-        self.lin4 = nn.Linear(32, 1)
+        self.lin2 = nn.Linear(56, 16)
+        self.lin4 = nn.Linear(16, 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
@@ -251,13 +250,11 @@ class NeuralNetwork(nn.Module):
         layer1 = nn.functional.elu(layer1)
 
         concat = torch.cat([layer1, elec], dim=1)
-        concat = nn.functional.elu(concat)
+        # concat = nn.functional.elu(concat)
 
         layer2 = self.lin2(concat)
         layer2 = nn.functional.elu(layer2)
-        layer3 = self.lin3(layer2)
-        layer3 = nn.functional.elu(layer3)
-        layer4 = self.lin4(layer3)
+        layer4 = self.lin4(layer2)
 
         return layer4
 
@@ -410,7 +407,7 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['4000', '30000']
+train_set = ['1000', '20000', '2000', '4000', '8000', '10000', '30000']
 op = 'EAT'
 n_val = 5000
 
@@ -426,7 +423,7 @@ patience = 500
 current_dir = os.getcwd()
 
 for ii in range(len(train_set)):
-    n_test = len(iY) - int(train_set[ii]) - n_val
+    n_test = len(iY) - n_val
     print('Trainset= {:}'.format(train_set[ii]))
     chdir(current_dir)
     os.chdir(current_dir + '/withdft/bob/')
