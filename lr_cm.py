@@ -258,5 +258,5 @@ for n_train in [1000, 2000, 4000, 8000, 10000, 20000, 30000]:
             predicted = model(Variable(torch.from_numpy(x_test).float()))
 
     mae_loss = torch.nn.L1Loss()
-    print(mae_loss(predicted, torch.from_numpy(y_test).float()))
-    mae.append(mae_loss(predicted, torch.from_numpy(y_test).float()))
+    print(mae_loss(predicted, torch.from_numpy(y_test).float().cuda()))
+    mae.append(mae_loss(predicted, torch.from_numpy(y_test).float().cuda()))
