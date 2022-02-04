@@ -1,2 +1,23 @@
 Starting Program
+Trainset = 1000
+Perfoming training
+tensor(2.0324, device='cuda:0')
+Trainset = 2000
+Perfoming training
+tensor(1.8254, device='cuda:0')
+Trainset = 4000
+Perfoming training
+tensor(1.7438, device='cuda:0')
+Trainset = 8000
+Perfoming training
+tensor(1.6677, device='cuda:0')
+Trainset = 10000
+Perfoming training
+tensor(1.6251, device='cuda:0')
+Trainset = 20000
+Perfoming training
+tensor(1.5702, device='cuda:0')
+Trainset = 30000
+Perfoming training
+tensor(1.5244, device='cuda:0')
 training is over :-)
