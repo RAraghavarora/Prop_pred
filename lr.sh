@@ -7,7 +7,7 @@
 #SBATCH -J lr
 #SBATCH --output=lr_bob.out
 #SBATCH --error=lr_bob.err
-#SBATCH -A p_phononics
+#SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
 #SBATCH --mem-per-gpu=8000MB
