@@ -4,7 +4,7 @@
 #SBATCH --gres=gpu:2                      # use 1 GPU per node (i.e. use one GPU per task)
 #SBATCH --nodes=4                        # request 1 node
 #SBATCH --ntasks=8
-#SBATCH -J lr
+#SBATCH -J lr2
 #SBATCH --output=lr_bob.out
 #SBATCH --error=lr_bob.err
 #SBATCH -A p_biomolecules
