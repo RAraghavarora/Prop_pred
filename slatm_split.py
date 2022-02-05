@@ -434,6 +434,9 @@ for ii in range(len(train_set)):
     try:
         os.mkdir('16')
         os.chdir('16')
+    except:
+        os.chdir('16')
+    try:
         os.mkdir(str(train_set[ii]))
     except:
         pass
