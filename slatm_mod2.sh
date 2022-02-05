@@ -10,6 +10,7 @@
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
 #SBATCH --mem-per-cpu=6000MB
+#SBATCH --gres=gpu:1                      # use 1 GPU per node (i.e. use one GPU per task)
 
 
 ulimit -s unlimited
