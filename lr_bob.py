@@ -137,9 +137,9 @@ def prepare_data(op):
         p7b.append(p7[nn1])
         p8b.append(p8[nn1])
         p9b.append(p9[nn1])
-        p10b.append(p10[nn1])
-        p11b.append(p11[nn1])
-        TPROP2.append(TPROP[nn1])
+        p10b.append(p10[nn1].numpy())
+        p11b.append(p11[nn1].numpy())
+        TPROP2.append(TPROP[nn1].numpy())
 
     p11b = complete_array(p11b)
 
