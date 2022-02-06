@@ -96,7 +96,7 @@ def prepare_data(op):
         AE.append(float(props['EAT']))
         EGAP.append(float(props['EGAP']))
         KSE.append(props['KSE'])
-        TPROP.append(float(props[op]))
+        TPROP.append(float(props[op]*23.0621))
         xyz.append(atoms.get_positions())
         Z.append(atoms.get_atomic_numbers())
         p1.append(float(props['FermiEne']))
@@ -399,7 +399,7 @@ def plotting_results(model, test_loader):
 print("Device count: ", torch.cuda.device_count())
 
 # prepare dataset
-train_set = ['8000']
+train_set = ['4000', '2000', '1000']
 op = 'EGAP'
 n_val = 5000
 
