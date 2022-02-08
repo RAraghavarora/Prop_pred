@@ -15,8 +15,8 @@ for line in lines:
     y.append(float(mae))
 
 plt.plot(x[1500:], y[1500:], '.')
-plt.xlabel("Training MAE")
-plt.ylabel("Epoch")
-plt.title('Learning history for conv with size of 10000')
+plt.ylabel("Validation MAE")
+plt.xlabel("Epoch")
+plt.title('Learning history for conv with size of 8000')
 plt.show()
 plt.close()
