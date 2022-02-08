@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 from torchviz import make_dot
+import hiddenlayer as hl
 
 
 class NeuralNetwork(nn.Module):
@@ -29,8 +30,14 @@ class NeuralNetwork(nn.Module):
 
 
 model = torch.load('C:/Users/raghav/bob/16/20000/model.pt')
-torch.onnx.export(model)
+# torch.onnx.export(model)
 x = torch.randn(1, 568)
 y = model(x)
+
+# transforms = [hl.transforms.Prune('Constant'), hl.transforms.FoldDuplicates()]
+graph = hl.build_graph(model, x)
+graph.theme = hl.graph.THEMES['blue'].copy()
+graph.save('rnn_hiddenlayer2', format='png')
+
 # make_dot(y.mean(), params=dict(list(model.named_parameters())), show_attrs=True, show_saved=True
 #          ).render('Plots/plot')
