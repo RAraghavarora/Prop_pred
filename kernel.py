@@ -2,14 +2,10 @@
 import numpy as np
 from qml.representations import generate_coulomb_matrix
 import logging
-import pdb
 import schnetpack as spk
 from qml.math import cho_solve
 from qml.kernels import gaussian_kernel
-from scipy.optimize import dual_annealing
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-
-import random
 
 
 def complete_array(Aprop):
