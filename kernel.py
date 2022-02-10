@@ -2,14 +2,10 @@
 import numpy as np
 from qml.representations import generate_coulomb_matrix
 import logging
-import pdb
 import schnetpack as spk
 from qml.math import cho_solve
 from qml.kernels import gaussian_kernel
-from scipy.optimize import dual_annealing
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-
-import random
 
 
 def complete_array(Aprop):
@@ -46,7 +42,8 @@ def prepare_data(op):
         'TBchg',
     ]
 
-    dataset = spk.data.AtomsData(data_dir + 'distort.db', load_only=properties)
+    dataset = spk.data.AtomsData(
+        data_dir + 'qm7x-eq-n1.db', load_only=properties)
 
     n = len(dataset)
     idx = np.arange(n)
@@ -88,11 +85,13 @@ def prepare_data(op):
     # Generate representations
     # Coulomb matrix
     xyz_reps = np.array(
-        [generate_coulomb_matrix(Z[mol], xyz[mol], sorting='unsorted') for mol in idx2]
+        [generate_coulomb_matrix(
+            Z[mol], xyz[mol], sorting='unsorted') for mol in idx2]
     )
 
     TPROP2 = []
-    p1b, p2b, p11b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b = ([] for i in range(11))
+    p1b, p2b, p11b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b = (
+        [] for i in range(11))
     for nn in idx2:
         p1b.append(p1[nn])
         p2b.append(p2[nn])
@@ -135,7 +134,7 @@ def prepare_data(op):
     return reps2, TPROP2, atoms_data
 
 
-Repre, Target, atoms_data = prepare_data('EGAP')
+Repre, Target, atoms_data = prepare_data('EAT')
 Target = np.array(Target)
 
 
@@ -149,7 +148,7 @@ def objective(params):
     n_test = 10000
     n_val = 1000
 
-    train_set = [1000,2000,4000,8000,10000,20000,30000]
+    train_set = [1000, 2000, 4000, 8000, 10000, 20000, 30000]
 
     # try:
     #     indices = np.arange(desc.shape[0])
@@ -167,7 +166,7 @@ def objective(params):
 
         Y_train, Y_val, Y_test = (
             np.array(Target[:n_train]),
-            np.array(Target[-n_test - n_val : -n_test]),
+            np.array(Target[-n_test - n_val: -n_test]),
             np.array(Target[-n_test:]),
         )
 
@@ -180,17 +179,17 @@ def objective(params):
         # Writing the true and predicted EAT values
         dtest = np.array(Y_test - Y_predicted)
 
-        ctest = open('comp-test_%s.dat'%n_train, 'w')
+        ctest = open('comp-test_%s.dat' % n_train, 'w')
         for ii in range(0, len(Y_test)):
-            ctest.write(str(Y_test[ii]) +'\t' + str(Y_predicted[ii]) + '\t' +str(dtest[ii]) + '\n'
-            )
+            ctest.write(str(Y_test[ii]) + '\t' + str(Y_predicted[ii]) + '\t' + str(dtest[ii]) + '\n'
+                        )
         ctest.close()
 
         MAE_PROP = float(mean_absolute_error(Y_test, Y_predicted))
         MSE_PROP = float(mean_squared_error(Y_test, Y_predicted))
         STD_PROP = float(Y_test.std())
 
-        out2 = open('errors_test%s.dat'%n_train, 'w')
+        out2 = open('errors_test%s.dat' % n_train, 'w')
         out2.write(
             str(STD_PROP) + "\t"
             + str(MAE_PROP) + "\t"
@@ -203,7 +202,8 @@ def objective(params):
     print(res)
     return res
 
+
 # gamma = 9.990000000000001e-06
 # sigma= 135.55025590223175
 sigma, gamma = [1.54383770e+02, 4.86297071e-05]
-objective([sigma,gamma])
+objective([sigma, gamma])

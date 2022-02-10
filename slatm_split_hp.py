@@ -6,6 +6,7 @@ from os import path, mkdir, chdir
 import warnings
 import numpy as np
 import matplotlib.pyplot as plt
+import optuna
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error
@@ -68,7 +69,7 @@ def prepare_data(op):
         data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
         # data_dir = '../'
         dataset = spk.data.AtomsData(
-            data_dir + 'distort.db', load_only=properties)
+            data_dir + 'qm7x-eq-n1.db', load_only=properties)
     except:
         data_dir = '../'
         dataset = spk.data.AtomsData(
@@ -124,17 +125,11 @@ def prepare_data(op):
     TPROP = np.array(TPROP)
 
     # Generate representations
-    bob_repr = np.array(
-        [
-            generate_bob(
-                Z[mol],
-                xyz[mol],
-                atomtypes={'C', 'H', 'N', 'O', 'S', 'Cl'},
-                asize={'C': 7, 'H': 16, 'N': 3, 'O': 3, 'S': 1, 'Cl': 2},
-            )
-            for mol in idx2
-        ]
-    )
+    mbtypes = get_slatm_mbtypes([Z[mol] for mol in idx2])
+    slatm = [
+        generate_slatm(mbtypes=mbtypes, nuclear_charges=Z[mol], coordinates=xyz[mol])
+        for mol in idx2
+    ]
 
     TPROP2 = []
     p1b, p2b, p11b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b = (
@@ -187,7 +182,7 @@ def prepare_data(op):
         reps2.append(
             np.concatenate(
                 (
-                    bob_repr[ii],
+                    slatm[ii],
                     p1b[ii],
                     p2b[ii],
                     p3b[ii],
@@ -231,31 +226,34 @@ def split_data(n_train, n_val, n_test, Repre, Target):
 
 def init_weights(m):
     if isinstance(m, nn.Linear):
-        torch.nn.init.xavier_uniform(m.weight)
+        torch.nn.init.xavier_uniform_(m.weight)
         m.bias.data.fill_(0.01)
 
 
 class NeuralNetwork(nn.Module):
-    def __init__(self):
+    def __init__(self, params):
         super(NeuralNetwork, self).__init__()
 
-        self.lin1 = nn.Linear(528, 16)
-        self.lin2 = nn.Linear(56, 16)
-        self.lin4 = nn.Linear(16, 1)
+        self.lin1 = nn.Linear(17895, params['l1'])
+        self.lin2 = nn.Linear(params['l1'] + 40, params['l2'])
+        # self.lin3 = nn.Linear(128, 32)
+        self.lin4 = nn.Linear(params['l2'], 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
     def forward(self, x):
-        slatm = x[:, :528]
-        elec = x[:, 528:]
+        slatm = x[:, :17895]
+        elec = x[:, 17895:]
         layer1 = self.lin1(slatm)
-        layer1 = nn.functional.elu(layer1)
+        # layer1 = nn.functional.elu(layer1)
 
         concat = torch.cat([layer1, elec], dim=1)
-        # concat = nn.functional.elu(concat)
+        concat = nn.functional.elu(concat)
 
         layer2 = self.lin2(concat)
         layer2 = nn.functional.elu(layer2)
+        # layer3 = self.lin3(layer2)
+        # layer3 = nn.functional.elu(layer3)
         layer4 = self.lin4(layer2)
 
         return layer4
@@ -303,7 +301,7 @@ def test_nn(dataloader, model, loss_fn):
     return test_loss, mae
 
 
-def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model):
     batch_size = 16
     trainX, trainY, valX, valY, testX, testY = split_data(
         n_train, n_val, n_test, iX, iY
@@ -332,7 +330,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     device = "cpu"
     if torch.cuda.is_available():
         device = "cuda:0"
-    model = NeuralNetwork().to(device)
+    model = model.to(device)
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(
@@ -341,124 +339,54 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
 
-    epochs = 20000
-    val_losses, val_errors, lrates = [], [], []
+    epochs = 4000
+    # val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
         train_nn(train_loader, model, loss_fn, optimizer)
         valid_loss, valid_mae = test_nn(valid_loader, model, loss_fn)
         print(f"Validation MAE: {valid_mae}\n")
         scheduler.step(valid_mae)
-        val_losses.append(valid_loss)
-        val_errors.append(valid_mae)
-        lrates.append(optimizer.param_groups[0]['lr'])
+        # val_losses.append(valid_loss)
+        # val_errors.append(valid_mae)
+        # lrates.append(optimizer.param_groups[0]['lr'])
 
     test_mae = test_nn(test_loader, model, loss_fn)
     print(
         f"Finished training on train_size={n_train}\n Testing MAE = {test_mae}")
 
-    return (
-        model,
-        lrates,
-        val_losses,
-        val_errors,
-        test_loader
-    )
+    return test_mae
 
 
-def plotting_results(model, test_loader):
-    # applying nn model
-    with torch.no_grad():
-        pred = model(test_loader.dataset.tensors[0])
-        y = test_loader.dataset.tensors[1]
-        loss_fn = nn.MSELoss()
-        test_loss = loss_fn(pred, y).item()
-        mae_loss = torch.nn.L1Loss(reduction='mean')
-        mae = mae_loss(pred, y)
+def objective(trial):
 
-    STD_PROP = float(pred.std())
+    params = {'l1': trial.suggest_categorical("l1", [16, 32, 64, 128]),
+              'l2': trial.suggest_categorical("l2", [2, 4, 8, 16, 32, 64]),
+              }
 
-    out2 = open('errors_test.dat', 'w')
-    out2.write(
-        '{:>24}'.format(STD_PROP)
-        + '{:>24}'.format(mae)
-        + '{:>24}'.format(test_loss)
-        + "\n"
-    )
-    out2.close()
+    model = NeuralNetwork(params)
+    n_train = 10000
+    n_val = 5000
+    n_test = 41537 - 10000 - 5000
+    patience = 700
+    op = 'EAT'
+    iX, iY = prepare_data(op)
 
-    # writing ouput for comparing values
-    dtest = np.array(pred - y)
-    Y_test = y.reshape(-1, 1)
-    format_list1 = ['{:16f}' for item1 in Y_test[0]]
-    s = ' '.join(format_list1)
-    ctest = open('comp-test.dat', 'w')
-    for ii in range(0, len(pred)):
-        ctest.write(
-            s.format(*pred[ii]) + s.format(*Y_test[ii]) +
-            s.format(*dtest[ii]) + '\n'
-        )
-    ctest.close()
+    test_mae = fit_model_dense(
+        n_train, n_val, n_test, iX, iY, patience, params, model)
 
-    # Save as a plot
-    plt.plot(pred, y, '.')
-    mini = min(y).item()
-    maxi = max(y).item()
-    temp = np.arange(mini, maxi, 0.1)
-    plt.plot(temp, temp)
-    plt.xlabel("True EGAP")
-    plt.ylabel("Predicted EGAP")
-    plt.savefig('Result.png')
+    return test_mae[1]
 
 
-# prepare dataset
-train_set = ['30000']
-op = 'EAT'
-n_val = 5000
+study = optuna.create_study(
+    direction="minimize",
+    sampler=optuna.samplers.RandomSampler(),
+    pruner=optuna.pruners.MedianPruner(
+        n_startup_trials=5, n_warmup_steps=30, interval_steps=10, n_min_trials=500)
+)
+study.optimize(objective, n_trials=15)
 
-iX, iY = prepare_data(op)
-print(iX.shape)
-print(iY.shape)
+best_trial = study.best_trial
 
-
-# fit model and plot learning curves for a patience
-patience = 500
-
-current_dir = os.getcwd()
-
-for ii in range(len(train_set)):
-    n_test = len(iY) - n_val
-    print('Trainset= {:}'.format(train_set[ii]))
-    chdir(current_dir)
-    os.chdir(current_dir + '/withdft/bob/')
-    try:
-        os.mkdir('16')
-        os.chdir('16')
-    except:
-        os.chdir('16')
-    try:
-        os.mkdir(str(train_set[ii]))
-    except:
-        pass
-    os.chdir(current_dir + '/withdft/bob/16/' + str(train_set[ii]))
-
-    model, lr, loss, mae, test_loader = fit_model_dense(
-        int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
-    )
-
-    lhis = open('learning-history.dat', 'w')
-    for ii in range(0, len(lr)):
-        lhis.write(
-            '{:8d}'.format(ii)
-            + '{:16f}'.format(lr[ii])
-            + '{:16f}'.format(loss[ii])
-            + '{:16f}'.format(mae[ii])
-            + '\n'
-        )
-    lhis.close()
-
-    # Saving NN model
-    torch.save(model, 'model.pt')
-
-    # Saving results
-    plotting_results(model, test_loader)
+for key, value in best_trial.params.items():
+    print("{}: {}".format(key, value))

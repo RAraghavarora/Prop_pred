@@ -7,9 +7,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_absolute_error
-
-from dscribe.descriptors import SOAP
 
 import logging
 import schnetpack as spk
@@ -17,6 +14,10 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from ignite.metrics import MeanAbsoluteError
+from ignite.engine import Engine, Events, create_supervised_trainer, create_supervised_evaluator
+from ignite.handlers import EarlyStopping
+
 
 # monitor the learning rate
 def complete_array(Aprop):
@@ -65,7 +66,6 @@ def prepare_data(op):
         data_dir = '../'
         dataset = spk.data.AtomsData(data_dir + 'totgdb7x_pbe0.db', load_only=properties)
         
-
     n = len(dataset)
     print(n)
     idx = np.arange(n)
@@ -96,7 +96,7 @@ def prepare_data(op):
         AE.append(float(props['EAT']))
         EGAP.append(float(props['EGAP']))
         KSE.append(props['KSE'])
-        TPROP.append(float(props[op]*23.0621))
+        TPROP.append(float(props[op]))
         xyz.append(atoms.get_positions())
         Z.append(atoms.get_atomic_numbers())
         p1.append(float(props['FermiEne']))
@@ -138,9 +138,9 @@ def prepare_data(op):
         p6b.append(p6[nn1])
         p7b.append(p7[nn1])
         p8b.append(p8[nn1])
-        p9b.append(p9[nn1].numpy())
-        p10b.append(p10[nn1].numpy())
-        p11b.append(p11[nn1].numpy())
+        p9b.append(p9[nn1])
+        p10b.append(p10[nn1])
+        p11b.append(p11[nn1])
         TPROP2.append(TPROP[nn1])
 
     p11b = complete_array(p11b)
@@ -190,31 +190,31 @@ def split_data(n_train, n_val, n_test, Repre, Target):
 
     X_train1, X_val1, X_test1 = (
         torch.from_numpy(np.array(global_features[:n_train])).float(),
-        torch.from_numpy(np.array(global_features[-n_test - n_val : -n_test])).float(),
+        torch.from_numpy(np.array(global_features[-n_test - n_val: -n_test])).float(),
         torch.from_numpy(np.array(global_features[-n_test:])).float(),
     )
 
     X_train2, X_val2, X_test2 = (
         torch.from_numpy(np.array(p9b[:n_train])).float(),
-        torch.from_numpy(np.array(p9b[-n_test - n_val : -n_test])).float(),
+        torch.from_numpy(np.array(p9b[-n_test - n_val: -n_test])).float(),
         torch.from_numpy(np.array(p9b[-n_test:])).float(),
     )
 
     X_train3, X_val3, X_test3 = (
         torch.from_numpy(np.array(p10b[:n_train])).float(),
-        torch.from_numpy(np.array(p10b[-n_test - n_val : -n_test])).float(),
+        torch.from_numpy(np.array(p10b[-n_test - n_val: -n_test])).float(),
         torch.from_numpy(np.array(p10b[-n_test:])).float(),
     )
 
     X_train4, X_val4, X_test4 = (
         torch.from_numpy(np.array(p11b[:n_train])).float(),
-        torch.from_numpy(np.array(p11b[-n_test - n_val : -n_test])).float(),
+        torch.from_numpy(np.array(p11b[-n_test - n_val: -n_test])).float(),
         torch.from_numpy(np.array(p11b[-n_test:])).float(),
     )
 
     Y_train, Y_val, Y_test = (
         torch.from_numpy(np.array(Target[:n_train])).float(),
-        torch.from_numpy(np.array(Target[-n_test - n_val : -n_test])).float(),
+        torch.from_numpy(np.array(Target[-n_test - n_val: -n_test])).float(),
         torch.from_numpy(np.array(Target[-n_test:])).float(),
     )
 
@@ -233,17 +233,18 @@ def init_weights(m):
 class NeuralNetwork(nn.Module):
     def __init__(self, l1=16, l2=2, l3=16, l4=2, l5=16):
         super(NeuralNetwork, self).__init__()
-        
-        self.lin1 = nn.Linear(8,l1)
-        self.lin2 = nn.Linear(3,l2)
-        self.lin3 = nn.Linear(8,l3)
-        self.lin4 = nn.Linear(23,l4)
 
-        self.lin5 = nn.Linear(l1+l2+l3+l4, l5)
+        self.lin1 = nn.Linear(8, l1)
+        self.lin2 = nn.Linear(3, l2)
+        self.lin3 = nn.Linear(8, l3)
+        self.lin4 = nn.Linear(23, l4)
+
+        self.lin5 = nn.Linear(l1 + l2 + l3 + l4, l5)
         self.lin6 = nn.Linear(l5, 1)
 
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
+
     def forward(self, x):
         # x = self.flatten(x)
         global_features, p9b, p10b, p11b = x[:,0:8], x[:,8:11], x[:,11:19], x[:,19:]
@@ -266,43 +267,9 @@ class NeuralNetwork(nn.Module):
         return layer6
 
 
-def train_nn(dataloader, model, loss_fn, optimizer):
-    # size = len(dataloader.dataset)
-    model.train()
-    device = "cuda"
-    # device = "cpu"
-    for batch, (X, y) in enumerate(dataloader):
-        X, y = X.to(device), y.to(device)
-
-        # Compute prediction error
-        pred = model(X)
-        loss = loss_fn(pred, y)
-        # mae = float(mean_absolute_error(pred,y))
-
-        # Backpropagation
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-
-def test_nn(dataloader, model, loss_fn):
-    # size = len(dataloader.dataset)
-    num_batches = len(dataloader)
-    model.eval()
-    test_loss, mae = 0, 0
-    device = "cuda"
-    # device = "cpu"
-    with torch.no_grad():
-        for batch, (X, y) in enumerate(dataloader):
-            X, y = X.to(device), y.to(device)
-            pred = model(X)
-            test_loss += loss_fn(pred, y).item()
-            mae_loss = torch.nn.L1Loss(reduction='mean')
-            mae += mae_loss(pred,y)
-
-    test_loss /= num_batches
-    mae /= num_batches
-    return test_loss, mae
+def score_function(engine):
+    val_loss = engine.state.metrics['mae']
+    return val_loss
 
 
 def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
@@ -318,8 +285,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     test_loader = DataLoader(test, batch_size=batch_size, shuffle = False)
     valid_loader = DataLoader(valid, batch_size=batch_size, shuffle = False)
 
-    device = "cuda"
-    # device = "cpu"
+    # device = "cuda"
+    device = "cpu"
     model = NeuralNetwork().to(device)
     model = nn.DataParallel(model)
     model.to(device)
@@ -328,78 +295,38 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     scheduler = ReduceLROnPlateau(optimizer, factor=0.57, patience = 500, min_lr=1e-6)
 
     epochs = 20000
-    val_losses, val_errors, lrates = [], [], []
-    for t in range(epochs):
-        print(f"Epoch {t+1}\n-------------------------------")
-        train_nn(train_loader, model, loss_fn, optimizer)
-        valid_loss, valid_mae = test_nn(valid_loader, model, loss_fn)
-        print(f"Validation MAE: {valid_mae}\n")
-        scheduler.step(valid_mae)
-        val_losses.append(valid_loss)
-        val_errors.append(valid_mae)
-        lrates.append(optimizer.param_groups[0]['lr'])
 
-    test_mae = test_nn(test_loader, model, loss_fn)
-    print(f"Finished training on train_size={n_train}\n Testing MAE = {test_mae}")
-
-    return (
-        model,
-        lrates,
-        val_losses,
-        val_errors,
-        test_loader
-    )
+    trainer = create_supervised_trainer(model, optimizer, loss_fn)
+    val_metrics = {
+        "mae": MeanAbsoluteError(),
+    }
+    evaluator = create_supervised_evaluator(model, metrics=val_metrics)
+    MeanAbsoluteError().attach(evaluator, "mae")
+    handler = EarlyStopping(patience=10, score_function=score_function, trainer=trainer)
+    evaluator.add_event_handler(Events.COMPLETED, handler)
 
 
-def plotting_results(model, test_loader):
-    # applying nn model
-    with torch.no_grad():
-        x = test_loader.dataset.tensors[0].cuda()
-        pred = model(x)
-        y = test_loader.dataset.tensors[1].cuda()
-        loss_fn = nn.MSELoss()
-        test_loss = loss_fn(pred, y).item()
-        mae_loss = torch.nn.L1Loss(reduction='mean')
-        mae = mae_loss(pred,y)
+    validate_every = 10
 
-    STD_PROP = float(pred.std())
+    @trainer.on(Events.EPOCH_COMPLETED(every=validate_every))
+    def run_validation():
+        evaluator.run(valid_loader)
 
-    out2 = open('errors_test.dat', 'w')
-    out2.write(
-        '{:>24}'.format(STD_PROP)
-        + '{:>24}'.format(mae)
-        + '{:>24}'.format(test_loss)
-        + "\n"
-    )
-    out2.close()
+    @trainer.on(Events.EPOCH_COMPLETED(every=validate_every))
+    def log_validation():
+        metrics = evaluator.state.metrics
+        print(f"Epoch: {trainer.state.epoch},  MAE: {metrics['mae']}")
 
-    # writing ouput for comparing values
-    dtest = np.array(pred.cpu() - y.cpu())
-    Y_test = y.reshape(-1, 1)
-    format_list1 = ['{:16f}' for item1 in Y_test[0]]
-    s = ' '.join(format_list1)
-    ctest = open('comp-test.dat', 'w')
-    for ii in range(0, len(pred)):
-        ctest.write(
-            s.format(*pred[ii]) + s.format(*Y_test[ii]) + s.format(*dtest[ii]) + '\n'
-        )
-    ctest.close()
+    trainer.run(train_loader, epochs)
 
-    #Save as a plot
-    plt.plot(pred.cpu(),y.cpu(),'.')
-    mini = min(y).item()
-    maxi = max(y).item()
-    temp = np.arange(mini, maxi, 0.1)
-    plt.plot(temp, temp)
-    plt.xlabel("True EGAP")
-    plt.ylabel("Predicted EGAP")
-    plt.savefig('Result.png')
+    x = evaluator.run(test_loader)
+    print(x)
+    pdb.set_trace()
 
-
-print("Device count: ", torch.cuda.device_count())
+    return model
 
 # prepare dataset
-train_set = ['4000', '2000', '1000']
+train_set = ['59']
 op = 'EGAP'
 n_val = 5000
 
@@ -421,24 +348,9 @@ for ii in range(len(train_set)):
         pass
     os.chdir(current_dir + '/only_dft/egap/' + str(train_set[ii]))
 
-
-    model, lr, loss, mae, test_loader = fit_model_dense(
+    model = fit_model_dense(
         int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
     )
 
-    lhis = open('learning-history.dat', 'w')
-    for ii in range(0, len(lr)):
-        lhis.write(
-            '{:8d}'.format(ii)
-            + '{:16f}'.format(lr[ii])
-            + '{:16f}'.format(loss[ii])
-            + '{:16f}'.format(mae[ii])
-            + '\n'
-        )
-    lhis.close()
-
     # Saving NN model
     torch.save(model, 'model.pt')
-    
-    # Saving results
-    plotting_results(model, test_loader)
