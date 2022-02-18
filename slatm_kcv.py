@@ -10,6 +10,11 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import KFold
 
 
+from qml.representations import (
+    get_slatm_mbtypes,
+    generate_slatm,
+    generate_bob
+)
 import logging
 import schnetpack as spk
 import torch
