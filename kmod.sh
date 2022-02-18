@@ -2,8 +2,8 @@
 #SBATCH --time=96:00:00
 #SBATCH --partition=haswell
 #SBATCH -J k2
-#SBATCH --output=kbob.out
-#SBATCH --error=kbob.err
+#SBATCH --output=kslatm.out
+#SBATCH --error=kslatm.err
 #SBATCH -A p_biomolecules
 #SBATCH -N 2
 
@@ -11,7 +11,7 @@
 #SBATCH --ntasks-per-node=4
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
-#SBATCH --mem-per-cpu=8000MB
+#SBATCH --mem-per-cpu=10000MB
 
 
 ulimit -s unlimited
@@ -52,7 +52,7 @@ echo "training starts"
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-python3 $work/kernel.py
+python3 $work/kernel_slatm.py
 
 echo "training is over :-)"
 EXTSTAT=$?

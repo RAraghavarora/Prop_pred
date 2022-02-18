@@ -1,11 +1,11 @@
 Starting Program
 training starts
-*** JOB 'k2' (ID: 23302010) ***
-*** taurusi[4207,4213]: 2 node(s),  8 core(s) in total ***
+*** JOB 'k2' (ID: 23474619) ***
+*** taurusi[4226-4227]: 2 node(s),  8 core(s) in total ***
 *** Submitted in: /lustre/scratch2/ws/1/medranos-DFTBprojects/raghav/Prop_pred ***
 
-*** [TIMING] start Jan 28, 14:39:50 ***
-*** [TIMING] walltime 3-23:59:54 [95:59:54] ends Feb 01, 14:39:44 ***
+*** [TIMING] start Feb 08, 13:57:51 ***
+*** [TIMING] walltime 3-23:59:54 [95:59:54] ends Feb 12, 13:57:45 ***
 
 
 
@@ -13,13 +13,13 @@ JOB OUTPUT:
 ###########################################################################
 
 training starts
-sigma= 154.38377
-gamma= 4.86297071e-05
-0.19433431423350583
+sigma= 135.55025
+gamma= 9.99e-06
+0.047951078455589706
 training is over :-)
 
 ###########################################################################
 
-*** [TIMING] end Jan 28, 15:24:49 ***
-*** [TIMING] duration 45:05[0:44:59] ***
+*** [TIMING] end Feb 08, 18:04:51 ***
+*** [TIMING] duration 4:07:06[4:07:00] ***
 

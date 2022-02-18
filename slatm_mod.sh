@@ -4,10 +4,10 @@
 #SBATCH -J bob
 #SBATCH --output=bob_hp.out
 #SBATCH --error=bob_hp.err
-#SBATCH -A p_phononics
-#SBATCH -N 12
+#SBATCH -A p_biomolecules
+#SBATCH -N 8
 
-#SBATCH -n 48
+#SBATCH -n 32
 #SBATCH --ntasks-per-node=4
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
@@ -52,8 +52,8 @@ echo "training starts"
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-pip install optuna
-python3 $work/bob_split_hp.py
+#pip install optuna
+python3 $work/slatm_split.py
 
 echo "training is over :-)"
 EXTSTAT=$?

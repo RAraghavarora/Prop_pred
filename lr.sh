@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --time=96:00:00
 #SBATCH --partition=gpu2                        # specify ml partition or gpu2 partition
-#SBATCH --gres=gpu:2                      # use 1 GPU per node (i.e. use one GPU per task)
-#SBATCH --nodes=4                        # request 1 node
-#SBATCH --ntasks=8
+#SBATCH --gres=gpu:1                      # use 1 GPU per node (i.e. use one GPU per task)
+#SBATCH --nodes=2                        # request 1 node
+#SBATCH --ntasks=4
 #SBATCH -J lr2
-#SBATCH --output=lr_bob.out
-#SBATCH --error=lr_bob.err
+#SBATCH --output=slatm.out
+#SBATCH --error=slatm.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
@@ -20,7 +20,7 @@ module load Python/3.6.4-intel-2018a
 module load cuDNN/8.0.4.30-CUDA-11.1.1
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-python3 $work/lr_bob.py
+python3 $work/slatm_split_actual.py
 
 echo "training is over :-)"
 EXTSTAT=$?
