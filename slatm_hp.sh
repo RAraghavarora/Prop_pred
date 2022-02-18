@@ -4,9 +4,9 @@
 #SBATCH --gres=gpu:1                      # use 1 GPU per node (i.e. use one GPU per task)
 #SBATCH --nodes=4                        # request 1 node
 #SBATCH --ntasks=8
-#SBATCH -J slatm_hp
-#SBATCH --output=slatm_hp.out
-#SBATCH --error=slatm_hp.err
+#SBATCH -J slatm_kcv
+#SBATCH --output=slatm_kcv.out
+#SBATCH --error=slatm_kcv.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
@@ -20,7 +20,7 @@ module load Python/3.6.4-intel-2018a
 module load cuDNN/8.0.4.30-CUDA-11.1.1
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-python3 $work/slatm_split_hp.py
+python3 $work/slatm_kcv.py
 
 echo "training is over :-)"
 EXTSTAT=$?
