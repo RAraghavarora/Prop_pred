@@ -3,7 +3,7 @@
 #SBATCH --partition=gpu2                        # specify ml partition or gpu2 partition
 #SBATCH --gres=gpu:1                      # use 1 GPU per node (i.e. use one GPU per task)
 #SBATCH --nodes=4                        # request 1 node
-#SBATCH --ntasks=8
+#SBATCH --ntasks=10
 #SBATCH -J slatm_qm9
 #SBATCH --output=slatm.out
 #SBATCH --error=slatm.err
