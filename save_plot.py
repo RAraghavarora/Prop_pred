@@ -8,14 +8,15 @@ class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
 
-        self.lin1 = nn.Linear(528, 16)
-        self.lin2 = nn.Linear(56, 16)
-        self.lin4 = nn.Linear(16, 1)
+        self.lin1 = nn.Linear(17895, 16)
+        self.lin2 = nn.Linear(56, 2)
+        self.lin4 = nn.Linear(2, 1)
+        self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
     def forward(self, x):
-        slatm = x[:, :528]
-        elec = x[:, 528:]
+        slatm = x[:, :17895]
+        elec = x[:, 17895:]
         layer1 = self.lin1(slatm)
         layer1 = nn.functional.elu(layer1)
 
@@ -29,9 +30,9 @@ class NeuralNetwork(nn.Module):
         return layer4
 
 
-model = torch.load('C:/Users/raghav/bob/16/20000/model.pt')
+model = torch.load('withdft/slatm/20000/model.pt', map_location=torch.device('cpu'))
 # torch.onnx.export(model)
-x = torch.randn(1, 568)
+x = torch.randn(1, 17935)
 y = model(x)
 
 # transforms = [hl.transforms.Prune('Constant'), hl.transforms.FoldDuplicates()]
