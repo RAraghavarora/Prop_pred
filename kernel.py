@@ -43,7 +43,7 @@ def prepare_data(op):
     ]
 
     dataset = spk.data.AtomsData(
-        data_dir + 'qm7x-eq-n1.db', load_only=properties)
+        data_dir + 'distort.db', load_only=properties)
 
     n = len(dataset)
     idx = np.arange(n)
