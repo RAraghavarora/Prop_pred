@@ -45,11 +45,8 @@ def complete_array(Aprop):
 def prepare_data(op):
     #  # read dataset
     properties = [
-        'RMSD',
         'EAT',
-        'EMBD',
         'EGAP',
-        'KSE',
         'FermiEne',
         'BandEne',
         'NumElec',
@@ -103,8 +100,6 @@ def prepare_data(op):
         atoms, props = dataset.get_properties(int(i))
         ATOMS.append(atoms)
         AE.append(float(props['EAT']))
-        EGAP.append(float(props['EGAP']))
-        KSE.append(props['KSE'])
         TPROP.append(float(props[op]))
         xyz.append(atoms.get_positions())
         Z.append(atoms.get_atomic_numbers())
@@ -125,17 +120,10 @@ def prepare_data(op):
     TPROP = np.array(TPROP)
 
     # Generate representations
-    bob_repr = np.array(
-        [
-            generate_bob(
-                Z[mol],
-                xyz[mol],
-                atomtypes={'C', 'H', 'N', 'O', 'S', 'Cl'},
-                asize={'C': 7, 'H': 16, 'N': 3, 'O': 3, 'S': 1, 'Cl': 2},
-            )
-            for mol in idx2
-        ]
-    )
+    bob_repr = np.array([generate_bob(
+        Z[mol], xyz[mol], atomtypes={'C', 'H', 'N', 'O', 'F'}, size=29,
+        asize={'C': 9, 'H': 20, 'N': 7, 'O': 5, 'F': 6}
+    ) for mol in idx])
 
     TPROP2 = []
     p1b, p2b, p11b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b = (
