@@ -69,7 +69,7 @@ def prepare_data(op):
         data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
         # data_dir = '../'
         dataset = spk.data.AtomsData(
-            data_dir + 'distort.db', load_only=properties)
+            data_dir + 'qm9-dftb.db', load_only=properties)
     except:
         data_dir = '../'
         dataset = spk.data.AtomsData(
@@ -240,16 +240,16 @@ class NeuralNetwork(nn.Module):
     def __init__(self, params):
         super(NeuralNetwork, self).__init__()
 
-        self.lin1 = nn.Linear(528, params['l1'])
-        self.lin2 = nn.Linear(params['l1'] + 40, params['l2'])
+        self.lin1 = nn.Linear(1128, params['l1'])
+        self.lin2 = nn.Linear(params['l1'] + 46, params['l2'])
         # self.lin3 = nn.Linear(128, 32)
         self.lin4 = nn.Linear(params['l2'], 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
     def forward(self, x):
-        slatm = x[:, :528]
-        elec = x[:, 528:]
+        slatm = x[:, :1128]
+        elec = x[:, 1128:]
         layer1 = self.lin1(slatm)
         # layer1 = nn.functional.elu(layer1)
 
@@ -307,7 +307,7 @@ def test_nn(dataloader, model, loss_fn):
     return test_loss, mae
 
 
-def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model):
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model, trial):
     batch_size = 16
     trainX, trainY, valX, valY, testX, testY = split_data(
         n_train, n_val, n_test, iX, iY
@@ -353,6 +353,12 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model):
         valid_loss, valid_mae = test_nn(valid_loader, model, loss_fn)
         print(f"Validation MAE: {valid_mae}\n")
         scheduler.step(valid_mae)
+
+        # Prune the optimization trial if needed
+        trial.report(valid_mae, t)
+        if trial.should_prune():
+            print("Pruning")
+            raise optuna.TrialPruned()
         # val_losses.append(valid_loss)
         # val_errors.append(valid_mae)
         # lrates.append(optimizer.param_groups[0]['lr'])
@@ -379,7 +385,7 @@ def objective(trial):
     iX, iY = prepare_data(op)
 
     test_mae = fit_model_dense(
-        n_train, n_val, n_test, iX, iY, patience, params, model)
+        n_train, n_val, n_test, iX, iY, patience, params, model, trial)
 
     return test_mae[1]
 
@@ -388,9 +394,9 @@ study = optuna.create_study(
     direction="minimize",
     sampler=optuna.samplers.RandomSampler(),
     pruner=optuna.pruners.MedianPruner(
-        n_startup_trials=5, n_warmup_steps=30, interval_steps=10, n_min_trials=1000)
+        n_startup_trials=2, n_warmup_steps=30, interval_steps=10)
 )
-study.optimize(objective, n_trials=30)
+study.optimize(objective, n_trials=30, n_jobs=4, timeout=86400)
 
 best_trial = study.best_trial
 
