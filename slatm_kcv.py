@@ -302,15 +302,28 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     batch_size = 16
     results = {}
 
-    iX = torch.from_numpy(iX).float()
-    iY = torch.from_numpy(iY).float()
-    dataset = torch.utils.data.TensorDataset(iX, iY)
-    idx = np.arange(5000)
-    np.random.seed(9511)
-    idx = np.random.permutation(idx)
-    valid_dataset = torch.utils.data.TensorDataset(iX[idx], iY[idx])
-    valid_loader = DataLoader(
-        valid_dataset, batch_size=batch_size, shuffle=False)
+    trainX, trainY, valX, valY, testX, testY = split_data(
+        n_train, n_val, n_test, iX, iY
+    )
+
+    X_train, X_val, X_test = (
+        torch.from_numpy(trainX).float(),
+        torch.from_numpy(valX).float(),
+        torch.from_numpy(testX).float(),
+    )
+
+    Y_train, Y_val, Y_test = (
+        torch.from_numpy(trainY).float(),
+        torch.from_numpy(valY).float(),
+        torch.from_numpy(testY).float(),
+    )
+
+    train = torch.utils.data.TensorDataset(X_train, Y_train)
+    test = torch.utils.data.TensorDataset(X_test, Y_test)
+    valid = torch.utils.data.TensorDataset(X_val, Y_val)
+    # data loader
+    test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
+    valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
     # data loader
 
     device = "cpu"
@@ -320,23 +333,22 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(
-        optimizer, factor=0.59, patience=500, min_lr=1e-6)
+        optimizer, factor=0.5, patience=300, min_lr=1e-6)
 
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
 
     epochs = 20000
-    k_folds = 5
+    k_folds = 3
     kfold = KFold(n_splits=k_folds, shuffle=True)
 
-    for fold, (train_ids, test_ids) in enumerate(kfold.split(dataset)):
+    # Split only the training set into k-folds
+    for fold, (train_ids, test_ids) in enumerate(kfold.split(train)):
         print(f'FOLD {fold}')
         train_subsampler = torch.utils.data.SubsetRandomSampler(train_ids)
-        test_subsampler = torch.utils.data.SubsetRandomSampler(test_ids)
         train_loader = torch.utils.data.DataLoader(
-            dataset, batch_size=batch_size, sampler=train_subsampler)
-        test_loader = torch.utils.data.DataLoader(
-            dataset, batch_size=batch_size, sampler=test_subsampler)
+            train, batch_size=batch_size, sampler=train_subsampler)
+        # Instead of (1/k)th split, we use the whole dataset for testing
 
         for t in range(epochs):
             print(f"Epoch {t+1}\n-------------------------------")
@@ -410,7 +422,7 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['1000', '2000', '4000']
+train_set = ['1500', '3000', '6000', '12000']
 op = 'EAT'
 n_val = 5000
 
