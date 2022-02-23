@@ -52,7 +52,7 @@ def prepare_data(op):
         data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
         # data_dir = '../'
         dataset = spk.data.AtomsData(
-            data_dir + 'distort.db', load_only=properties)
+            data_dir + 'qm7x-eq-n1.db', load_only=properties)
     except:
         data_dir = '../'
         dataset = spk.data.AtomsData(
@@ -199,7 +199,7 @@ def objective(params):
     n_test = 31000
     n_val = 5000
 
-    train_set = [30000]
+    train_set = [1000, 2000, 4000, 8000, 10000, 20000, 30000]
 
     # try:
     #     indices = np.arange(desc.shape[0])
