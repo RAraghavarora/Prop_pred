@@ -30,10 +30,10 @@ def complete_array(Aprop):
     Aprop2 = []
     for ii in range(len(Aprop)):
         n1 = len(Aprop[ii])
-        if n1 == 23:
+        if n1 == 29:
             Aprop2.append(Aprop[ii])
         else:
-            n2 = 23 - n1
+            n2 = 29 - n1
             Aprop2.append(np.concatenate((Aprop[ii], np.zeros(n2)), axis=None))
 
     return Aprop2
