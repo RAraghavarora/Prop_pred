@@ -329,7 +329,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(
-        optimizer, factor=0.50, patience=300, min_lr=1e-6)
+        optimizer, factor=0.50, patience=100, min_lr=1e-6)
 
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
@@ -407,7 +407,7 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['4000', '40000']
+train_set = ['50000', '4000']
 op = 'EAT'
 n_val = 5000
 
