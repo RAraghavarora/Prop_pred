@@ -221,8 +221,6 @@ def objective(params):
             np.array(Target[-n_test:]),
         )
 
-        del Repre, Target, Y_val
-
         K = gaussian_kernel(X_train, X_train, sigma)
         K[np.diag_indices_from(K)] += gamma  # Regularizer
         alpha = cho_solve(K, Y_train)  # α=(K+λI)−1y
