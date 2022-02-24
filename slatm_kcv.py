@@ -357,11 +357,15 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
             print(f"Validation MAE: {valid_mae}\n")
             scheduler.step(valid_mae)
 
-        test_mae = test_nn(test_loader, model, loss_fn)
-        results[fold] = test_mae
+        loss, test_mae = test_nn(test_loader, model, loss_fn)
+        try:
+            results[fold] = test_mae.item()
+        except:
+            results[fold] = test_mae
 
     print(f'K-FOLD CROSS VALIDATION RESULTS FOR {k_folds} FOLDS')
     print('--------------------------------')
+    print(results)
     sum = 0.0
     for key, value in results.items():
         print(f'Fold {key}: {value} %')
