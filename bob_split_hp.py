@@ -30,10 +30,10 @@ def complete_array(Aprop):
     Aprop2 = []
     for ii in range(len(Aprop)):
         n1 = len(Aprop[ii])
-        if n1 == 23:
+        if n1 == 29:
             Aprop2.append(Aprop[ii])
         else:
-            n2 = 23 - n1
+            n2 = 29 - n1
             Aprop2.append(np.concatenate((Aprop[ii], np.zeros(n2)), axis=None))
 
     return Aprop2
@@ -45,11 +45,8 @@ def complete_array(Aprop):
 def prepare_data(op):
     #  # read dataset
     properties = [
-        'RMSD',
         'EAT',
-        'EMBD',
         'EGAP',
-        'KSE',
         'FermiEne',
         'BandEne',
         'NumElec',
@@ -69,7 +66,7 @@ def prepare_data(op):
         data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
         # data_dir = '../'
         dataset = spk.data.AtomsData(
-            data_dir + 'distort.db', load_only=properties)
+            data_dir + 'qm9-dftb.db', load_only=properties)
     except:
         data_dir = '../'
         dataset = spk.data.AtomsData(
@@ -103,8 +100,6 @@ def prepare_data(op):
         atoms, props = dataset.get_properties(int(i))
         ATOMS.append(atoms)
         AE.append(float(props['EAT']))
-        EGAP.append(float(props['EGAP']))
-        KSE.append(props['KSE'])
         TPROP.append(float(props[op]))
         xyz.append(atoms.get_positions())
         Z.append(atoms.get_atomic_numbers())
@@ -125,17 +120,10 @@ def prepare_data(op):
     TPROP = np.array(TPROP)
 
     # Generate representations
-    bob_repr = np.array(
-        [
-            generate_bob(
-                Z[mol],
-                xyz[mol],
-                atomtypes={'C', 'H', 'N', 'O', 'S', 'Cl'},
-                asize={'C': 7, 'H': 16, 'N': 3, 'O': 3, 'S': 1, 'Cl': 2},
-            )
-            for mol in idx2
-        ]
-    )
+    bob_repr = np.array([generate_bob(
+        Z[mol], xyz[mol], atomtypes={'C', 'H', 'N', 'O', 'F'}, size=29,
+        asize={'C': 9, 'H': 20, 'N': 7, 'O': 5, 'F': 6}
+    ) for mol in idx])
 
     TPROP2 = []
     p1b, p2b, p11b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b = (
@@ -240,16 +228,16 @@ class NeuralNetwork(nn.Module):
     def __init__(self, params):
         super(NeuralNetwork, self).__init__()
 
-        self.lin1 = nn.Linear(528, params['l1'])
-        self.lin2 = nn.Linear(params['l1'] + 40, params['l2'])
+        self.lin1 = nn.Linear(1128, params['l1'])
+        self.lin2 = nn.Linear(params['l1'] + 46, params['l2'])
         # self.lin3 = nn.Linear(128, 32)
         self.lin4 = nn.Linear(params['l2'], 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
     def forward(self, x):
-        slatm = x[:, :528]
-        elec = x[:, 528:]
+        slatm = x[:, :1128]
+        elec = x[:, 1128:]
         layer1 = self.lin1(slatm)
         # layer1 = nn.functional.elu(layer1)
 
@@ -268,9 +256,12 @@ class NeuralNetwork(nn.Module):
 def train_nn(dataloader, model, loss_fn, optimizer):
     # size = len(dataloader.dataset)
     model.train()
+    num_batches = len(dataloader)
     device = "cpu"
     if torch.cuda.is_available():
         device = "cuda:0"
+
+    mae = 0
     for batch, (X, y) in enumerate(dataloader):
         X, y = X.to(device), y.to(device)
 
@@ -283,6 +274,11 @@ def train_nn(dataloader, model, loss_fn, optimizer):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        mae_loss = torch.nn.L1Loss(reduction='mean')
+        mae += mae_loss(pred, y)
+
+    mae /= num_batches
+    return mae
 
 
 def test_nn(dataloader, model, loss_fn):
@@ -307,7 +303,7 @@ def test_nn(dataloader, model, loss_fn):
     return test_loss, mae
 
 
-def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model):
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model, trial):
     batch_size = 16
     trainX, trainY, valX, valY, testX, testY = split_data(
         n_train, n_val, n_test, iX, iY
@@ -340,7 +336,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model):
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(
-        optimizer, factor=0.59, patience=500, min_lr=1e-6)
+        optimizer, factor=0.50, patience=100, min_lr=1e-6)
 
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
@@ -349,10 +345,16 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model):
     # val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
-        train_nn(train_loader, model, loss_fn, optimizer)
-        valid_loss, valid_mae = test_nn(valid_loader, model, loss_fn)
-        print(f"Validation MAE: {valid_mae}\n")
-        scheduler.step(valid_mae)
+        mae = train_nn(train_loader, model, loss_fn, optimizer)
+        # valid_loss, valid_mae = test_nn(valid_loader, model, loss_fn)
+        print(f"Train MAE: {mae}\n")
+        scheduler.step(mae)
+
+        # Prune the optimization trial if needed
+        trial.report(mae, t)
+        if trial.should_prune():
+            print("Pruning")
+            raise optuna.TrialPruned()
         # val_losses.append(valid_loss)
         # val_errors.append(valid_mae)
         # lrates.append(optimizer.param_groups[0]['lr'])
@@ -367,30 +369,31 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model):
 def objective(trial):
 
     params = {'l1': trial.suggest_categorical("l1", [16, 32, 64, 128]),
-              'l2': trial.suggest_categorical("l2", [2, 4, 8, 16, 32, 64]),
+              'l2': trial.suggest_categorical("l2", [16, 32, 64]),
               }
 
     model = NeuralNetwork(params)
-    n_train = 10000
+    n_train = 50000
     n_val = 5000
-    n_test = 41537 - 10000 - 5000
+    n_test = 10000
     patience = 700
     op = 'EAT'
     iX, iY = prepare_data(op)
 
     test_mae = fit_model_dense(
-        n_train, n_val, n_test, iX, iY, patience, params, model)
+        n_train, n_val, n_test, iX, iY, patience, params, model, trial)
 
     return test_mae[1]
 
 
 study = optuna.create_study(
+    study_name="bob_hp",
     direction="minimize",
-    sampler=optuna.samplers.RandomSampler(),
+    sampler=optuna.samplers.TPESampler(),
     pruner=optuna.pruners.MedianPruner(
-        n_startup_trials=5, n_warmup_steps=30, interval_steps=10, n_min_trials=1000)
+        n_startup_trials=2, n_warmup_steps=30, interval_steps=10)
 )
-study.optimize(objective, n_trials=30)
+study.optimize(objective, n_trials=30, n_jobs=-1, timeout=86400)
 
 best_trial = study.best_trial
 

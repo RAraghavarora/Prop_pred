@@ -338,7 +338,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
 
-    epochs = 20000
+    epochs = 15000
     k_folds = 3
     kfold = KFold(n_splits=k_folds, shuffle=True)
 
@@ -357,11 +357,15 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
             print(f"Validation MAE: {valid_mae}\n")
             scheduler.step(valid_mae)
 
-        test_mae = test_nn(test_loader, model, loss_fn)
-        results[fold] = test_mae
+        loss, test_mae = test_nn(test_loader, model, loss_fn)
+        try:
+            results[fold] = test_mae.item()
+        except:
+            results[fold] = test_mae
 
     print(f'K-FOLD CROSS VALIDATION RESULTS FOR {k_folds} FOLDS')
     print('--------------------------------')
+    print(results)
     sum = 0.0
     for key, value in results.items():
         print(f'Fold {key}: {value} %')
@@ -422,7 +426,7 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['1500', '3000', '6000', '12000']
+train_set = ['3000', '6000', '12000']
 op = 'EAT'
 n_val = 5000
 
@@ -447,7 +451,8 @@ for ii in range(len(train_set)):
         int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
     )
     outfile = open('output.txt', 'w')
-    outfile.write(results)
+    import json 
+    outfile.write(json.dumps(results))
     outfile.close()
     # lhis = open('learning-history.dat', 'w')
     # for ii in range(0, len(lr)):
