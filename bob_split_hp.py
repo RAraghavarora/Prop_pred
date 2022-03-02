@@ -352,6 +352,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model, tri
 
         # Prune the optimization trial if needed
         trial.report(mae, t)
+
         if trial.should_prune():
             print("Pruning")
             raise optuna.TrialPruned()

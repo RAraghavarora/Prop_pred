@@ -11,7 +11,7 @@
 #SBATCH --ntasks-per-node=4
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
-#SBATCH --mem-per-cpu=10000MB
+#SBATCH --mem-per-cpu=6000MB
 
 
 ulimit -s unlimited
