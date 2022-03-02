@@ -20,7 +20,8 @@ module load Python/3.6.4-intel-2018a
 module load cuDNN/8.0.4.30-CUDA-11.1.1
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-python3 $work/slatm_kcv.py
+mkdir $work/withdft/kcv/qm9
+python3 $work/slatm_qm9_kcv.py
 
 echo "training is over :-)"
 EXTSTAT=$?
