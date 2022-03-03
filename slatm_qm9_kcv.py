@@ -65,7 +65,7 @@ def prepare_data(op):
         data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
         # data_dir = '../'
         dataset = spk.data.AtomsData(
-            data_dir + 'distort.db', load_only=properties)
+            data_dir + 'qm9-dftb.db', load_only=properties)
     except:
         data_dir = '../'
         dataset = spk.data.AtomsData(
