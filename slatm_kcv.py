@@ -426,7 +426,7 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['3000', '6000', '12000']
+train_set = ['3000', '15000', '30000', '45000']
 op = 'EAT'
 n_val = 5000
 
