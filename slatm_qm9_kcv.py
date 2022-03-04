@@ -195,6 +195,7 @@ def prepare_data(op):
             )
         )
 
+    print(np.array(reps2).shape)
     return np.array(reps2), np.array(TPROP2)
 
 
@@ -231,14 +232,16 @@ class NeuralNetwork(nn.Module):
         super(NeuralNetwork, self).__init__()
 
         self.lin1 = nn.Linear(11966, 16)
-        self.lin2 = nn.Linear(62, 2)
+        self.lin2 = nn.Linear(62, 4)
         self.lin4 = nn.Linear(4, 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
     def forward(self, x):
         slatm = x[:, :11966]
+        print(slatm.shape)
         elec = x[:, 11966:]
+        print(elec.shape)
         layer1 = self.lin1(slatm)
         layer1 = nn.functional.elu(layer1)
 
@@ -427,7 +430,7 @@ op = 'EAT'
 n_val = 5000
 
 iX, iY = prepare_data(op)
-
+print(iX.shape)
 patience = 500
 
 current_dir = os.getcwd()
