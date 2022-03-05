@@ -1,6 +1,6 @@
 # NN model
 import numpy as np
-from qml.representations import generate_coulomb_matrix
+from qml.representations import generate_bob
 import logging
 import schnetpack as spk
 from qml.math import cho_solve
@@ -12,10 +12,10 @@ def complete_array(Aprop):
     Aprop2 = []
     for ii in range(len(Aprop)):
         n1 = len(Aprop[ii])
-        if n1 == 23:
+        if n1 == 29:
             Aprop2.append(Aprop[ii])
         else:
-            n2 = 23 - n1
+            n2 = 29 - n1
             Aprop2.append(np.concatenate((Aprop[ii], np.zeros(n2)), axis=None))
     return Aprop2
 
@@ -24,11 +24,8 @@ def prepare_data(op):
     #  # read dataset
     data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
     properties = [
-        'RMSD',
         'EAT',
-        'EMBD',
         'EGAP',
-        'KSE',
         'FermiEne',
         'BandEne',
         'NumElec',
@@ -43,7 +40,7 @@ def prepare_data(op):
     ]
 
     dataset = spk.data.AtomsData(
-        data_dir + 'distort.db', load_only=properties)
+        data_dir + 'qm9-dftb.db', load_only=properties)
 
     n = len(dataset)
     idx = np.arange(n)
@@ -53,14 +50,12 @@ def prepare_data(op):
     # computing predicted property
     logging.info("get predicted property")
     AE, xyz, Z = [], [], []
-    EGAP, KSE, TPROP = [], [], []
+    EGAP, TPROP = [], []
     p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 = ([] for i in range(11))
     atoms_data = []
     for i in idx2[:n]:
         atoms, props = dataset.get_properties(i)
         AE.append(float(props['EAT']))
-        EGAP.append(float(props['EGAP']))
-        KSE.append(props['KSE'])
         TPROP.append(float(props[op]))
         xyz.append(atoms.get_positions())
         Z.append(atoms.get_atomic_numbers())
@@ -75,7 +70,6 @@ def prepare_data(op):
         p9.append(props['TBdip'])
         p10.append(props['TBeig'])
         p11.append(props['TBchg'])
-        atoms_data.append(atoms)
 
     AE = np.array(AE)
     EGAP = np.array(EGAP)
@@ -84,10 +78,10 @@ def prepare_data(op):
 
     # Generate representations
     # Coulomb matrix
-    xyz_reps = np.array(
-        [generate_coulomb_matrix(
-            Z[mol], xyz[mol], sorting='unsorted') for mol in idx2]
-    )
+    bob_repr = np.array([generate_bob(
+        Z[mol], xyz[mol], atomtypes={'C', 'H', 'N', 'O', 'F'}, size=29,
+        asize={'C': 9, 'H': 20, 'N': 7, 'O': 5, 'F': 6}
+    ) for mol in idx])
 
     TPROP2 = []
     p1b, p2b, p11b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b = (
@@ -113,7 +107,7 @@ def prepare_data(op):
         reps2.append(
             np.concatenate(
                 (
-                    xyz_reps[ii],
+                    bob_repr[ii],
                     p1b[ii],
                     p2b[ii],
                     p3b[ii],
@@ -145,10 +139,11 @@ def objective(params):
     print("sigma=", sigma)
     print("gamma=", gamma)
 
-    n_test = 10000
-    n_val = 1000
+    n_test = 133000
+    n_val = 5000
 
-    train_set = [1000, 2000, 4000, 8000, 10000, 20000, 30000]
+    train_set = [1000, 2000, 4000, 8000, 10000,
+                 20000, 30000, 40000, 50000, 60000, 70000]
 
     # try:
     #     indices = np.arange(desc.shape[0])
@@ -179,7 +174,8 @@ def objective(params):
         # Writing the true and predicted EAT values
         dtest = np.array(Y_test - Y_predicted)
 
-        ctest = open('comp-test_%s.dat' % n_train, 'w')
+        ctest = open('Kernel_Results/EAT_bob_qm9/comp-test_%s.dat' %
+                     n_train, 'w')
         for ii in range(0, len(Y_test)):
             ctest.write(str(Y_test[ii]) + '\t' + str(Y_predicted[ii]) + '\t' + str(dtest[ii]) + '\n'
                         )
@@ -189,7 +185,8 @@ def objective(params):
         MSE_PROP = float(mean_squared_error(Y_test, Y_predicted))
         STD_PROP = float(Y_test.std())
 
-        out2 = open('errors_test%s.dat' % n_train, 'w')
+        out2 = open('Kernel_Results/EAT_bob_qm9/errors_test%s.dat' %
+                    n_train, 'w')
         out2.write(
             str(STD_PROP) + "\t"
             + str(MAE_PROP) + "\t"
@@ -205,5 +202,5 @@ def objective(params):
 
 # gamma = 9.990000000000001e-06
 # sigma= 135.55025590223175
-sigma, gamma = [1.54383770e+02, 4.86297071e-05]
+sigma, gamma = [135.55025, 1e-05]
 objective([sigma, gamma])
