@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --time=96:00:00
 #SBATCH --partition=gpu2                        # specify ml partition or gpu2 partition
-#SBATCH --nodes=1                        # request 1 node
-#SBATCH --ntasks=1
+#SBATCH --nodes=4                        # request 1 node
+#SBATCH --ntasks=8
 #SBATCH -J split-ra
 #SBATCH --gres=gpu:2
-#SBATCH --output=split.out
-#SBATCH --error=split.err
+#SBATCH --output=split_eat.out
+#SBATCH --error=split_eat.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
@@ -48,7 +48,7 @@ echo "training starts"
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-python3 $work/split.py
+python3 $work/eat_split.py
 
 echo "training is over :-)"
 EXTSTAT=$?
