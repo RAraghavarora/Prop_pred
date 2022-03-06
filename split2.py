@@ -477,11 +477,11 @@ def objective():
     patience = 700
     op = 'EGAP'
     current_dir = os.getcwd()
-    os.chdir(current_dir + 'only_dft/egap/qm9/')
+    os.chdir(current_dir + '/only_dft/egap/qm9/')
     iX, iY = prepare_data(op)
     for train in n_train:
         os.mkdir(str(train))
-        os.chdir(current_dir + 'only_dft/egap/qm9/' + str(train))
+        os.chdir(current_dir + '/only_dft/egap/qm9/' + str(train))
         model, test_mae, test_loader = fit_model_dense(
             train, n_val, n_test, iX, iY, patience, params, model)
         print(train, '\t', test_mae[0])
