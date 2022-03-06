@@ -361,7 +361,7 @@ def plotting_results(model, test_loader):
     ctest.close()
 
 
-def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, params, model, trial):
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, params, model):
     batch_size = 16
     X_train, Y_train, X_val, Y_val, X_test, Y_test = split_data(
         n_train, n_val, n_test, iX, iY
@@ -390,12 +390,6 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, params, model, tri
 #         valid_loss, valid_mae = test_nn(valid_loader, model, loss_fn)
         print(f"Train MAE: {mae}\n")
         scheduler.step(mae)
-
-        trial.report(mae, t)
-
-        if trial.should_prune():
-            print("Pruning")
-            raise optuna.TrialPruned()
 
 #         val_losses.append(valid_loss)
 #         val_errors.append(valid_mae)
