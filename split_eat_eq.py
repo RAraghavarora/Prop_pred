@@ -295,8 +295,9 @@ class NeuralNetwork(nn.Module):
 def train_nn(dataloader, model, loss_fn, optimizer):
     # size = len(dataloader.dataset)
     model.train()
-    device = "cuda"
-    # device = "cpu"
+    device = "cpu"
+    if torch.cuda.is_available():
+        device = "cuda:0"
     for batch, (X, y) in enumerate(dataloader):
         X, y = X.to(device), y.to(device)
 
@@ -316,8 +317,9 @@ def test_nn(dataloader, model, loss_fn):
     num_batches = len(dataloader)
     model.eval()
     test_loss, mae = 0, 0
-    device = "cuda"
-    # device = "cpu"
+    device = "cpu"
+    if torch.cuda.is_available():
+        device = "cuda:0"
     with torch.no_grad():
         for batch, (X, y) in enumerate(dataloader):
             X, y = X.to(device), y.to(device)
@@ -344,8 +346,9 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
     valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
 
-    device = "cuda"
-    # device = "cpu"
+    device = "cpu"
+    if torch.cuda.is_available():
+        device = "cuda:0"
     model = NeuralNetwork().to(device)
     model = nn.DataParallel(model)
     model.to(device)
