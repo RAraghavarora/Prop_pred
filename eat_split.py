@@ -95,7 +95,6 @@ def prepare_data(op):
         ATOMS.append(atoms)
         AE.append(float(props['EAT']))
         EGAP.append(float(props['EGAP']))
-        KSE.append(props['KSE'])
         TPROP.append(float(props[op] * 23.0621))
         xyz.append(atoms.get_positions())
         Z.append(atoms.get_atomic_numbers())
