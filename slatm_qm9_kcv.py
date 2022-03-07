@@ -231,16 +231,16 @@ class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
 
-        self.lin1 = nn.Linear(11966, 16)
-        self.lin2 = nn.Linear(56, 4)
+        self.lin1 = nn.Linear(11960, 16)
+        self.lin2 = nn.Linear(62, 4)
         self.lin4 = nn.Linear(4, 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
     def forward(self, x):
-        slatm = x[:, :11966]
+        slatm = x[:, :11960]
         print(slatm.shape)
-        elec = x[:, 11966:]
+        elec = x[:, 11960:]
         print(elec.shape)
         layer1 = self.lin1(slatm)
         layer1 = nn.functional.elu(layer1)
@@ -425,7 +425,7 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['6000', '50000', '60000']
+train_set = ['30000', '45000', '75000']
 op = 'EAT'
 n_val = 5000
 
