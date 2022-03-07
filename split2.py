@@ -382,7 +382,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, params, model):
     scheduler = ReduceLROnPlateau(
         optimizer, factor=0.6, patience=500, min_lr=1e-6)
 
-    epochs = 10000
+    epochs = 20000
     val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
@@ -465,15 +465,15 @@ def objective():
               }
 
     model = NeuralNetwork(params)
-    n_train = [30000, 1000, 20000, 10000, 8000, 4000, 2000]
+    n_train = [50000, 20000, 10000, 8000, 4000, 2000]
     n_val = 5000
     n_test = 50000
     patience = 700
     op = 'EGAP'
     current_dir = os.getcwd()
-    os.chdir(current_dir + '/only_dft/egap/qm9/')
     iX, iY = prepare_data(op)
     for train in n_train:
+        os.chdir(current_dir + '/only_dft/egap/qm9/')
         os.mkdir(str(train))
         os.chdir(current_dir + '/only_dft/egap/qm9/' + str(train))
         model, test_mae, test_loader = fit_model_dense(
