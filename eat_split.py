@@ -25,10 +25,10 @@ def complete_array(Aprop):
     Aprop2 = []
     for ii in range(len(Aprop)):
         n1 = len(Aprop[ii])
-        if n1 == 23:
+        if n1 == 29:
             Aprop2.append(Aprop[ii])
         else:
-            n2 = 23 - n1
+            n2 = 29 - n1
             Aprop2.append(np.concatenate((Aprop[ii], np.zeros(n2)), axis=None))
 
     return Aprop2
@@ -40,11 +40,8 @@ def complete_array(Aprop):
 def prepare_data(op):
     #  # read dataset
     properties = [
-        'RMSD',
         'EAT',
-        'EMBD',
         'EGAP',
-        'KSE',
         'FermiEne',
         'BandEne',
         'NumElec',
@@ -63,7 +60,7 @@ def prepare_data(op):
     try:
         data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
         dataset = spk.data.AtomsData(
-            data_dir + 'qm7x-eq-n1.db', load_only=properties)
+            data_dir + 'qm9-dftb.db', load_only=properties)
     except:
         data_dir = '../'
         dataset = spk.data.AtomsData(
@@ -440,12 +437,12 @@ for ii in range(len(train_set)):
     n_test = len(iY) - n_val
     print('Trainset= {:}'.format(train_set[ii]))
     chdir(current_dir)
-    os.chdir(current_dir + '/withdft/split/eq/')
+    os.chdir(current_dir + '/withdft/split/qm9/')
     try:
         os.mkdir(str(train_set[ii]))
     except:
         pass
-    os.chdir(current_dir + '/withdft/split/eq/' + str(train_set[ii]))
+    os.chdir(current_dir + '/withdft/split/qm9/' + str(train_set[ii]))
 
     model, lr, loss, mae, test_loader = fit_model_dense(
         int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
