@@ -253,7 +253,7 @@ class NeuralNetwork(nn.Module):
         self.lin1 = nn.Linear(8, l1)
         self.lin2 = nn.Linear(3, l2)
         self.lin3 = nn.Linear(8, l3)
-        self.lin4 = nn.Linear(23, l4)
+        self.lin4 = nn.Linear(29, l4)
 
         self.lin5 = nn.Linear(l0 + l1 + l2 + l3 + l4, l5)
         self.lin6 = nn.Linear(l5, 1)
