@@ -4,13 +4,13 @@
 #SBATCH --gres=gpu:2                      # use 1 GPU per node (i.e. use one GPU per task)
 #SBATCH --nodes=1                        # request 1 node
 #SBATCH --ntasks=8
-#SBATCH -J fchl-ra
-#SBATCH --output=dip.out
-#SBATCH --error=dip.err
+#SBATCH -J only_slatm
+#SBATCH --output=os.out
+#SBATCH --error=os.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
-#SBATCH --mem-per-gpu=8000MB
+#SBATCH --mem-per-gpu=16GB
 ulimit -s unlimited
 echo Starting Program
 module purge                                 # purge if you already have modules loaded
@@ -49,7 +49,7 @@ echo "training starts"
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-python3 $work/train_fchl.py
+python3 $work/only_slatm_eq.py
 
 echo "training is over :-)"
 EXTSTAT=$?
