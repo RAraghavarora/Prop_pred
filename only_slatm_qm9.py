@@ -225,6 +225,9 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
 
+    t = torch.get_num_threads()
+    torch.set_num_threads(t)
+
     epochs = 20000
     val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
@@ -303,6 +306,9 @@ def plotting_results(model, test_loader):
 
 # prepare dataset
 train_set = ['8000', '30000', '10000', '20000', '1000', '2000', '4000']
+print("Threads = ", torch.get_num_threads())
+logging.info("Threads = " + str(torch.get_num_threads()))
+
 op = 'EAT'
 n_val = 5000
 
