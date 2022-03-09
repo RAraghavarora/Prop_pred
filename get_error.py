@@ -278,10 +278,10 @@ print(torch.cuda.get_device_name(0))
 model = torch.load('only_dft/egap/30000/model.pt', map_location='cuda:0')
 
 with torch.no_grad():
-    x = test_loader.dataset.tensors[0].cuda()
+    x = test_loader.dataset.tensors[0].to('cuda:0')
     model.eval()
     pred = model(x)
-    y = test_loader.dataset.tensors[1].cuda()
+    y = test_loader.dataset.tensors[1].to('cuda:0')
     loss_fn = nn.MSELoss()
     test_loss = loss_fn(pred, y).item()
     mae_loss = torch.nn.L1Loss(reduction='mean')
