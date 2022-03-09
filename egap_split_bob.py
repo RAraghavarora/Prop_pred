@@ -274,7 +274,7 @@ class NeuralNetwork(nn.Module):
     def forward(self, x):
         bob, global_features, p9b, p10b, p11b = x[:,0:528], x[:,528:528+8], x[:, 528+8:528+11], x[:, 528+11:528+19], x[:, 528+19:]
 
-        layer0 = self.lin1(bob)
+        layer0 = self.lin0(bob)
         layer0 = nn.functional.elu(layer0)
         layer1 = self.lin1(global_features)
         layer1 = nn.functional.elu(layer1)
