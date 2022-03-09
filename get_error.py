@@ -264,7 +264,7 @@ X_train, Y_train, X_val, Y_val, X_test, Y_test = split_data(
 test = torch.utils.data.TensorDataset(torch.cat(X_test, dim=1), Y_test)
 # data loader
 test_loader = DataLoader(test, batch_size=16, shuffle=False)
-model = torch.load('only_dft/egap/30000/model.pt')
+model = torch.load('only_dft/egap/30000/model.pt', map_location='cuda:0')
 
 with torch.no_grad():
     x = test_loader.dataset.tensors[0].cuda()
