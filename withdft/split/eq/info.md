@@ -1,0 +1,1 @@
+** Using BOB(Reduced) + Props(split) -> Equilibrium QM7X dataset
