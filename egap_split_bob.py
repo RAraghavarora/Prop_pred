@@ -349,8 +349,9 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
     valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
 
-    device = "cuda"
-    # device = "cpu"
+    device = "cpu"
+    if torch.cuda.is_available():
+        device = "cuda:0"
     model = NeuralNetwork().to(device)
     model = nn.DataParallel(model)
     model.to(device)
