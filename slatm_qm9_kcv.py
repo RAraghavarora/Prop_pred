@@ -337,7 +337,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
 
-    epochs = 15000
+    epochs = 20000
     k_folds = 3
     kfold = KFold(n_splits=k_folds, shuffle=True)
 
