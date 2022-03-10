@@ -243,12 +243,16 @@ class NeuralNetwork(nn.Module):
         elec = x[:, 11960:]
         layer1 = self.lin1(slatm)
         layer1 = nn.functional.elu(layer1)
+        drop = nn.Dropout(p=0.5)
+        layer1 = drop(layer1)
 
         concat = torch.cat([layer1, elec], dim=1)
         # concat = nn.functional.elu(concat)
 
         layer2 = self.lin2(concat)
         layer2 = nn.functional.elu(layer2)
+        drop = nn.Dropout(p=0.5)
+        layer2 = drop(layer2)        
         layer4 = self.lin4(layer2)
 
         return layer4
@@ -407,9 +411,9 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['10000', '4000', '70000']
+train_set = ['100000']
 op = 'EAT'
-n_val = 5000
+n_val = 8000
 
 iX, iY = prepare_data(op)
 # fit model and plot learning curves for a patience
