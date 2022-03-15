@@ -236,7 +236,7 @@ class NeuralNetwork(nn.Module):
 
         self.lin1 = nn.Linear(17895, l1)
         self.lin2 = nn.Linear(l1 + 40, 4)
-        self.lin4 = nn.Linear(2, 1)
+        self.lin4 = nn.Linear(4, 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
