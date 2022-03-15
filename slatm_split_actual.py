@@ -231,11 +231,11 @@ def init_weights(m):
 
 
 class NeuralNetwork(nn.Module):
-    def __init__(self):
+    def __init__(self, l1):
         super(NeuralNetwork, self).__init__()
 
-        self.lin1 = nn.Linear(17895, 16)
-        self.lin2 = nn.Linear(56, 2)
+        self.lin1 = nn.Linear(17895, l1)
+        self.lin2 = nn.Linear(l1 + 40, 4)
         self.lin4 = nn.Linear(2, 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
@@ -298,7 +298,7 @@ def test_nn(dataloader, model, loss_fn):
     return test_loss, mae
 
 
-def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
     batch_size = 16
     trainX, trainY, valX, valY, testX, testY = split_data(
         n_train, n_val, n_test, iX, iY
@@ -327,7 +327,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     device = "cpu"
     if torch.cuda.is_available():
         device = "cuda:0"
-    model = NeuralNetwork().to(device)
+    model = NeuralNetwork(slatm_len).to(device)
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(
@@ -336,7 +336,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
 
-    epochs = 20000
+    epochs = 8000
     val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
@@ -409,9 +409,10 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['30000', '1000', '2000', '4000', '10000', '20000']
+train_set = ['8000']
 op = 'EAT'
 n_val = 5000
+slatm_lens = [16, 32, 64, 128]
 
 iX, iY = prepare_data(op)
 
@@ -420,19 +421,19 @@ patience = 500
 
 current_dir = os.getcwd()
 
-for ii in range(len(train_set)):
+for slatm_len in slatm_lens:
     n_test = len(iY) - n_val
-    print('Trainset= {:}'.format(train_set[ii]))
+    print('Trainset= {:}'.format(train_set[0]))
     chdir(current_dir)
-    os.chdir(current_dir + '/withdft/slatm/eq/')
+    os.chdir(current_dir + '/withdft/slatm/eq/validation/')
     try:
-        os.mkdir(str(train_set[ii]))
+        os.mkdir(str(slatm_len))
     except:
         pass
-    os.chdir(current_dir + '/withdft/slatm/eq/' + str(train_set[ii]))
+    os.chdir(current_dir + '/withdft/slatm/eq/validation/' + str(slatm_len))
 
     model, lr, loss, mae, test_loader = fit_model_dense(
-        int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
+        int(train_set[0]), int(n_val), int(n_test), iX, iY, patience, slatm_len
     )
 
     lhis = open('learning-history.dat', 'w')
@@ -451,4 +452,3 @@ for ii in range(len(train_set)):
 
     # Saving results
     plotting_results(model, test_loader)
-
