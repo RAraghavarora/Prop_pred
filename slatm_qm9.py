@@ -338,7 +338,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     # if torch.cuda.device_count() > 1:
     #     model = nn.DataParallel(model)
 
-    model = torch.load('withdft/slatm/qm9/70000/model.pt')
+    model = torch.load('/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred/withdft/slatm/qm9/70000/model.pt')
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(
