@@ -251,9 +251,9 @@ class NeuralNetwork(nn.Module):
 
         layer2 = self.lin2(concat)
         layer2 = nn.functional.elu(layer2)
-        drop = nn.Dropout(p=0.5)
-        # layer2 = drop(layer2)        
-        # layer4 = self.lin4(layer2)
+        # drop = nn.Dropout(p=0.5)
+        # # layer2 = drop(layer2)        
+        layer4 = self.lin4(layer2)
 
         return layer4
 
