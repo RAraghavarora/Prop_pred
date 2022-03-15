@@ -5,8 +5,8 @@
 #SBATCH --nodes=5                        # request 1 node
 #SBATCH --ntasks=12
 #SBATCH -J slatm_qm9
-#SBATCH --output=slatm1l.out
-#SBATCH --error=slatm1l.err
+#SBATCH --output=slatm.out
+#SBATCH --error=slatm.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
