@@ -218,7 +218,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
         device = "cuda:0"
     model = NeuralNetwork().to(device)
     loss_fn = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, weight_decay=1e-5)
     scheduler = ReduceLROnPlateau(
         optimizer, factor=0.5, patience=100, min_lr=1e-6)
 
@@ -302,8 +302,8 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['8000', '30000', '10000', '20000', '1000', '2000', '4000']
-op = 'EAT'
+train_set = ['8000', '30000', '20000', '1000', '2000', '4000']
+op = 'EGAP'
 n_val = 5000
 
 iX, iY = prepare_data(op)

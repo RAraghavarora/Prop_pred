@@ -305,11 +305,11 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['8000', '30000', '10000', '20000', '1000', '2000', '4000']
+train_set = ['8000', '30000', '20000', '1000', '4000', '70000']
 print("Threads = ", torch.get_num_threads())
 logging.info("Threads = " + str(torch.get_num_threads()))
 
-op = 'EAT'
+op = 'EGAP'
 n_val = 5000
 
 iX, iY = prepare_data(op)
