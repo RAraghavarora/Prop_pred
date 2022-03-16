@@ -9,7 +9,10 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error
 
-from qml.representations import generate_bob
+from qml.representations import (
+    get_slatm_mbtypes,
+    generate_slatm,
+)
 
 import logging
 import schnetpack as spk
@@ -164,22 +167,17 @@ def prepare_data(op):
 
     p1b, p2b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b, p11b = temp
 
-    bob_repr = np.array(
-        [
-            generate_bob(
-                Z[mol],
-                xyz[mol],
-                atomtypes={'C', 'H', 'N', 'O', 'S', 'Cl'},
-                asize={'C': 7, 'H': 16, 'N': 3, 'O': 3, 'S': 1, 'Cl': 2},
-            )
-            for mol in idx2
-        ]
-    )
+    mbtypes = get_slatm_mbtypes([Z[mol] for mol in idx2])
+    slatm = [
+        generate_slatm(mbtypes=mbtypes,
+                       nuclear_charges=Z[mol], coordinates=xyz[mol])
+        for mol in idx2
+    ]
 
     global_features = []
-    bob = []
+    slatm_repr = []
     for ii in range(len(idx2)):
-        bob.append(bob_repr[ii])
+        slatm_repr.append(slatm[ii])
         global_features.append(
             np.concatenate(
                 (
@@ -197,7 +195,7 @@ def prepare_data(op):
         )
     global_features = np.array(global_features)
 
-    return [bob, global_features, p9b, p10b, p11b], TPROP2
+    return [slatm_repr, global_features, p9b, p10b, p11b], TPROP2
 
 
 def split_data(n_train, n_val, n_test, Repre, Target):
@@ -260,7 +258,7 @@ class NeuralNetwork(nn.Module):
     def __init__(self, l0=16, l1=16, l2=2, l3=16, l4=2, l5=16):
         super(NeuralNetwork, self).__init__()
 
-        self.lin0 = nn.Linear(528, l0)
+        self.lin0 = nn.Linear(17895, l0)
         self.lin1 = nn.Linear(8, l1)
         self.lin2 = nn.Linear(3, l2)
         self.lin3 = nn.Linear(8, l3)
@@ -272,7 +270,7 @@ class NeuralNetwork(nn.Module):
         self.apply(init_weights)
 
     def forward(self, x):
-        bob, global_features, p9b, p10b, p11b = x[:,0:528], x[:,528:528+8], x[:, 528+8:528+11], x[:, 528+11:528+19], x[:, 528+19:]
+        bob, global_features, p9b, p10b, p11b = x[:,0:17895], x[:,17895:17895+8], x[:, 17895+8:17895+11], x[:, 17895+11:17895+19], x[:, 17895+19:]
 
         layer0 = self.lin0(bob)
         layer0 = nn.functional.elu(layer0)
@@ -453,12 +451,12 @@ for ii in range(len(train_set)):
     n_test = len(iY) - int(train_set[ii]) - n_val
     print('Trainset= {:}'.format(train_set[ii]))
     chdir(current_dir)
-    os.chdir(current_dir + '/withdft/split/egap/eq/')
+    os.chdir(current_dir + '/withdft/split/egap/eq/slatm/')
     try:
         os.mkdir(str(train_set[ii]))
     except:
         pass
-    os.chdir(current_dir + '/withdft/split/egap/eq/' + str(train_set[ii]))
+    os.chdir(current_dir + '/withdft/split/egap/eq/slatm/' + str(train_set[ii]))
 
     model, lr, loss, mae, test_loader = fit_model_dense(
         int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
