@@ -3,7 +3,7 @@
 #SBATCH --partition=gpu2                        # specify ml partition or gpu2 partition
 #SBATCH --nodes=4                        # request 1 node
 #SBATCH --ntasks=8
-#SBATCH -J split-ra
+#SBATCH -J egap_eq
 #SBATCH --gres=gpu:1
 #SBATCH --output=split_eq.out
 #SBATCH --error=split_eq.err
