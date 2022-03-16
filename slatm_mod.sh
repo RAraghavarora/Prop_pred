@@ -4,9 +4,9 @@
 #SBATCH --gres=gpu:1                      # use 1 GPU per node (i.e. use one GPU per task)
 #SBATCH --nodes=4                        # request 1 node
 #SBATCH --ntasks=6
-#SBATCH -J slatm_eq
-#SBATCH --output=slatmeq.out
-#SBATCH --error=slatmeq.err
+#SBATCH -J slatm_256
+#SBATCH --output=slatm256.out
+#SBATCH --error=slatm256.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
