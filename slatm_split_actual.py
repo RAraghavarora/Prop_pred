@@ -412,7 +412,7 @@ def plotting_results(model, test_loader):
 train_set = ['8000']
 op = 'EAT'
 n_val = 5000
-slatm_lens = [16, 32, 64, 128]
+slatm_lens = [256, 512]
 
 iX, iY = prepare_data(op)
 
