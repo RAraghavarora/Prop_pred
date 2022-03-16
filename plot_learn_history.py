@@ -2,35 +2,45 @@ import matplotlib.pyplot as plt
 
 # Plot the curve of learning rate
 
-lhis = open('withdft/split/eq/20000/learning-history.dat', 'r')
 
-lines = lhis.readlines()
-x = []
-y = []
+def get_data(path):
+    lhis = open(path, 'r')
+    lines = lhis.readlines()
+    x = []
+    y = []
 
+    for line in lines:
+        epoch, lr, loss, mae = line.split()
+        x.append(int(epoch))
+        y.append(float(mae)*23.0621)
 
-for line in lines:
-    epoch, lr, loss, mae = line.split()
-    x.append(int(epoch))
-    y.append(float(mae))
-
-lhis = open('withdft/slatm/eq/30000/learning-history.dat', 'r')
-
-lines = lhis.readlines()
-x1 = []
-y1 = []
+    return x, y
 
 
-for line in lines:
-    epoch, lr, loss, mae = line.split()
-    x1.append(int(epoch))
-    y1.append(float(mae)*23.0621)
+paths = [
+    'withdft/slatm/eq/validation/128/learning-history.dat',
+    'withdft/slatm/eq/validation/64/learning-history.dat',
+    # 'withdft/slatm/eq/validation/32/learning-history.dat',
+    'withdft/slatm/eq/validation/16/learning-history.dat',
+]
 
-plt.plot(x[1500:], y[1500:], '.')
-plt.plot(x1[1500:], y1[1500:], '.')
+labels = [
+    '128',
+    '64',
+    # '32',
+    '16',
+]
+
+i=0
+for path in paths:
+    x, y = get_data(path)
+    plt.plot(x[50:], y[50:], '.', alpha=0.2, label=labels[i])
+    i+=1
+
 
 plt.ylabel("Validation MAE")
 plt.xlabel("Epoch")
-plt.title('Learning history for conv with size of 8000')
+plt.title('Learning history')
+plt.legend()
 plt.show()
 plt.close()
