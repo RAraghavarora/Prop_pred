@@ -243,16 +243,12 @@ class NeuralNetwork(nn.Module):
         elec = x[:, 11960:]
         layer1 = self.lin1(slatm)
         layer1 = nn.functional.elu(layer1)
-        # drop = nn.Dropout(p=0.5)
-        # layer1 = drop(layer1)
 
         concat = torch.cat([layer1, elec], dim=1)
         # concat = nn.functional.elu(concat)
 
         layer2 = self.lin2(concat)
         layer2 = nn.functional.elu(layer2)
-        # drop = nn.Dropout(p=0.5)
-        # # layer2 = drop(layer2)        
         layer4 = self.lin4(layer2)
 
         return layer4
@@ -329,22 +325,16 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     device = "cpu"
     if torch.cuda.is_available():
         device = "cuda:0"
-    # model = NeuralNetwork().to(device)
-    # loss_fn = nn.MSELoss()
-    # optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
-    # scheduler = ReduceLROnPlateau(
-    #     optimizer, factor=0.50, patience=100, min_lr=1e-6)
-
-    # if torch.cuda.device_count() > 1:
-    #     model = nn.DataParallel(model)
-
-    model = torch.load('/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred/withdft/slatm/qm9/70000/model.pt')
+    model = NeuralNetwork().to(device)
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(
         optimizer, factor=0.50, patience=100, min_lr=1e-6)
 
-    epochs = 10000
+    if torch.cuda.device_count() > 1:
+        model = nn.DataParallel(model)
+
+    epochs = 20000
     val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
@@ -382,7 +372,7 @@ def plotting_results(model, test_loader):
 
     STD_PROP = float(pred.std())
 
-    out2 = open('errors_test2.dat', 'w')
+    out2 = open('errors_test.dat', 'w')
     out2.write(
         '{:>24}'.format(STD_PROP)
         + '{:>24}'.format(mae)
@@ -396,7 +386,7 @@ def plotting_results(model, test_loader):
     Y_test = y.reshape(-1, 1)
     format_list1 = ['{:16f}' for item1 in Y_test[0]]
     s = ' '.join(format_list1)
-    ctest = open('comp-test2.dat', 'w')
+    ctest = open('comp-test.dat', 'w')
     for ii in range(0, len(pred)):
         ctest.write(
             s.format(*pred[ii]) + s.format(*Y_test[ii]) +
@@ -412,14 +402,14 @@ def plotting_results(model, test_loader):
     plt.plot(temp, temp)
     plt.xlabel("True EGAP")
     plt.ylabel("Predicted EGAP")
-    plt.savefig('Result2.png')
+    plt.savefig('Result.png')
     plt.close()
 
 
 # prepare dataset
-train_set = ['70000']
+train_set = ['10000', '4000', '70000']
 op = 'EAT'
-n_val = 8000
+n_val = 5000
 
 iX, iY = prepare_data(op)
 # fit model and plot learning curves for a patience
