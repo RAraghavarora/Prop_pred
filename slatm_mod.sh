@@ -20,7 +20,7 @@ module load Python/3.6.4-intel-2018a
 module load cuDNN/8.0.4.30-CUDA-11.1.1
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-python3 $work/slatm_split_actual.py
+python3 $work/train16.py
 
 echo "training is over :-)"
 EXTSTAT=$?
