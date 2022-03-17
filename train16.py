@@ -328,7 +328,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
     if torch.cuda.is_available():
         device = "cuda:0"
     # model = NeuralNetwork(slatm_len).to(device)
-    model = torch.load('/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred/withdft/slatm/eq/validation/16/model.pt')
+    model = torch.load('/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred/withdft/slatm/eq/validation/16/model1.pt')
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(
