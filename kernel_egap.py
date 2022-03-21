@@ -148,7 +148,7 @@ def objective(params):
     n_test = 40000
     n_val = 1000
 
-    train_set = [30000]
+    train_set = [1000, 4000, 30000]
 
     # try:
     #     indices = np.arange(desc.shape[0])
