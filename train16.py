@@ -337,7 +337,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
 
-    epochs = 8000
+    epochs = 1000
     val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
@@ -403,8 +403,8 @@ def plotting_results(model, test_loader):
     maxi = max(y).item()
     temp = np.arange(mini, maxi, 0.1)
     plt.plot(temp, temp)
-    plt.xlabel("True EGAP")
-    plt.ylabel("Predicted EGAP")
+    plt.xlabel("True EAT")
+    plt.ylabel("Predicted EAT")
     plt.savefig('Result1.png')
     plt.close()
 
@@ -412,7 +412,7 @@ def plotting_results(model, test_loader):
 # prepare dataset
 train_set = ['8000']
 op = 'EAT'
-n_val = 5000
+n_val = 8000
 slatm_lens = [16]
 
 iX, iY = prepare_data(op)
