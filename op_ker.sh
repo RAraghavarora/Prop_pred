@@ -5,10 +5,10 @@
 #SBATCH --output=ok.out
 #SBATCH --error=ok.err
 #SBATCH -A p_biomolecules
-#SBATCH -N 8
+#SBATCH -N 4
 
-#SBATCH -n 32
-#SBATCH --ntasks-per-node=4
+#SBATCH -n 12
+#SBATCH --ntasks-per-node=3
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
 #SBATCH --mem-per-cpu=8000MB
