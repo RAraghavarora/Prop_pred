@@ -297,7 +297,7 @@ def test_nn(dataloader, model, loss_fn):
 
 
 def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
-    batch_size = 16
+    batch_size = 32
     trainX, trainY, valX, valY, testX, testY = split_data(
         n_train, n_val, n_test, iX, iY
     )
@@ -407,7 +407,7 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['10000', '4000', '70000']
+train_set = ['70000']
 op = 'EAT'
 n_val = 5000
 
