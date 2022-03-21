@@ -43,7 +43,7 @@ def prepare_data(op):
     ]
 
     dataset = spk.data.AtomsData(
-        data_dir + 'distort.db', load_only=properties)
+        data_dir + 'qm7x-eq-n1.db', load_only=properties)
 
     n = len(dataset)
     idx = np.arange(n)
@@ -179,7 +179,7 @@ def objective(params):
         # Writing the true and predicted EAT values
         dtest = np.array(Y_test - Y_predicted)
 
-        ctest = open('comp-test_%s.dat' % n_train, 'w')
+        ctest = open('Kernel_Results/Egap_eq/comp-test_%s.dat' % n_train, 'w')
         for ii in range(0, len(Y_test)):
             ctest.write(str(Y_test[ii]) + '\t' + str(Y_predicted[ii]) + '\t' + str(dtest[ii]) + '\n'
                         )
@@ -189,7 +189,7 @@ def objective(params):
         MSE_PROP = float(mean_squared_error(Y_test, Y_predicted))
         STD_PROP = float(Y_test.std())
 
-        out2 = open('errors_test%s.dat' % n_train, 'w')
+        out2 = open('Kernel_Results/Egap_eq/errors_test%s.dat' % n_train, 'w')
         out2.write(
             str(STD_PROP) + "\t"
             + str(MAE_PROP) + "\t"
