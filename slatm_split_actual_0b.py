@@ -208,13 +208,13 @@ def split_data(n_train, n_val, n_test, Repre, Target):
 
     X_train, X_val, X_test = (
         np.array(Repre[:n_train]),
-        np.array(Repre[-n_test - n_val: -n_test]),
-        np.array(Repre[-n_test:]),
+        np.array(Repre[n_train: n_train + n_val]),
+        np.array(Repre[n_train + n_val:]),
     )
     Y_train, Y_val, Y_test = (
         np.array(Target[:n_train]),
-        np.array(Target[-n_test - n_val: -n_test]),
-        np.array(Target[-n_test:]),
+        np.array(Target[n_train: n_train + n_val]),
+        np.array(Target[n_train + n_val:]),
     )
 
     Y_train = Y_train.reshape(-1, 1)
@@ -409,9 +409,9 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['30000']
+train_set = ['20000', '10000', '2000', '30000']
 op = 'EAT'
-n_val = 5000
+n_val = 6000
 
 iX, iY = prepare_data(op)
 
