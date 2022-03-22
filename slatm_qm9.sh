@@ -4,7 +4,7 @@
 #SBATCH --gres=gpu:3                      # use 1 GPU per node (i.e. use one GPU per task)
 #SBATCH --nodes=1                        # request 1 node
 #SBATCH --ntasks=8
-#SBATCH -J slatm_qm9
+#SBATCH -J ra-qm9
 #SBATCH --output=slatm.out
 #SBATCH --error=slatm.err
 #SBATCH -A p_biomolecules
