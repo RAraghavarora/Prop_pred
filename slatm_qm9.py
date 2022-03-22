@@ -409,7 +409,7 @@ def plotting_results(model, test_loader):
 # prepare dataset
 train_set = ['10000', '30000', '4000', '70000']
 op = 'EAT'
-n_val = 5000
+n_val = 6000
 
 iX, iY = prepare_data(op)
 # fit model and plot learning curves for a patience
