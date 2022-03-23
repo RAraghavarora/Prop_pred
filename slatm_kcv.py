@@ -1,4 +1,4 @@
-# NN model
+import math
 import sys
 import os
 import pdb
@@ -208,13 +208,13 @@ def split_data(n_train, n_val, n_test, Repre, Target):
 
     X_train, X_val, X_test = (
         np.array(Repre[:n_train]),
-        np.array(Repre[-n_test - n_val: -n_test]),
-        np.array(Repre[-n_test:]),
+        np.array(Repre[n_train: n_train + n_val]),
+        np.array(Repre[n_train + n_val:]),
     )
     Y_train, Y_val, Y_test = (
         np.array(Target[:n_train]),
-        np.array(Target[-n_test - n_val: -n_test]),
-        np.array(Target[-n_test:]),
+        np.array(Target[n_train: n_train + n_val]),
+        np.array(Target[n_train + n_val:]),
     )
 
     Y_train = Y_train.reshape(-1, 1)
@@ -298,8 +298,55 @@ def test_nn(dataloader, model, loss_fn):
     return test_loss, mae
 
 
-def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
-    batch_size = 16
+def plotting_results(model, test_loader, fold):
+    # applying nn model
+    with torch.no_grad():
+        x = test_loader.dataset.tensors[0].cuda()
+        pred = model(x)
+        y = test_loader.dataset.tensors[1].cuda()
+        loss_fn = nn.MSELoss()
+        test_loss = loss_fn(pred, y).item()
+        mae_loss = torch.nn.L1Loss(reduction='mean')
+        mae = mae_loss(pred, y)
+
+    STD_PROP = float(pred.std())
+
+    out2 = open(f'errors_test_{fold}.dat', 'w')
+    out2.write(
+        '{:>24}'.format(STD_PROP)
+        + '{:>24}'.format(mae)
+        + '{:>24}'.format(test_loss)
+        + "\n"
+    )
+    out2.close()
+
+    # writing ouput for comparing values
+    dtest = np.array(pred.cpu() - y.cpu())
+    Y_test = y.reshape(-1, 1)
+    format_list1 = ['{:16f}' for item1 in Y_test[0]]
+    s = ' '.join(format_list1)
+    ctest = open(f'comp-test_{fold}.dat', 'w')
+    for ii in range(0, len(pred)):
+        ctest.write(
+            s.format(*pred[ii]) + s.format(*Y_test[ii]) +
+            s.format(*dtest[ii]) + '\n'
+        )
+    ctest.close()
+
+    # Save as a plot
+    plt.plot(pred.cpu(), y.cpu(), '.')
+    mini = min(y).item()
+    maxi = max(y).item()
+    temp = np.arange(mini, maxi, 0.1)
+    plt.plot(temp, temp)
+    plt.ylabel("True EGAP")
+    plt.xlabel("Predicted EGAP")
+    plt.savefig(f'Result{fold}.png')
+    plt.close()
+
+
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
+    batch_size = 32
     results = {}
 
     trainX, trainY, valX, valY, testX, testY = split_data(
@@ -326,21 +373,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
     # data loader
 
-    device = "cpu"
-    if torch.cuda.is_available():
-        device = "cuda:0"
-    model = NeuralNetwork().to(device)
-    loss_fn = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
-    scheduler = ReduceLROnPlateau(
-        optimizer, factor=0.5, patience=300, min_lr=1e-6)
-
-    if torch.cuda.device_count() > 1:
-        model = nn.DataParallel(model)
-
     epochs = 15000
-    k_folds = 3
-    kfold = KFold(n_splits=k_folds, shuffle=True)
+    kfold = KFold(n_splits=split, shuffle=True)
 
     # Split only the training set into k-folds
     for fold, (train_ids, test_ids) in enumerate(kfold.split(train)):
@@ -350,20 +384,52 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
             train, batch_size=batch_size, sampler=train_subsampler)
         # Instead of (1/k)th split, we use the whole dataset for testing
 
+        device = "cpu"
+        if torch.cuda.is_available():
+            device = "cuda:0"
+        model = NeuralNetwork().to(device)
+        loss_fn = nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+        scheduler = ReduceLROnPlateau(
+            optimizer, factor=0.5, patience=300, min_lr=1e-6)
+
+        if torch.cuda.device_count() > 1:
+            model = nn.DataParallel(model)
+
+        val_losses, val_errors, lrates = [], [], []
         for t in range(epochs):
-            print(f"Epoch {t+1}\n-------------------------------")
+            # print(f"Epoch {t+1}\n-------------------------------")
             train_nn(train_loader, model, loss_fn, optimizer)
             valid_loss, valid_mae = test_nn(valid_loader, model, loss_fn)
-            print(f"Validation MAE: {valid_mae}\n")
+            # print(f"Validation MAE: {valid_mae}\n")
             scheduler.step(valid_mae)
+            val_losses.append(valid_loss)
+            val_errors.append(valid_mae)
+            lrates.append(optimizer.param_groups[0]['lr'])
 
         loss, test_mae = test_nn(test_loader, model, loss_fn)
         try:
             results[fold] = test_mae.item()
         except:
             results[fold] = test_mae
+        torch.save(model.state_dict(), f'model_dict_{fold}.pt')
 
-    print(f'K-FOLD CROSS VALIDATION RESULTS FOR {k_folds} FOLDS')
+        lhis = open(f'learning-history_{fold}.dat', 'w')
+        for ii in range(0, len(lrates)):
+            lhis.write(
+                '{:8d}'.format(ii)
+                + '{:16f}'.format(lrates[ii])
+                + '{:16f}'.format(loss[ii])
+                + '{:16f}'.format(val_errors[ii])
+                + '\n'
+            )
+        lhis.close()
+
+        plotting_results(model, test_loader, fold)
+
+
+
+    print(f'K-FOLD CROSS VALIDATION RESULTS FOR {split} FOLDS')
     print('--------------------------------')
     print(results)
     sum = 0.0
@@ -378,57 +444,14 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     )
 
 
-def plotting_results(model, test_loader):
-    # applying nn model
-    with torch.no_grad():
-        x = test_loader.dataset.tensors[0].cuda()
-        pred = model(x)
-        y = test_loader.dataset.tensors[1].cuda()
-        loss_fn = nn.MSELoss()
-        test_loss = loss_fn(pred, y).item()
-        mae_loss = torch.nn.L1Loss(reduction='mean')
-        mae = mae_loss(pred, y)
 
-    STD_PROP = float(pred.std())
-
-    out2 = open('errors_test.dat', 'w')
-    out2.write(
-        '{:>24}'.format(STD_PROP)
-        + '{:>24}'.format(mae)
-        + '{:>24}'.format(test_loss)
-        + "\n"
-    )
-    out2.close()
-
-    # writing ouput for comparing values
-    dtest = np.array(pred.cpu() - y.cpu())
-    Y_test = y.reshape(-1, 1)
-    format_list1 = ['{:16f}' for item1 in Y_test[0]]
-    s = ' '.join(format_list1)
-    ctest = open('comp-test.dat', 'w')
-    for ii in range(0, len(pred)):
-        ctest.write(
-            s.format(*pred[ii]) + s.format(*Y_test[ii]) +
-            s.format(*dtest[ii]) + '\n'
-        )
-    ctest.close()
-
-    # Save as a plot
-    plt.plot(pred.cpu(), y.cpu(), '.')
-    mini = min(y).item()
-    maxi = max(y).item()
-    temp = np.arange(mini, maxi, 0.1)
-    plt.plot(temp, temp)
-    plt.xlabel("True EGAP")
-    plt.ylabel("Predicted EGAP")
-    plt.savefig('Result.png')
-    plt.close()
 
 
 # prepare dataset
-train_set = ['15000', '30000', '45000']
+train_set = ['500', '1000', '2000']
+splits = [22, 12, 10]
 op = 'EAT'
-n_val = 5000
+n_val = 6000
 
 iX, iY = prepare_data(op)
 
@@ -447,8 +470,11 @@ for ii in range(len(train_set)):
         pass
     os.chdir(current_dir + '/withdft/kcv/' + str(train_set[ii]))
 
+    split = splits[ii]
+    n_train = math.ceil(train_set[ii] * split / (split - 1))
+
     model, results = fit_model_dense(
-        int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
+        n_train, n_val, n_test, iX, iY, patience, split
     )
     outfile = open('output.txt', 'w')
     import json 

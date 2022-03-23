@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --time=144:00:00
+#SBATCH --time=168:00:00
 #SBATCH --partition=gpu2                        # specify ml partition or gpu2 partition
-#SBATCH --gres=gpu:2                      # use 1 GPU per node (i.e. use one GPU per task)
-#SBATCH --nodes=5                        # request 1 node
+#SBATCH --gres=gpu:4                      # use 1 GPU per node (i.e. use one GPU per task)
+#SBATCH --nodes=1                        # request 1 node
 #SBATCH --ntasks=16
-#SBATCH -J slatm_kcv
+#SBATCH -J ra-slatm_kcv
 #SBATCH --output=slatm_kcv_.out
 #SBATCH --error=slatm_kcv_.err
 #SBATCH -A p_biomolecules
