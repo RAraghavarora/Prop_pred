@@ -471,7 +471,7 @@ for ii in range(len(train_set)):
     os.chdir(current_dir + '/withdft/kcv/' + str(train_set[ii]))
 
     split = splits[ii]
-    n_train = math.ceil(train_set[ii] * split / (split - 1))
+    n_train = math.ceil(int(train_set[ii]) * split / (split - 1))
 
     model, results = fit_model_dense(
         n_train, n_val, n_test, iX, iY, patience, split
