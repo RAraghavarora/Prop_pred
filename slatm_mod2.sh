@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --time=144:00:00
+#SBATCH --time=168:00:00
 #SBATCH --partition=gpu2
 #SBATCH -J ra-valid
 #SBATCH --output=valid.out
 #SBATCH --error=valid.err
 #SBATCH -A p_biomolecules
 #SBATCH --nodes=1                        # request 1 node
-#SBATCH --ntasks=8
+#SBATCH --ntasks=4
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
 #SBATCH --mem-per-cpu=16GB
