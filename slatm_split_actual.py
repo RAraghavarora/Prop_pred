@@ -208,13 +208,13 @@ def split_data(n_train, n_val, n_test, Repre, Target):
 
     X_train, X_val, X_test = (
         np.array(Repre[:n_train]),
-        np.array(Repre[-n_test - n_val: -n_test]),
-        np.array(Repre[-n_test:]),
+        np.array(Repre[n_train: n_train + n_val]),
+        np.array(Repre[n_train + n_val:]),
     )
     Y_train, Y_val, Y_test = (
         np.array(Target[:n_train]),
-        np.array(Target[-n_test - n_val: -n_test]),
-        np.array(Target[-n_test:]),
+        np.array(Target[n_train: n_train + n_val]),
+        np.array(Target[n_train + n_val:]),
     )
 
     Y_train = Y_train.reshape(-1, 1)
@@ -226,8 +226,8 @@ def split_data(n_train, n_val, n_test, Repre, Target):
 
 def init_weights(m):
     if isinstance(m, nn.Linear):
-        torch.nn.init.xavier_uniform(m.weight)
-        m.bias.data.fill_(0.01)
+        torch.nn.init.xavier_uniform_(m.weight)
+        m.bias.data.fill_(0)
 
 
 class NeuralNetwork(nn.Module):
@@ -409,10 +409,10 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['8000']
+train_set = ['20000']
 op = 'EAT'
-n_val = 5000
-slatm_lens = [256, 512]
+n_val = 6000
+slatm_lens = [16, 32, 64, 128, 256, 512]
 
 iX, iY = prepare_data(op)
 
@@ -425,12 +425,12 @@ for slatm_len in slatm_lens:
     n_test = len(iY) - n_val
     print('Trainset= {:}'.format(train_set[0]))
     chdir(current_dir)
-    os.chdir(current_dir + '/withdft/slatm/eq/validation/')
+    os.chdir(current_dir + '/withdft/slatm/eq/validation/20k/')
     try:
         os.mkdir(str(slatm_len))
     except:
         pass
-    os.chdir(current_dir + '/withdft/slatm/eq/validation/' + str(slatm_len))
+    os.chdir(current_dir + '/withdft/slatm/eq/validation/20k/' + str(slatm_len))
 
     model, lr, loss, mae, test_loader = fit_model_dense(
         int(train_set[0]), int(n_val), int(n_test), iX, iY, patience, slatm_len

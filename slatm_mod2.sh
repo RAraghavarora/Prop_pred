@@ -1,16 +1,16 @@
 #!/bin/bash
 #SBATCH --time=144:00:00
 #SBATCH --partition=gpu2
-#SBATCH -J bob2
-#SBATCH --output=bob_hp2.out
-#SBATCH --error=bob_hp2.err
+#SBATCH -J ra-valid
+#SBATCH --output=valid.out
+#SBATCH --error=valid.err
 #SBATCH -A p_biomolecules
 #SBATCH --nodes=1                        # request 1 node
 #SBATCH --ntasks=8
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
-#SBATCH --mem-per-cpu=6000MB
-#SBATCH --gres=gpu:1                      # use 1 GPU per node (i.e. use one GPU per task)
+#SBATCH --mem-per-cpu=16GB
+#SBATCH --gres=gpu:2                      # use 1 GPU per node (i.e. use one GPU per task)
 
 
 ulimit -s unlimited
@@ -51,7 +51,8 @@ echo "training starts"
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-python3 $work/slatm_split2.py
+mkdir $work/withdft/slatm/eq/validation/20k/
+python3 $work/slatm_split_actual.py
 
 echo "training is over :-)"
 EXTSTAT=$?
