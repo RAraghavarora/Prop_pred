@@ -335,7 +335,7 @@ def test_nn(dataloader, model, loss_fn):
 
 
 def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
-    batch_size = 16
+    batch_size = 32
     X_train, Y_train, X_val, Y_val, X_test, Y_test = split_data(
         n_train, n_val, n_test, iX, iY
     )
