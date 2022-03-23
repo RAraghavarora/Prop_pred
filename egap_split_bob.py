@@ -351,7 +351,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     if torch.cuda.is_available():
         device = "cuda:0"
     model = NeuralNetwork().to(device)
-    model = nn.DataParallel(model)
+    model = nn.parallel.DistributedDataParallel(model)
     model.to(device)
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
@@ -475,6 +475,7 @@ for ii in range(len(train_set)):
 
     # Saving NN model
     torch.save(model, 'model.pt')
+    torch.save(model.state_dict(), 'model_dict.pt')
 
     # Saving results
     plotting_results(model, test_loader)

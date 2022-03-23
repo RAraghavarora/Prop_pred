@@ -5,10 +5,10 @@
 #SBATCH --output=bob_egap.out
 #SBATCH --error=bob_egap.err
 #SBATCH -A p_biomolecules
-#SBATCH -N 6
+#SBATCH -N 4
 
-#SBATCH -n 18
-#SBATCH --ntasks-per-node=3
+#SBATCH -n 8
+#SBATCH --ntasks-per-node=2
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
 #SBATCH --mem-per-cpu=10GB
