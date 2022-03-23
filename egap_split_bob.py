@@ -205,39 +205,39 @@ def split_data(n_train, n_val, n_test, Repre, Target):
 
     X_train0, X_val0, X_test0 = (
         torch.from_numpy(np.array(bob[:n_train])).float(),
-        torch.from_numpy(np.array(bob[-n_test - n_val: -n_test])).float(),
-        torch.from_numpy(np.array(bob[-n_test:])).float(),
+        torch.from_numpy(np.array(bob[n_train: n_train + n_val])).float(),
+        torch.from_numpy(np.array(bob[n_train + n_val:])).float(),
     )
 
     X_train1, X_val1, X_test1 = (
         torch.from_numpy(np.array(global_features[:n_train])).float(),
         torch.from_numpy(
-            np.array(global_features[-n_test - n_val: -n_test])).float(),
-        torch.from_numpy(np.array(global_features[-n_test:])).float(),
+            np.array(global_features[n_train: n_train + n_val])).float(),
+        torch.from_numpy(np.array(global_features[n_train + n_val:])).float(),
     )
 
     X_train2, X_val2, X_test2 = (
         torch.from_numpy(np.array(p9b[:n_train])).float(),
-        torch.from_numpy(np.array(p9b[-n_test - n_val: -n_test])).float(),
-        torch.from_numpy(np.array(p9b[-n_test:])).float(),
+        torch.from_numpy(np.array(p9b[n_train: n_train + n_val])).float(),
+        torch.from_numpy(np.array(p9b[n_train + n_val:])).float(),
     )
 
     X_train3, X_val3, X_test3 = (
         torch.from_numpy(np.array(p10b[:n_train])).float(),
-        torch.from_numpy(np.array(p10b[-n_test - n_val: -n_test])).float(),
-        torch.from_numpy(np.array(p10b[-n_test:])).float(),
+        torch.from_numpy(np.array(p10b[n_train: n_train + n_val])).float(),
+        torch.from_numpy(np.array(p10b[n_train + n_val:])).float(),
     )
 
     X_train4, X_val4, X_test4 = (
         torch.from_numpy(np.array(p11b[:n_train])).float(),
-        torch.from_numpy(np.array(p11b[-n_test - n_val: -n_test])).float(),
-        torch.from_numpy(np.array(p11b[-n_test:])).float(),
+        torch.from_numpy(np.array(p11b[n_train: n_train + n_val])).float(),
+        torch.from_numpy(np.array(p11b[n_train + n_val:])).float(),
     )
 
     Y_train, Y_val, Y_test = (
         torch.from_numpy(np.array(Target[:n_train])).float(),
-        torch.from_numpy(np.array(Target[-n_test - n_val: -n_test])).float(),
-        torch.from_numpy(np.array(Target[-n_test:])).float(),
+        torch.from_numpy(np.array(Target[n_train: n_train + n_val])).float(),
+        torch.from_numpy(np.array(Target[n_train + n_val:])).float(),
     )
 
     # Data standardization
@@ -436,7 +436,7 @@ def plotting_results(model, test_loader):
 print("Device count: ", torch.cuda.device_count())
 
 # prepare dataset
-train_set = ['30000', '1000', '20000', '2000', '4000', '10000']
+train_set = ['30000', '20000']
 op = 'EGAP'
 n_val = 5000
 
