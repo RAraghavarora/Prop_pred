@@ -419,7 +419,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
             lhis.write(
                 '{:8d}'.format(ii)
                 + '{:16f}'.format(lrates[ii])
-                + '{:16f}'.format(loss[ii])
+                + '{:16f}'.format(val_losses[ii])
                 + '{:16f}'.format(val_errors[ii])
                 + '\n'
             )
