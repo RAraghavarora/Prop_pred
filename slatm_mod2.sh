@@ -51,7 +51,6 @@ echo "training starts"
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-mkdir $work/withdft/slatm/eq/validation/20k/
 python3 $work/slatm_split_actual.py
 
 echo "training is over :-)"
