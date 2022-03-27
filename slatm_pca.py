@@ -64,7 +64,7 @@ def prepare_data(op):
 
     # data preparation
     try:
-        data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
+        data_dir = '/scratch/ws/1/medranos-TUDprojects/raghav/data/'
         # data_dir = '../'
         dataset = spk.data.AtomsData(
             data_dir + 'qm7x-eq-n1.db', load_only=properties)
@@ -407,7 +407,7 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['20000', '10000', '2000', '30000']
+train_set = ['2000', '30000']
 op = 'EAT'
 n_val = 6000
 

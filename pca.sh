@@ -19,7 +19,7 @@ module load Python/3.6.4-intel-2018a
 . /home/medranos/vdftb20/bin/activate
 module load cuDNN/8.0.4.30-CUDA-11.1.1
 
-work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
+work=/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred
 python3 $work/slatm_pca.py
 
 echo "training is over :-)"
