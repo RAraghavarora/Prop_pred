@@ -65,7 +65,7 @@ def prepare_data(op):
 
     # data preparation
     try:
-        data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
+        data_dir = '/scratch/ws/1/medranos-TUDprojects/raghav/data/'
         # data_dir = '../'
         dataset = spk.data.AtomsData(
             data_dir + 'qm7x-eq-n1.db', load_only=properties)
@@ -412,7 +412,7 @@ def plotting_results(model, test_loader):
 train_set = ['20000']
 op = 'EAT'
 n_val = 6000
-slatm_lens = [16, 32, 64, 128, 256, 512]
+slatm_lens = [128, 256, 512]
 
 iX, iY = prepare_data(op)
 
