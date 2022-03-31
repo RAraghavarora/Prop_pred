@@ -27,7 +27,7 @@ def parse_xyz_string(xyz):
 
 
 def prepare_data():
-    file = 'data/lip_filter.csv'
+    file = '/scratch/ws/1/medranos-TUDprojects/raghav/data/lip_filter.csv'
     target = []
     smiles = []
     with open(file, 'r') as file:
