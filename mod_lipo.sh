@@ -49,6 +49,8 @@ echo "training starts"
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
 work=/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred
+pip install rdkit-pypi
+mkdir $work/slatm/lipo
 python3 $work/lipo_slatm.py
 
 echo "training is over :-)"
