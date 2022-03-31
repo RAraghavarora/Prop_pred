@@ -43,7 +43,7 @@ def prepare_data():
         mol = Chem.MolFromSmiles(smile)
         at_nos = []
         for atom in mol.GetAtoms():
-            at_nos.append(atom.GetAtomic_Num())
+            at_nos.append(atom.GetAtomicNum())
         Z.append(at_nos)
 
         AllChem.EmbedMolecule(mol)
