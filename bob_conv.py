@@ -261,10 +261,9 @@ class NeuralNetwork(nn.Module):
         dlen = 17895
         desc, global_features, p10b, p11b = (
             x[:, 0:dlen],
-            x[:, dlen:dlen + 8],
-            x[:, dlen + 8:dlen + 11],
-            x[:, dlen + 11:dlen + 19],
-            x[:, dlen + 19:]
+            x[:, dlen:dlen + 9],
+            x[:, dlen + 9:dlen + 17],
+            x[:, dlen + 17:]
         )
 
         # Convolve the matrices
