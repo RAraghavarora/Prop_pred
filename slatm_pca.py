@@ -234,10 +234,10 @@ def init_weights(m):
 
 
 class NeuralNetwork(nn.Module):
-    def __init__(self):
+    def __init__(self, slatm_len):
         super(NeuralNetwork, self).__init__()
 
-        self.lin1 = nn.Linear(40 + 16, 16)
+        self.lin1 = nn.Linear(40 + slatm_len, 16)
         self.lin2 = nn.Linear(16, 4)
         self.lin4 = nn.Linear(4, 1)
         self.apply(init_weights)
@@ -245,7 +245,7 @@ class NeuralNetwork(nn.Module):
 
     def forward(self, x):
         layer1 = self.lin1(x)
-        layer1 = nn.functional.tanh(layer1)
+        layer1 = nn.functional.elu(layer1)
 
         layer2 = self.lin2(layer1)
         layer2 = nn.functional.elu(layer2)
@@ -296,7 +296,7 @@ def test_nn(dataloader, model, loss_fn):
     return test_loss, mae
 
 
-def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
     batch_size = 32
     trainX, trainY, valX, valY, testX, testY = split_data(
         n_train, n_val, n_test, iX, iY
@@ -325,7 +325,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     device = "cpu"
     if torch.cuda.is_available():
         device = "cuda:0"
-    model = NeuralNetwork().to(device)
+    model = NeuralNetwork(slatm_len).to(device)
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(
@@ -433,7 +433,7 @@ for red in reduction:
         os.chdir(current_dir + '/withdft/slatm/eq/pca/' + str(red))
 
         model, lr, loss, mae, test_loader = fit_model_dense(
-            int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
+            int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience, red
         )
 
         lhis = open('learning-history.dat', 'w')
