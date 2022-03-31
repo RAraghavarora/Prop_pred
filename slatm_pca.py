@@ -426,8 +426,8 @@ for red in reduction:
         chdir(current_dir)
         os.chdir(current_dir + '/withdft/slatm/eq/pca/')
         try:
-            os.mkdir(str(train_set[ii]))
             os.mkdir(str(red))
+            # os.mkdir(str(train_set[ii]))
         except:
             pass
         os.chdir(current_dir + '/withdft/slatm/eq/pca/' + str(red))
