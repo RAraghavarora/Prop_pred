@@ -1,15 +1,15 @@
 #!/bin/bash
 #SBATCH --time=96:00:00
 #SBATCH --partition=haswell                        # specify ml partition or gpu2 partition
-#SBATCH --nodes=8                        # request 1 node
-#SBATCH --ntasks=16
+#SBATCH --nodes=4                        # request 1 node
+#SBATCH --ntasks=8
 #SBATCH -J sdftb-eq
 #SBATCH --output=dip.out
 #SBATCH --error=dip.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=raghav.arora@ext.uni.lu
-#SBATCH --mem-per-cpu=16000 MB
+#SBATCH --mem-per-cpu=16000MB
 ulimit -s unlimited
 echo Starting Program
 module purge                                 # purge if you already have modules loaded
