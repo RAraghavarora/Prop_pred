@@ -62,7 +62,7 @@ def prepare_data(op):
 
     # data preparation
     try:
-        data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
+        data_dir = '/scratch/ws/1/medranos-TUDprojects/raghav/data/'
         # data_dir = '../'
         dataset = spk.data.AtomsData(
             data_dir + 'qm9-dftb.db', load_only=properties)
