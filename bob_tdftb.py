@@ -33,6 +33,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
+
 def complete_array(Aprop):
     Aprop2 = []
     for ii in range(len(Aprop)):
@@ -214,6 +215,7 @@ def prepare_data(op):
 
     return np.array(reps2), np.array(TPROP2)
 
+
 def split_data(n_train, n_val, n_test, Repre, Target):
     # Training
     print("Perfoming training")
@@ -234,6 +236,7 @@ def split_data(n_train, n_val, n_test, Repre, Target):
     Y_test = Y_test.reshape(-1, 1)
 
     return X_train, Y_train, X_val, Y_val, X_test, Y_test
+
 
 def init_weights(m):
     if isinstance(m, nn.Linear):
@@ -265,6 +268,7 @@ class NeuralNetwork(nn.Module):
         layer4 = self.lin4(layer2)
 
         return layer4
+
 
 def train_nn(dataloader, model, loss_fn, optimizer):
     # size = len(dataloader.dataset)
@@ -306,6 +310,7 @@ def test_nn(dataloader, model, loss_fn):
     test_loss /= num_batches
     mae /= num_batches
     return test_loss, mae
+
 
 def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     batch_size = 16
@@ -369,6 +374,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
         test_loader
     )
 
+
 def plotting_results(model, test_loader):
     # applying nn model
     with torch.no_grad():
@@ -413,7 +419,6 @@ def plotting_results(model, test_loader):
     plt.xlabel("True EGAP")
     plt.ylabel("Predicted EGAP")
     plt.savefig('Result.png', bbob_inches='tight')
-
 
 
 train_set = ['20000', '2000', '4000', '10000', '30000']
