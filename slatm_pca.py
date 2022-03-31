@@ -40,7 +40,7 @@ def complete_array(Aprop):
 # prepare train and test dataset
 
 
-def prepare_data(op):
+def prepare_data(op, red):
     #  # read dataset
     properties = [
         'RMSD',
@@ -131,7 +131,7 @@ def prepare_data(op):
     ]
 
     # Use PCA to reduce SLATM dimensionality
-    pca = PCA(n_components=16)
+    pca = PCA(n_components=red)
     slatm_pca = pca.fit_transform(slatm)
 
     TPROP2 = []
@@ -407,45 +407,47 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['2000', '30000']
+train_set = ['20000']
 op = 'EAT'
 n_val = 6000
+reduction = [32, 64, 128, 256]
 
-iX, iY = prepare_data(op)
+for red in reduction:
+    iX, iY = prepare_data(op, red)
 
-# fit model and plot learning curves for a patience
-patience = 500
+    # fit model and plot learning curves for a patience
+    patience = 500
 
-current_dir = os.getcwd()
+    current_dir = os.getcwd()
 
-for ii in range(len(train_set)):
-    n_test = len(iY) - n_val
-    print('Trainset= {:}'.format(train_set[ii]))
-    chdir(current_dir)
-    os.chdir(current_dir + '/withdft/slatm/eq/pca/')
-    try:
-        os.mkdir(str(train_set[ii]))
-    except:
-        pass
-    os.chdir(current_dir + '/withdft/slatm/eq/pca/' + str(train_set[ii]))
+    for ii in range(len(train_set)):
+        n_test = len(iY) - n_val
+        print('Trainset= {:}'.format(train_set[ii]))
+        chdir(current_dir)
+        os.chdir(current_dir + '/withdft/slatm/eq/pca/')
+        try:
+            os.mkdir(str(train_set[ii]))
+        except:
+            pass
+        os.chdir(current_dir + '/withdft/slatm/eq/pca/' + str(red))
 
-    model, lr, loss, mae, test_loader = fit_model_dense(
-        int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
-    )
-
-    lhis = open('learning-history.dat', 'w')
-    for ii in range(0, len(lr)):
-        lhis.write(
-            '{:8d}'.format(ii)
-            + '{:16f}'.format(lr[ii])
-            + '{:16f}'.format(loss[ii])
-            + '{:16f}'.format(mae[ii])
-            + '\n'
+        model, lr, loss, mae, test_loader = fit_model_dense(
+            int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
         )
-    lhis.close()
 
-    # Saving NN model
-    torch.save(model.state_dict, 'model_dict.pt')
+        lhis = open('learning-history.dat', 'w')
+        for ii in range(0, len(lr)):
+            lhis.write(
+                '{:8d}'.format(ii)
+                + '{:16f}'.format(lr[ii])
+                + '{:16f}'.format(loss[ii])
+                + '{:16f}'.format(mae[ii])
+                + '\n'
+            )
+        lhis.close()
 
-    # Saving results
-    plotting_results(model, test_loader)
+        # Saving NN model
+        torch.save(model.state_dict, 'model_dict.pt')
+
+        # Saving results
+        plotting_results(model, test_loader)
