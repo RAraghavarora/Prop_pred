@@ -258,6 +258,9 @@ class NeuralNetwork(nn.Module):
 
     def forward(self, x):
         # x = self.flatten(x)
+        device = "cpu"
+        if torch.cuda.is_available():
+            device = "cuda:0"
         dlen = 17895
         desc, global_features, p10b, p11b = (
             x[:, 0:dlen],
@@ -269,12 +272,12 @@ class NeuralNetwork(nn.Module):
         # Convolve the matrices
         input_vector = []
         for a_desc, a_glo, a_p10, a_p11 in zip(desc, global_features, p10b, p11b):
-            temp1 = np.convolve(a_p10, a_p11)
-            temp2 = np.convolve(a_glo, temp1)
-            temp3 = np.convolve(a_desc, temp2)
+            temp1 = np.convolve(a_p10.cpu(), a_p11.cpu())
+            temp2 = np.convolve(a_glo.cpu(), temp1)
+            temp3 = np.convolve(a_desc.cpu(), temp2)
             input_vector.append(temp3)
 
-        input_vector = torch.from_numpy(np.array(input_vector))
+        input_vector = torch.from_numpy(np.array(input_vector)).to(device)
 
         layer0 = self.lin0(input_vector)
         layer0 = nn.functional.elu(layer0)
