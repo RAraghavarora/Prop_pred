@@ -41,6 +41,7 @@ def prepare_data():
 
     for smile in smiles:
         mol = Chem.MolFromSmiles(smile)
+        mol = Chem.AddHs(mol)
         at_nos = []
         for atom in mol.GetAtoms():
             at_nos.append(atom.GetAtomicNum())
