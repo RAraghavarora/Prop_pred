@@ -273,9 +273,9 @@ def plotting_results(model, test_loader):
     plt.close()
 
 
-n_train = 3000
+n_train = 2000
 n_val = 500
-n_test = 592
+n_test = 1592
 patience = 100
 iX, iY = prepare_data()
 
