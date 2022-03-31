@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --time=96:00:00
 #SBATCH --partition=gpu2                        # specify ml partition or gpu2 partition
-#SBATCH --gres=gpu:4                      # use 1 GPU per node (i.e. use one GPU per task)
+#SBATCH --gres=gpu:3                      # use 1 GPU per node (i.e. use one GPU per task)
 #SBATCH --nodes=1                        # request 1 node
 #SBATCH --ntasks=8
 #SBATCH -J ra-lipo
@@ -48,7 +48,7 @@ echo "training starts"
 #export DFTB_COMMAND='mpiexec -n 1 /home/medranos/vdftb20/dftb/bin/dftb+'
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
-work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
+work=/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred
 python3 $work/lipo_slatm.py
 
 echo "training is over :-)"
