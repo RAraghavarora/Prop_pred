@@ -47,7 +47,7 @@ echo "training starts"
 #export DFTB_COMMAND='mpiexec -n 1 /home/medranos/vdftb20/dftb/bin/dftb+'
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
-work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
+work=/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred
 python3 $work/split_eat_eq.py
 
 echo "training is over :-)"

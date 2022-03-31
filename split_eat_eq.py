@@ -61,7 +61,7 @@ def prepare_data(op):
     # data preparation
     logging.info("get dataset")
     try:
-        data_dir = '/scratch/ws/1/medranos-DFTBprojects/raghav/data/'
+        data_dir = '/scratch/ws/1/medranos-TUDprojects/raghav/data/'
         dataset = spk.data.AtomsData(
             data_dir + 'qm7x-eq-n1.db', load_only=properties)
     except:
