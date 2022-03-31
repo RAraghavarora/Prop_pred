@@ -244,7 +244,7 @@ class NeuralNetwork(nn.Module):
         slatm = x[:, :17895]
         elec = x[:, 17895:]
         layer1 = self.lin1(slatm)
-        layer1 = nn.functional.tanh(layer1)
+        layer1 = nn.functional.elu(layer1)
 
         concat = torch.cat([layer1, elec], dim=1)
         # concat = nn.functional.elu(concat)
@@ -409,7 +409,7 @@ def plotting_results(model, test_loader):
 
 
 # prepare dataset
-train_set = ['2000', '30000']
+train_set = ['2000', '30000', '10000', '20000']
 op = 'EAT'
 n_val = 6000
 
