@@ -42,14 +42,20 @@ def prepare_data():
     for smile in smiles:
         mol = Chem.MolFromSmiles(smile)
         mol = Chem.AddHs(mol)
+        AllChem.EmbedMolecule(mol)
+        try:
+            pos = mol.GetConformer().GetPositions()
+        except:
+            print("Unable to write ", smile)
+            continue
+        xyz.append(pos)
         at_nos = []
         for atom in mol.GetAtoms():
             at_nos.append(atom.GetAtomicNum())
         Z.append(at_nos)
 
-        AllChem.EmbedMolecule(mol)
-        xyz_block = Chem.rdmolfiles.MolToXYZBlock(mol)
-        xyz.append(parse_xyz_string(xyz_block))
+        # xyz_block = Chem.rdmolfiles.MolToXYZBlock(mol)
+        # xyz.append(parse_xyz_string(xyz_block))
 
     n = len(Z)
     print(n)
