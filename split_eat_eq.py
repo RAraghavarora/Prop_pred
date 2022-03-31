@@ -9,7 +9,10 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error
 
-from qml.representations import generate_bob
+from qml.representations import (
+    get_slatm_mbtypes,
+    generate_slatm,
+)
 
 import logging
 import schnetpack as spk
@@ -114,17 +117,12 @@ def prepare_data(op):
     EGAP = np.array(EGAP)
     TPROP = np.array(TPROP)
 
-    bob_repr = np.array(
-        [
-            generate_bob(
-                Z[mol],
-                xyz[mol],
-                atomtypes={'C', 'H', 'N', 'O', 'S', 'Cl'},
-                asize={'C': 7, 'H': 16, 'N': 3, 'O': 3, 'S': 1, 'Cl': 2},
-            )
-            for mol in idx2
-        ]
-    )
+    mbtypes = get_slatm_mbtypes([Z[mol] for mol in idx2])
+    slatm = [
+        generate_slatm(mbtypes=mbtypes,
+                       nuclear_charges=Z[mol], coordinates=xyz[mol])
+        for mol in idx2
+    ]
 
     TPROP2 = []
     p1b, p2b, p11b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b = (
@@ -175,7 +173,7 @@ def prepare_data(op):
     global_features = []
     desc = []
     for ii in range(len(idx2)):
-        desc.append(bob_repr[ii])
+        desc.append(slatm[ii])
         global_features.append(
             np.concatenate(
                 (
@@ -203,39 +201,39 @@ def split_data(n_train, n_val, n_test, Repre, Target):
 
     X_train0, X_val0, X_test0 = (
         torch.from_numpy(np.array(desc[:n_train])).float(),
-        torch.from_numpy(np.array(desc[-n_test - n_val: -n_test])).float(),
-        torch.from_numpy(np.array(desc[-n_test:])).float(),
+        torch.from_numpy(np.array(desc[n_train: n_train + n_val])).float(),
+        torch.from_numpy(np.array(desc[n_train + n_val:])).float(),
     )
 
     X_train1, X_val1, X_test1 = (
         torch.from_numpy(np.array(global_features[:n_train])).float(),
         torch.from_numpy(
-            np.array(global_features[-n_test - n_val: -n_test])).float(),
-        torch.from_numpy(np.array(global_features[-n_test:])).float(),
+            np.array(global_features[n_train: n_train + n_val])).float(),
+        torch.from_numpy(np.array(global_features[n_train + n_val:])).float(),
     )
 
     X_train2, X_val2, X_test2 = (
         torch.from_numpy(np.array(p9b[:n_train])).float(),
-        torch.from_numpy(np.array(p9b[-n_test - n_val: -n_test])).float(),
-        torch.from_numpy(np.array(p9b[-n_test:])).float(),
+        torch.from_numpy(np.array(p9b[n_train: n_train + n_val])).float(),
+        torch.from_numpy(np.array(p9b[n_train + n_val:])).float(),
     )
 
     X_train3, X_val3, X_test3 = (
         torch.from_numpy(np.array(p10b[:n_train])).float(),
-        torch.from_numpy(np.array(p10b[-n_test - n_val: -n_test])).float(),
-        torch.from_numpy(np.array(p10b[-n_test:])).float(),
+        torch.from_numpy(np.array(p10b[n_train: n_train + n_val])).float(),
+        torch.from_numpy(np.array(p10b[n_train + n_val:])).float(),
     )
 
     X_train4, X_val4, X_test4 = (
         torch.from_numpy(np.array(p11b[:n_train])).float(),
-        torch.from_numpy(np.array(p11b[-n_test - n_val: -n_test])).float(),
-        torch.from_numpy(np.array(p11b[-n_test:])).float(),
+        torch.from_numpy(np.array(p11b[n_train: n_train + n_val])).float(),
+        torch.from_numpy(np.array(p11b[n_train + n_val:])).float(),
     )
 
     Y_train, Y_val, Y_test = (
         torch.from_numpy(np.array(Target[:n_train])).float(),
-        torch.from_numpy(np.array(Target[-n_test - n_val: -n_test])).float(),
-        torch.from_numpy(np.array(Target[-n_test:])).float(),
+        torch.from_numpy(np.array(Target[n_train: n_train + n_val])).float(),
+        torch.from_numpy(np.array(Target[n_train + n_val:])).float(),
     )
 
     # Data standardization
@@ -256,7 +254,7 @@ class NeuralNetwork(nn.Module):
     def __init__(self, l0=16, l1=16, l2=2, l3=16, l4=2, l5=16):
         super(NeuralNetwork, self).__init__()
 
-        self.lin0 = nn.Linear(528, l0)
+        self.lin0 = nn.Linear(17895, l0)
         self.lin1 = nn.Linear(8, l1)
         self.lin2 = nn.Linear(3, l2)
         self.lin3 = nn.Linear(8, l3)
@@ -270,7 +268,15 @@ class NeuralNetwork(nn.Module):
 
     def forward(self, x):
         # x = self.flatten(x)
-        desc, global_features, p9b, p10b, p11b = x[:, 0:528], x[:, 528:528 + 8], x[:, 528 + 8:528 + 11], x[:, 528 + 11:528 + 19], x[:, 528 + 19:]
+        dlen = 17895
+        desc, global_features, p9b, p10b, p11b = (
+            x[:, 0:dlen],
+            x[:, dlen:dlen + 8],
+            x[:, dlen + 8:dlen + 11],
+            x[:, dlen + 11:dlen + 19],
+            x[:, dlen + 19:]
+        )
+
         layer0 = self.lin0(desc)
         layer0 = nn.functional.elu(layer0)
         layer1 = self.lin1(global_features)
@@ -446,12 +452,12 @@ for ii in range(len(train_set)):
     n_test = len(iY) - n_val
     print('Trainset= {:}'.format(train_set[ii]))
     chdir(current_dir)
-    os.chdir(current_dir + '/withdft/split/eq/')
+    os.chdir(current_dir + '/withdft/split/eq/slatm')
     try:
         os.mkdir(str(train_set[ii]))
     except:
         pass
-    os.chdir(current_dir + '/withdft/split/eq/' + str(train_set[ii]))
+    os.chdir(current_dir + '/withdft/split/eq/slatm/' + str(train_set[ii]))
 
     model, lr, loss, mae, test_loader = fit_model_dense(
         int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience

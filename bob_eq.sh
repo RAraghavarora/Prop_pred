@@ -3,7 +3,7 @@
 #SBATCH --partition=haswell                        # specify ml partition or gpu2 partition
 #SBATCH --nodes=8                        # request 1 node
 #SBATCH --ntasks=16
-#SBATCH -J split_bob_eq
+#SBATCH -J sdftb-eq
 #SBATCH --output=dip.out
 #SBATCH --error=dip.err
 #SBATCH -A p_biomolecules
