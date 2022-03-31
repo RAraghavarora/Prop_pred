@@ -441,7 +441,6 @@ for ii in range(len(train_set)):
         os.mkdir(str(train_set[ii]))
     except:
         pass
-    os.mkdir(str(train_set[ii]))
     os.chdir(current_dir + '/withdft/bob/eq/' + str(train_set[ii]))
 
     model, lr, loss, mae, test_loader = fit_model_dense(
