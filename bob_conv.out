@@ -1,0 +1,28 @@
+Starting Program
+training starts
+*** JOB 'bob_conv' (ID: 24789774) ***
+*** taurusi2048: 1 node(s),  8 core(s) in total ***
+*** Submitted in: /lustre/scratch2/ws/1/medranos-TUDprojects/raghav/Prop_pred ***
+
+*** [TIMING] start Mar 31, 22:43:36 ***
+*** [TIMING] walltime 5-23:59:49 [143:59:49] ends Apr 06, 22:43:25 ***
+
+
+
+JOB OUTPUT:
+###########################################################################
+
+training starts
+Device count:  2
+41537
+Trainset= 1000
+Perfoming training
+Epoch 1
+-------------------------------
+training is over :-)
+
+###########################################################################
+
+*** [TIMING] end Mar 31, 23:16:02 ***
+*** [TIMING] duration 32:37[0:32:26] ***
+
