@@ -1,4 +1,4 @@
-# NN model
+import math
 import sys
 import os
 import pdb
@@ -22,6 +22,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from sklearn.model_selection import KFold
 
 
 # monitor the learning rate
@@ -254,6 +255,41 @@ class NeuralNetwork(nn.Module):
         return layer4
 
 
+class EarlyStopping():
+    """
+    Early stopping to stop the training when the loss does not improve after
+    certain epochs.
+    """
+
+    def __init__(self, patience=1000, min_delta=0.005):
+        """
+        :param patience: how many epochs to wait before stopping when loss is
+               not improving
+        :param min_delta: minimum difference between new loss and old loss for
+               new loss to be considered as an improvement
+        """
+        self.patience = patience
+        self.min_delta = min_delta
+        self.counter = 0
+        self.best_loss = None
+        self.early_stop = False
+
+    def __call__(self, val_loss):
+        if self.best_loss is None:
+            self.best_loss = val_loss
+        elif self.best_loss - val_loss > self.min_delta:
+            self.best_loss = val_loss
+            # reset counter if validation loss improves
+            self.counter = 0
+        elif self.best_loss - val_loss < self.min_delta:
+            self.counter += 1
+            print(
+                f"INFO: Early stopping counter {self.counter} of {self.patience}")
+            if self.counter >= self.patience:
+                print('INFO: Early stopping')
+                self.early_stop = True
+
+
 def train_nn(dataloader, model, loss_fn, optimizer):
     # size = len(dataloader.dataset)
     model.train()
@@ -272,6 +308,52 @@ def train_nn(dataloader, model, loss_fn, optimizer):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+
+
+def plotting_results(model, test_loader, fold):
+    # applying nn model
+    with torch.no_grad():
+        x = test_loader.dataset.tensors[0].cuda()
+        pred = model(x)
+        y = test_loader.dataset.tensors[1].cuda()
+        loss_fn = nn.MSELoss()
+        test_loss = loss_fn(pred, y).item()
+        mae_loss = torch.nn.L1Loss(reduction='mean')
+        mae = mae_loss(pred, y)
+
+    STD_PROP = float(pred.std())
+
+    out2 = open(f'errors_test_{fold}.dat', 'w')
+    out2.write(
+        '{:>24}'.format(STD_PROP)
+        + '{:>24}'.format(mae)
+        + '{:>24}'.format(test_loss)
+        + "\n"
+    )
+    out2.close()
+
+    # writing ouput for comparing values
+    dtest = np.array(pred.cpu() - y.cpu())
+    Y_test = y.reshape(-1, 1)
+    format_list1 = ['{:16f}' for item1 in Y_test[0]]
+    s = ' '.join(format_list1)
+    ctest = open(f'comp-test_{fold}.dat', 'w')
+    for ii in range(0, len(pred)):
+        ctest.write(
+            s.format(*pred[ii]) + s.format(*Y_test[ii]) + s.format(*dtest[ii]) + '\n'
+        )
+    ctest.close()
+
+    # Save as a plot
+    plt.plot(pred.cpu(), y.cpu(), '.')
+    mini = min(y).item()
+    maxi = max(y).item()
+    temp = np.arange(mini, maxi, 0.1)
+    plt.plot(temp, temp)
+    plt.xlabel("True EGAP")
+    plt.ylabel("Predicted EGAP")
+    plt.savefig(f'Result{fold}.png')
+    plt.close()
 
 
 def test_nn(dataloader, model, loss_fn):
@@ -296,7 +378,7 @@ def test_nn(dataloader, model, loss_fn):
     return test_loss, mae
 
 
-def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     batch_size = 32
     trainX, trainY, valX, valY, testX, testY = split_data(
         n_train, n_val, n_test, iX, iY
@@ -325,89 +407,69 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     device = "cpu"
     if torch.cuda.is_available():
         device = "cuda:0"
-    model = NeuralNetwork().to(device)
-    loss_fn = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
-    scheduler = ReduceLROnPlateau(
-        optimizer, factor=0.50, patience=100, min_lr=1e-6)
 
-    if torch.cuda.device_count() > 1:
-        model = nn.DataParallel(model)
+    kfold = KFold(n_splits=split, shuffle=True)
 
-    epochs = 20000
-    val_losses, val_errors, lrates = [], [], []
-    for t in range(epochs):
-        print(f"Epoch {t+1}\n-------------------------------")
-        train_nn(train_loader, model, loss_fn, optimizer)
-        valid_loss, valid_mae = test_nn(valid_loader, model, loss_fn)
-        print(f"Validation MAE: {valid_mae}\n")
-        scheduler.step(valid_mae)
-        val_losses.append(valid_loss)
-        val_errors.append(valid_mae)
-        lrates.append(optimizer.param_groups[0]['lr'])
+    for fold, (train_ids, test_ids) in enumerate(kfold.split(train)):
+        print(f'FOLD {fold}')
+        train_subsampler = torch.utils.data.SubsetRandomSampler(train_ids)
+        train_loader = torch.utils.data.DataLoader(
+            train, batch_size=batch_size, sampler=train_subsampler)
 
-    test_mae = test_nn(test_loader, model, loss_fn)
-    print(
-        f"Finished training on train_size={n_train}\n Testing MAE = {test_mae}")
-
-    return (
-        model,
-        lrates,
-        val_losses,
-        val_errors,
-        test_loader
-    )
-
-
-def plotting_results(model, test_loader):
-    # applying nn model
-    with torch.no_grad():
-        x = test_loader.dataset.tensors[0].cuda()
-        pred = model(x)
-        y = test_loader.dataset.tensors[1].cuda()
+        model = NeuralNetwork().to(device)
         loss_fn = nn.MSELoss()
-        test_loss = loss_fn(pred, y).item()
-        mae_loss = torch.nn.L1Loss(reduction='mean')
-        mae = mae_loss(pred, y)
+        optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+        scheduler = ReduceLROnPlateau(
+            optimizer, factor=0.50, patience=100, min_lr=1e-6)
 
-    STD_PROP = float(pred.std())
+        if torch.cuda.device_count() > 1:
+            model = nn.DataParallel(model)
 
-    out2 = open('errors_test.dat', 'w')
-    out2.write(
-        '{:>24}'.format(STD_PROP)
-        + '{:>24}'.format(mae)
-        + '{:>24}'.format(test_loss)
-        + "\n"
-    )
-    out2.close()
+        early_stopping = EarlyStopping()
 
-    # writing ouput for comparing values
-    dtest = np.array(pred.cpu() - y.cpu())
-    Y_test = y.reshape(-1, 1)
-    format_list1 = ['{:16f}' for item1 in Y_test[0]]
-    s = ' '.join(format_list1)
-    ctest = open('comp-test.dat', 'w')
-    for ii in range(0, len(pred)):
-        ctest.write(
-            s.format(*pred[ii]) + s.format(*Y_test[ii]) +
-            s.format(*dtest[ii]) + '\n'
-        )
-    ctest.close()
+        epochs = 20000
+        val_losses, val_errors, lrates = [], [], []
+        for t in range(epochs):
+            print(f"Epoch {t+1}\n-------------------------------")
+            train_nn(train_loader, model, loss_fn, optimizer)
+            valid_loss, valid_mae = test_nn(valid_loader, model, loss_fn)
+            print(f"Validation MAE: {valid_mae}\n")
+            scheduler.step(valid_mae)
+            val_losses.append(valid_loss)
+            val_errors.append(valid_mae)
+            lrates.append(optimizer.param_groups[0]['lr'])
+            early_stopping(valid_loss)
+            if early_stopping.early_stop:
+                warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+                break
 
-    # Save as a plot
-    plt.plot(pred.cpu(), y.cpu(), '.')
-    mini = min(y).item()
-    maxi = max(y).item()
-    temp = np.arange(mini, maxi, 0.1)
-    plt.plot(temp, temp)
-    plt.xlabel("True EGAP")
-    plt.ylabel("Predicted EGAP")
-    plt.savefig('Result.png')
-    plt.close()
+        torch.save(model.state_dict(), f'model_dict_{fold}.pt')
+        lhis = open(f'learning-history_{fold}.dat', 'w')
+        for ii in range(0, len(lrates)):
+            lhis.write(
+                '{:8d}'.format(ii)
+                + '{:16f}'.format(lrates[ii])
+                + '{:16f}'.format(val_losses[ii])
+                + '{:16f}'.format(val_errors[ii])
+                + '\n'
+            )
+        lhis.close()
+        plotting_results(model, test_loader, fold)
 
 
-# prepare dataset
-train_set = ['1000', '4000']
+train_set = ['1000', '4000', '16000']
+splits = {
+    500: 22,
+    1000: 12,
+    2000: 10,
+    4000: 8,
+    8000: 4,
+    16000: 2,
+    40000: 1,
+    60000: 1,
+    80000: 1
+}
+
 op = 'EAT'
 n_val = 6000
 
@@ -428,23 +490,7 @@ for ii in range(len(train_set)):
         pass
     os.chdir(current_dir + '/withdft/slatm/qm9/' + str(train_set[ii]))
 
-    model, lr, loss, mae, test_loader = fit_model_dense(
-        int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience
-    )
+    split = splits[str(train_set[ii])]
+    n_train = math.ceil(int(train_set[ii]) * split / (split - 1))
 
-    lhis = open('learning-history.dat', 'w')
-    for ii in range(0, len(lr)):
-        lhis.write(
-            '{:8d}'.format(ii)
-            + '{:16f}'.format(lr[ii])
-            + '{:16f}'.format(loss[ii])
-            + '{:16f}'.format(mae[ii])
-            + '\n'
-        )
-    lhis.close()
-
-    # Saving NN model
-    torch.save(model, 'model.pt')
-
-    # Saving results
-    plotting_results(model, test_loader)
+    fit_model_dense(int(n_train), int(n_val), int(n_test), iX, iY, patience)
