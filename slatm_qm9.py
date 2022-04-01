@@ -493,4 +493,4 @@ for ii in range(len(train_set)):
     split = splits[int(train_set[ii])]
     n_train = math.ceil(int(train_set[ii]) * split / (split - 1))
 
-    fit_model_dense(int(n_train), int(n_val), int(n_test), iX, iY, patience)
+    fit_model_dense(int(n_train), int(n_val), int(n_test), iX, iY, patience, split)
