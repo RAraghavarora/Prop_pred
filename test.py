@@ -332,12 +332,12 @@ def test_nn(dataloader, model, loss_fn):
 
 def fit_model_dense(n_train, n_val, n_test, iX, iY, patience):
     batch_size = 16
-    X_train, Y_train, X_val, Y_val, X_test, Y_test = split_data(
-        n_train, n_val, n_test, iX, iY
-    )
-    train = torch.utils.data.TensorDataset(torch.cat(X_train, dim=1), Y_train)
-    test = torch.utils.data.TensorDataset(torch.cat(X_test, dim=1), Y_test)
-    valid = torch.utils.data.TensorDataset(torch.cat(X_val, dim=1), Y_val)
+    # X_train, Y_train, X_val, Y_val, X_test, Y_test = split_data(
+    #     n_train, n_val, n_test, iX, iY
+    # )
+    train = torch.utils.data.TensorDataset(iX[:n_train], iY[:n_train])
+    test = torch.utils.data.TensorDataset(iX[:50], iY[:50])
+    valid = torch.utils.data.TensorDataset(iX, iY)
     # data loader
     train_loader = DataLoader(train, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
