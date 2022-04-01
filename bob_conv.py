@@ -249,7 +249,7 @@ class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
 
-        self.lin0 = nn.Linear(565, 16)
+        self.lin0 = nn.Linear(17932, 16)
         self.lin1 = nn.Linear(16, 4)
         self.lin2 = nn.Linear(4, 1)
 
