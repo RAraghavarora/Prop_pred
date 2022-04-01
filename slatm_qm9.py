@@ -490,7 +490,7 @@ for ii in range(len(train_set)):
         pass
     os.chdir(current_dir + '/withdft/slatm/qm9/' + str(train_set[ii]))
 
-    split = splits[str(train_set[ii])]
+    split = splits[int(train_set[ii])]
     n_train = math.ceil(int(train_set[ii]) * split / (split - 1))
 
     fit_model_dense(int(n_train), int(n_val), int(n_test), iX, iY, patience)
