@@ -258,9 +258,10 @@ class NeuralNetwork(nn.Module):
 
     def forward(self, x):
         # x = self.flatten(x)
+        warnings.warn(str(x.device))
         device = "cpu"
         if torch.cuda.is_available():
-            device = "cuda:0"
+            device = "cuda"
         dlen = 17895
         desc, global_features, p10b, p11b = (
             x[:, 0:dlen],
