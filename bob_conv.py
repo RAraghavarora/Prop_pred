@@ -429,7 +429,7 @@ print("Device count: ", torch.cuda.device_count())
 
 # prepare dataset
 train_set = ['1000', '20000', '4000']
-op = 'EGAP'
+op = 'EAT'
 n_val = 5000
 
 iX, iY = prepare_data(op)
