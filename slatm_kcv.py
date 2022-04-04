@@ -408,12 +408,16 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
     # data loader
 
-    epochs = 15000
-    kfold = KFold(n_splits=split, shuffle=True)
+    epochs = 20000
+    seeds = [2 ^ ij for ij in range(1, 22)]
 
-    # Split only the training set into k-folds
-    for fold, (train_ids, test_ids) in enumerate(kfold.split(train)):
+    for fold in range(0, split):
         print(f'FOLD {fold}')
+        seed = seeds[fold]
+        temp_id = np.arange(n_train)
+        np.random.seed(seed)
+        train_ids = np.random.permutation(temp_id)
+
         train_subsampler = torch.utils.data.SubsetRandomSampler(train_ids)
         train_loader = torch.utils.data.DataLoader(
             train, batch_size=batch_size, sampler=train_subsampler)
@@ -480,8 +484,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     )
 
 
-train_set = [4000, 8000, 16000, 25000]
-splits = [8, 4, 2]
+train_set = [500, 1000]
+splits = [22, 10]
 op = 'EAT'
 n_val = 6000
 
@@ -495,15 +499,15 @@ for ii in range(len(train_set)):
     n_test = len(iY) - n_val
     print('Trainset= {:}'.format(train_set[ii]))
     chdir(current_dir)
-    os.chdir(current_dir + '/withdft/kcv/')
+    os.chdir(current_dir + '/withdft/kcv/PureRandom')
     try:
         os.mkdir(str(train_set[ii]))
     except:
         pass
-    os.chdir(current_dir + '/withdft/kcv/' + str(train_set[ii]))
+    os.chdir(current_dir + '/withdft/kcv/PureRandom' + str(train_set[ii]))
 
     split = splits[ii]
-    n_train = math.ceil(int(train_set[ii]) * split / (split - 1))
+    n_train = int(train_set[ii])
 
     model, results = fit_model_dense(
         n_train, n_val, n_test, iX, iY, patience, split
