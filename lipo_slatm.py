@@ -33,6 +33,9 @@ def prepare_data():
     with open(file, 'r') as file:
         filecontent = csv.reader(file)
         for row in filecontent:
+            size = row[3]
+            if size > 90:
+                continue
             smiles.append(row[2])
             target.append(float(row[1]))
 
@@ -253,13 +256,12 @@ def plotting_results(model, test_loader):
     # writing ouput for comparing values
     dtest = np.array(pred.cpu() - y.cpu())
     Y_test = y.reshape(-1, 1)
-    format_list1 = ['{:16f}' for item1 in Y_test[0]]
-    s = ' '.join(format_list1)
     ctest = open('comp-test.dat', 'w')
     for ii in range(0, len(pred)):
         ctest.write(
-            s.format(*pred[ii]) + s.format(*Y_test[ii]) + s.format(*dtest[ii]) + '\n')
+            '{:16f}'.format(pred[ii]) + '{:16f}'.format(Y_test[ii]) + '{:16f}'.format(dtest[ii]) + '\n')
     ctest.close()
+
 
     # Save as a plot
     plt.plot(pred.cpu(), y.cpu(), '.')
@@ -273,9 +275,9 @@ def plotting_results(model, test_loader):
     plt.close()
 
 
-n_train = 2000
+n_train = 3000
 n_val = 500
-n_test = 1592
+n_test = 592
 patience = 100
 iX, iY = prepare_data()
 
