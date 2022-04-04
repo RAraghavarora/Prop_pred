@@ -410,15 +410,15 @@ def plotting_results(model, test_loader):
 train_set = ['20000']
 op = 'EAT'
 n_val = 6000
-reduction = [32, 64, 128, 256]
+reduction = [64, 128, 256]
 
+current_dir = os.getcwd()
 for red in reduction:
     iX, iY = prepare_data(op, red)
 
     # fit model and plot learning curves for a patience
     patience = 500
 
-    current_dir = os.getcwd()
 
     for ii in range(len(train_set)):
         n_test = len(iY) - n_val
