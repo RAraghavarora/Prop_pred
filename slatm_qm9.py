@@ -492,7 +492,7 @@ for ii in range(len(train_set)):
         os.mkdir(str(train_set[ii]))
     except:
         pass
-    os.chdir(current_dir + '/withdft/slatm/qm9/PureRandom' + str(train_set[ii]))
+    os.chdir(current_dir + '/withdft/slatm/qm9/PureRandom/' + str(train_set[ii]))
 
     split = splits[int(train_set[ii])]
     n_train = int(train_set[ii])
