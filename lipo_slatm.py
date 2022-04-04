@@ -34,7 +34,7 @@ def prepare_data():
         filecontent = csv.reader(file)
         for row in filecontent:
             size = row[3]
-            if size > 90:
+            if int(size) > 90:
                 continue
             smiles.append(row[2])
             target.append(float(row[1]))
