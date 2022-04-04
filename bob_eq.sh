@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time=96:00:00
+#SBATCH --time=144:00:00
 #SBATCH --partition=haswell                        # specify ml partition or gpu2 partition
 #SBATCH --nodes=4                        # request 1 node
 #SBATCH --ntasks=8
