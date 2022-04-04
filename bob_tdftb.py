@@ -421,7 +421,7 @@ def plotting_results(model, test_loader):
     plt.savefig('Result.png', bbob_inches='tight')
 
 
-train_set = ['20000', '2000', '4000', '10000', '30000']
+train_set = ['10000', '30000']
 op = 'EAT'
 n_val = 5000
 
