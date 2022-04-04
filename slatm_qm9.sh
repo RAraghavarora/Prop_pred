@@ -4,13 +4,13 @@
 #SBATCH --gres=gpu:3                      # use 1 GPU per node (i.e. use one GPU per task)
 #SBATCH --nodes=1                        # request 1 node
 #SBATCH --ntasks=8
-#SBATCH -J ra-qm9
-#SBATCH --output=slatm.out
-#SBATCH --error=slatm.err
+#SBATCH -J Pure-random
+#SBATCH --output=rand.out
+#SBATCH --error=rand.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
-#SBATCH --mem-per-gpu=20GB
+#SBATCH --mem-per-gpu=16GB
 ulimit -s unlimited
 echo Starting Program
 module purge                                 # purge if you already have modules loaded
@@ -20,6 +20,7 @@ module load Python/3.6.4-intel-2018a
 module load cuDNN/8.0.4.30-CUDA-11.1.1
 
 work=/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred
+mkdir $work/withdft/slatm/qm9/PureRandom/
 python3 $work/slatm_qm9.py
 
 echo "training is over :-)"
