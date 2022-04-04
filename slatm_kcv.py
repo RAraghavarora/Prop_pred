@@ -303,7 +303,8 @@ class EarlyStopping():
     Early stopping to stop the training when the loss does not improve after
     certain epochs.
     """
-    def __init__(self, patience=500, min_delta=0.001):
+
+    def __init__(self, patience=1000, min_delta=0.001):
         """
         :param patience: how many epochs to wait before stopping when loss is
                not improving
@@ -315,6 +316,7 @@ class EarlyStopping():
         self.counter = 0
         self.best_loss = None
         self.early_stop = False
+
     def __call__(self, val_loss):
         if self.best_loss == None:
             self.best_loss = val_loss
@@ -324,7 +326,8 @@ class EarlyStopping():
             self.counter = 0
         elif self.best_loss - val_loss < self.min_delta:
             self.counter += 1
-            print(f"INFO: Early stopping counter {self.counter} of {self.patience}")
+            print(
+                f"INFO: Early stopping counter {self.counter} of {self.patience}")
             if self.counter >= self.patience:
                 print('INFO: Early stopping')
                 self.early_stop = True
@@ -462,8 +465,6 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
 
         plotting_results(model, test_loader, fold)
 
-
-
     print(f'K-FOLD CROSS VALIDATION RESULTS FOR {split} FOLDS')
     print('--------------------------------')
     print(results)
@@ -479,12 +480,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     )
 
 
-
-
-
-# prepare dataset
-train_set = ['1000', '2000']
-splits = [12, 10]
+train_set = [4000, 8000, 16000, 25000]
+splits = [8, 4, 2]
 op = 'EAT'
 n_val = 6000
 
@@ -512,7 +509,7 @@ for ii in range(len(train_set)):
         n_train, n_val, n_test, iX, iY, patience, split
     )
     outfile = open('output.txt', 'w')
-    import json 
+    import json
     outfile.write(json.dumps(results))
     outfile.close()
     # lhis = open('learning-history.dat', 'w')
