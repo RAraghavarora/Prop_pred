@@ -202,19 +202,25 @@ def prepare_data(op):
     return np.array(reps2), np.array(TPROP2)
 
 
-def split_data(n_train, n_val, n_test, Repre, Target):
+def split_data(n_train, n_val, n_test, Repre, Target, seed):
     # Training
     print("Perfoming training")
+    Repre = np.array(Repre)
+    Target = np.array(Target)
+
+    idx = np.arange(len(Target))
+    np.random.seed(seed)
+    idx2 = np.random.permutation(idx)
 
     X_train, X_val, X_test = (
-        np.array(Repre[:n_train]),
-        np.array(Repre[n_train: n_train + n_val]),
-        np.array(Repre[n_train + n_val:]),
+        Repre[idx2[:n_train]],
+        Repre[idx2[n_train: n_train + n_val]],
+        Repre[idx2[n_train + n_val:]],
     )
     Y_train, Y_val, Y_test = (
-        np.array(Target[:n_train]),
-        np.array(Target[n_train: n_train + n_val]),
-        np.array(Target[n_train + n_val:]),
+        Target[idx2[:n_train]],
+        Target[idx2[n_train: n_train + n_val]],
+        Target[idx2[n_train + n_val:]],
     )
 
     Y_train = Y_train.reshape(-1, 1)
@@ -384,44 +390,36 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     batch_size = 32
     results = {}
 
-    trainX, trainY, valX, valY, testX, testY = split_data(
-        n_train, n_val, n_test, iX, iY
-    )
-
-    X_train, X_val, X_test = (
-        torch.from_numpy(trainX).float(),
-        torch.from_numpy(valX).float(),
-        torch.from_numpy(testX).float(),
-    )
-
-    Y_train, Y_val, Y_test = (
-        torch.from_numpy(trainY).float(),
-        torch.from_numpy(valY).float(),
-        torch.from_numpy(testY).float(),
-    )
-
-    train = torch.utils.data.TensorDataset(X_train, Y_train)
-    test = torch.utils.data.TensorDataset(X_test, Y_test)
-    valid = torch.utils.data.TensorDataset(X_val, Y_val)
-    # data loader
-    test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
-    valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
-    # data loader
-
     epochs = 20000
     seeds = [2 ^ ij for ij in range(1, 22)]
 
     for fold in range(0, split):
         print(f'FOLD {fold}')
         seed = seeds[fold]
-        temp_id = np.arange(n_train)
-        np.random.seed(seed)
-        train_ids = np.random.permutation(temp_id)
 
-        train_subsampler = torch.utils.data.SubsetRandomSampler(train_ids)
-        train_loader = torch.utils.data.DataLoader(
-            train, batch_size=batch_size, sampler=train_subsampler)
-        # Instead of (1/k)th split, we use the whole dataset for testing
+        trainX, trainY, valX, valY, testX, testY = split_data(
+            n_train, n_val, n_test, iX, iY, seed
+        )
+
+        X_train, X_val, X_test = (
+            torch.from_numpy(trainX).float(),
+            torch.from_numpy(valX).float(),
+            torch.from_numpy(testX).float(),
+        )
+
+        Y_train, Y_val, Y_test = (
+            torch.from_numpy(trainY).float(),
+            torch.from_numpy(valY).float(),
+            torch.from_numpy(testY).float(),
+        )
+
+        train = torch.utils.data.TensorDataset(X_train, Y_train)
+        test = torch.utils.data.TensorDataset(X_test, Y_test)
+        valid = torch.utils.data.TensorDataset(X_val, Y_val)
+        # data loader
+        train_loader = DataLoader(train, batch_size=batch_size, shuffle=False)
+        test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
+        valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
 
         device = "cpu"
         if torch.cuda.is_available():
