@@ -259,7 +259,7 @@ def plotting_results(model, test_loader):
     ctest = open('comp-test.dat', 'w')
     for ii in range(0, len(pred)):
         ctest.write(
-            '{:16f}'.format(pred[ii]) + '{:16f}'.format(Y_test[ii]) + '{:16f}'.format(dtest[ii]) + '\n')
+            '{}'.format(pred[ii]) + '{}'.format(Y_test[ii]) + '{}'.format(dtest[ii]) + '\n')
     ctest.close()
 
 
