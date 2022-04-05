@@ -201,28 +201,6 @@ def prepare_data(op):
     return np.array(reps2), np.array(TPROP2)
 
 
-def split_data(n_train, n_val, n_test, Repre, Target):
-    # Training
-    print("Perfoming training")
-
-    X_train, X_val, X_test = (
-        np.array(Repre[:n_train]),
-        np.array(Repre[n_train: n_train + n_val]),
-        np.array(Repre[n_train + n_val:]),
-    )
-    Y_train, Y_val, Y_test = (
-        np.array(Target[:n_train]),
-        np.array(Target[n_train: n_train + n_val]),
-        np.array(Target[n_train + n_val:]),
-    )
-
-    Y_train = Y_train.reshape(-1, 1)
-    Y_val = Y_val.reshape(-1, 1)
-    Y_test = Y_test.reshape(-1, 1)
-
-    return X_train, Y_train, X_val, Y_val, X_test, Y_test
-
-
 def init_weights(m):
     if isinstance(m, nn.Linear):
         torch.nn.init.xavier_uniform(m.weight)
@@ -378,32 +356,37 @@ def test_nn(dataloader, model, loss_fn):
     return test_loss, mae
 
 
-def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
-    batch_size = 32
-    trainX, trainY, valX, valY, testX, testY = split_data(
-        n_train, n_val, n_test, iX, iY
-    )
+def split_data(n_train, n_val, n_test, Repre, Target, seed):
+    # Training
+    print("Perfoming training")
+
+    Repre = np.array(Repre)
+    Target = np.array(Target)
+
+    idx = np.arange(len(Target))
+    np.random.seed(seed)
+    idx2 = np.random.permutation(idx)
 
     X_train, X_val, X_test = (
-        torch.from_numpy(trainX).float(),
-        torch.from_numpy(valX).float(),
-        torch.from_numpy(testX).float(),
+        Repre[idx2[:n_train]],
+        Repre[idx2[n_train: n_train + n_val]],
+        Repre[idx2[n_train + n_val:]],
     )
-
     Y_train, Y_val, Y_test = (
-        torch.from_numpy(trainY).float(),
-        torch.from_numpy(valY).float(),
-        torch.from_numpy(testY).float(),
+        Target[idx2[:n_train]],
+        Target[idx2[n_train: n_train + n_val]],
+        Target[idx2[n_train + n_val:]],
     )
 
-    train = torch.utils.data.TensorDataset(X_train, Y_train)
-    test = torch.utils.data.TensorDataset(X_test, Y_test)
-    valid = torch.utils.data.TensorDataset(X_val, Y_val)
-    # data loader
-    train_loader = DataLoader(train, batch_size=batch_size, shuffle=False)
-    test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
-    valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
+    Y_train = Y_train.reshape(-1, 1)
+    Y_val = Y_val.reshape(-1, 1)
+    Y_test = Y_test.reshape(-1, 1)
 
+    return X_train, Y_train, X_val, Y_val, X_test, Y_test
+
+
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
+    batch_size = 32
     device = "cpu"
     if torch.cuda.is_available():
         device = "cuda:0"
@@ -413,13 +396,30 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     for fold in range(0, split):
         print(f'FOLD {fold}')
         seed = seeds[fold]
-        temp_id = np.arange(n_train)
-        np.random.seed(seed)
-        train_ids = np.random.permutation(temp_id)
-        train_subsampler = torch.utils.data.SubsetRandomSampler(train_ids)
-        train_loader = torch.utils.data.DataLoader(
-            train, batch_size=batch_size, sampler=train_subsampler)
+        trainX, trainY, valX, valY, testX, testY = split_data(
+            n_train, n_val, n_test, iX, iY, seed
+        )
 
+        X_train, X_val, X_test = (
+            torch.from_numpy(trainX).float(),
+            torch.from_numpy(valX).float(),
+            torch.from_numpy(testX).float(),
+        )
+
+        Y_train, Y_val, Y_test = (
+            torch.from_numpy(trainY).float(),
+            torch.from_numpy(valY).float(),
+            torch.from_numpy(testY).float(),
+        )
+
+        train = torch.utils.data.TensorDataset(X_train, Y_train)
+        test = torch.utils.data.TensorDataset(X_test, Y_test)
+        valid = torch.utils.data.TensorDataset(X_val, Y_val)
+        # data loader
+        train_loader = DataLoader(train, batch_size=batch_size, shuffle=False)
+        test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
+        valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
+        
         model = NeuralNetwork().to(device)
         loss_fn = nn.MSELoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
