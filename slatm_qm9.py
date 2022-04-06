@@ -391,7 +391,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     if torch.cuda.is_available():
         device = "cuda:0"
 
-    seeds = [2 ^ ij for ij in range(1, 22)]
+    seeds = [2 ** ij for ij in range(1, 22)]
 
     for fold in range(0, split):
         print(f'FOLD {fold}')
