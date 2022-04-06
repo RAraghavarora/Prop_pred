@@ -391,7 +391,10 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     results = {}
 
     epochs = 20000
-    seeds = [2 ^ ij for ij in range(1, 22)]
+    # Randomly generated seeds np.random.seed(42); np.random.randint(50000, size=(22))
+    seeds = [15795, 860, 38158, 44732, 11284, 6265, 16850, 37194, 21962,
+             47191, 44131, 16023, 41090, 1685, 769, 2433, 5311, 37819,
+             39188, 17568, 19769, 28693]
 
     for fold in range(0, split):
         print(f'FOLD {fold}')
@@ -482,8 +485,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     )
 
 
-train_set = [500, 1000]
-splits = [22, 10]
+train_set = [2000, 4000, 8000]
+splits = [10, 8, 4]
 op = 'EAT'
 n_val = 6000
 
