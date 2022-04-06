@@ -250,13 +250,13 @@ class NeuralNetwork(nn.Module):
         slatm = x[:, :17895]
         elec = x[:, 17895:]
         layer1 = self.lin1(slatm)
-        layer1 = nn.functional.elu(layer1)
+        layer1 = nn.functional.leaky_relu(layer1)
 
         concat = torch.cat([layer1, elec], dim=1)
         # concat = nn.functional.elu(concat)
 
         layer2 = self.lin2(concat)
-        layer2 = nn.functional.elu(layer2)
+        layer2 = nn.functional.leaky_relu(layer2)
         layer4 = self.lin4(layer2)
 
         return layer4

@@ -221,13 +221,13 @@ class NeuralNetwork(nn.Module):
         slatm = x[:, :11960]
         elec = x[:, 11960:]
         layer1 = self.lin1(slatm)
-        layer1 = nn.functional.elu(layer1)
+        layer1 = nn.functional.leaky_relu(layer1)
 
         concat = torch.cat([layer1, elec], dim=1)
         # concat = nn.functional.elu(concat)
 
         layer2 = self.lin2(concat)
-        layer2 = nn.functional.elu(layer2)
+        layer2 = nn.functional.leaky_relu(layer2)
         layer4 = self.lin4(layer2)
 
         return layer4
@@ -391,7 +391,10 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     if torch.cuda.is_available():
         device = "cuda:0"
 
-    seeds = [2 ** ij for ij in range(1, 22)]
+    # Randomly generated seeds np.random.seed(42); np.random.randint(50000, size=(22))
+    seeds = [15795, 860, 38158, 44732, 11284, 6265, 16850, 37194, 21962,
+             47191, 44131, 16023, 41090, 1685, 769, 2433, 5311, 37819,
+             39188, 17568, 19769, 28693]
 
     for fold in range(0, split):
         print(f'FOLD {fold}')
@@ -461,7 +464,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
         plotting_results(model, test_loader, fold)
 
 
-train_set = ['1000', '4000', '16000']
+train_set = ['4000', '16000']
 splits = {
     500: 22,
     1000: 12,
