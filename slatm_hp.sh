@@ -2,11 +2,9 @@
 #SBATCH --time=144:00:00
 #SBATCH --partition=gpu2                        # specify ml partition or gpu2 partition
 #SBATCH --gres=gpu:2                      # use 1 GPU per node (i.e. use one GPU per task)
-#SBATCH --nodes=5                        # request 1 node
-#SBATCH --ntasks=16
-#SBATCH -J qm9_kcv
-#SBATCH --output=slatm_kcv.out
-#SBATCH --error=slatm_kcv.err
+#SBATCH --nodes=1                        # request 1 node
+#SBATCH --ntasks=1
+#SBATCH -J qm9_save
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
@@ -20,7 +18,7 @@ module load Python/3.6.4-intel-2018a
 module load cuDNN/8.0.4.30-CUDA-11.1.1
 
 work=/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred
-python3 $work/slatm_qm9_kcv.py
+python3 $work/save_qm9.py
 
 echo "training is over :-)"
 EXTSTAT=$?
