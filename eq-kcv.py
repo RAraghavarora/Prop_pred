@@ -202,19 +202,23 @@ def prepare_data(op):
     return np.array(reps2), np.array(TPROP2)
 
 
-def split_data(n_train, n_val, n_test, Repre, Target):
-    # Training
-    print("Perfoming training")
+def split_data(n_train, n_val, n_test, Repre, Target, seed):
+    Repre = np.array(Repre)
+    Target = np.array(Target)
+
+    idx = np.arange(len(Target))
+    np.random.seed(seed)
+    idx2 = np.random.permutation(idx)
 
     X_train, X_val, X_test = (
-        np.array(Repre[:n_train]),
-        np.array(Repre[n_train: n_train + n_val]),
-        np.array(Repre[n_train + n_val:]),
+        Repre[idx2[:n_train]],
+        Repre[idx2[n_train: n_train + n_val]],
+        Repre[idx2[n_train + n_val:]],
     )
     Y_train, Y_val, Y_test = (
-        np.array(Target[:n_train]),
-        np.array(Target[n_train: n_train + n_val]),
-        np.array(Target[n_train + n_val:]),
+        Target[idx2[:n_train]],
+        Target[idx2[n_train: n_train + n_val]],
+        Target[idx2[n_train + n_val:]],
     )
 
     Y_train = Y_train.reshape(-1, 1)
@@ -244,13 +248,13 @@ class NeuralNetwork(nn.Module):
         slatm = x[:, :17895]
         elec = x[:, 17895:]
         layer1 = self.lin1(slatm)
-        layer1 = nn.functional.elu(layer1)
+        layer1 = nn.functional.leaky_relu(layer1)
 
         concat = torch.cat([layer1, elec], dim=1)
         # concat = nn.functional.elu(concat)
 
         layer2 = self.lin2(concat)
-        layer2 = nn.functional.elu(layer2)
+        layer2 = nn.functional.leaky_relu(layer2)
         layer4 = self.lin4(layer2)
 
         return layer4
@@ -382,46 +386,45 @@ def plotting_results(model, test_loader, fold):
 
 def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     batch_size = 32
-    results = {}
+    seeds = [15795, 860, 38158, 44732, 11284, 6265, 16850, 37194, 21962,
+             47191, 44131, 16023, 41090, 1685, 769, 2433, 5311, 37819,
+             39188, 17568, 19769, 28693]
 
-    trainX, trainY, valX, valY, testX, testY = split_data(
-        n_train, n_val, n_test, iX, iY
-    )
+    device = "cpu"
+    if torch.cuda.is_available():
+        device = "cuda:0"
 
-    X_train, X_val, X_test = (
-        torch.from_numpy(trainX).float(),
-        torch.from_numpy(valX).float(),
-        torch.from_numpy(testX).float(),
-    )
-
-    Y_train, Y_val, Y_test = (
-        torch.from_numpy(trainY).float(),
-        torch.from_numpy(valY).float(),
-        torch.from_numpy(testY).float(),
-    )
-
-    train = torch.utils.data.TensorDataset(X_train, Y_train)
-    test = torch.utils.data.TensorDataset(X_test, Y_test)
-    valid = torch.utils.data.TensorDataset(X_val, Y_val)
-    # data loader
-    test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
-    valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
-    # data loader
-
-    epochs = 15000
-    kfold = KFold(n_splits=split, shuffle=True)
-
-    # Split only the training set into k-folds
-    for fold, (train_ids, test_ids) in enumerate(kfold.split(train)):
+    for fold in range(0, split):
         print(f'FOLD {fold}')
-        train_subsampler = torch.utils.data.SubsetRandomSampler(train_ids)
-        train_loader = torch.utils.data.DataLoader(
-            train, batch_size=batch_size, sampler=train_subsampler)
-        # Instead of (1/k)th split, we use the whole dataset for testing
+        seed = seeds[fold]
 
-        device = "cpu"
-        if torch.cuda.is_available():
-            device = "cuda:0"
+        trainX, trainY, valX, valY, testX, testY = split_data(
+            n_train, n_val, n_test, iX, iY, seed
+        )
+
+        X_train, X_val, X_test = (
+            torch.from_numpy(trainX).float(),
+            torch.from_numpy(valX).float(),
+            torch.from_numpy(testX).float(),
+        )
+
+        Y_train, Y_val, Y_test = (
+            torch.from_numpy(trainY).float(),
+            torch.from_numpy(valY).float(),
+            torch.from_numpy(testY).float(),
+        )
+
+        train = torch.utils.data.TensorDataset(X_train, Y_train)
+        test = torch.utils.data.TensorDataset(X_test, Y_test)
+        valid = torch.utils.data.TensorDataset(X_val, Y_val)
+        # data loader
+        train_loader = DataLoader(train, batch_size=batch_size, shuffle=False)
+        test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
+        valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
+        # data loader
+
+        epochs = 20000
+
         model = NeuralNetwork().to(device)
         loss_fn = nn.MSELoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
@@ -445,13 +448,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
             if early_stopping.early_stop:
                 break
 
-        loss, test_mae = test_nn(test_loader, model, loss_fn)
-        try:
-            results[fold] = test_mae.item()
-        except:
-            results[fold] = test_mae
         torch.save(model.state_dict(), f'model_dict_{fold}.pt')
-
         lhis = open(f'learning-history_{fold}.dat', 'w')
         for ii in range(0, len(lrates)):
             lhis.write(
@@ -465,23 +462,9 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
 
         plotting_results(model, test_loader, fold)
 
-    print(f'K-FOLD CROSS VALIDATION RESULTS FOR {split} FOLDS')
-    print('--------------------------------')
-    print(results)
-    sum = 0.0
-    for key, value in results.items():
-        print(f'Fold {key}: {value} %')
-        sum += value
-    print(f'Average: {sum/len(results.items())} %')
 
-    return (
-        model,
-        results
-    )
-
-
-train_set = [4000, 8000, 16000, 25000]
-splits = [8, 4, 2, 1]
+train_set = [500, 4000, 8000, 16000, 25000]
+splits = [22, 8, 4, 2, 1]
 op = 'EAT'
 n_val = 6000
 
@@ -495,36 +478,14 @@ for ii in range(len(train_set)):
     n_test = len(iY) - n_val
     print('Trainset= {:}'.format(train_set[ii]))
     chdir(current_dir)
-    os.chdir(current_dir + '/withdft/kcv/eq/')
+    os.chdir(current_dir + '/withdft/kcv/eq/PureRandom')
     try:
         os.mkdir(str(train_set[ii]))
     except:
         pass
-    os.chdir(current_dir + '/withdft/kcv/eq/' + str(train_set[ii]))
+    os.chdir(current_dir + '/withdft/kcv/eq/PureRandom' + str(train_set[ii]))
 
     split = splits[ii]
-    n_train = math.ceil(int(train_set[ii]) * split / (split - 1))
+    n_train = int(train_set[ii])
 
-    model, results = fit_model_dense(
-        n_train, n_val, n_test, iX, iY, patience, split
-    )
-    outfile = open('output.txt', 'w')
-    import json
-    outfile.write(json.dumps(results))
-    outfile.close()
-    # lhis = open('learning-history.dat', 'w')
-    # for ii in range(0, len(lr)):
-    #     lhis.write(
-    #         '{:8d}'.format(ii)
-    #         + '{:16f}'.format(lr[ii])
-    #         + '{:16f}'.format(loss[ii])
-    #         + '{:16f}'.format(mae[ii])
-    #         + '\n'
-    #     )
-    # lhis.close()
-
-    # Saving NN model
-    # torch.save(model, 'model.pt')
-
-    # Saving results
-    # plotting_results(model, test_loader)
+    fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split)
