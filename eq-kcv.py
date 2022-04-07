@@ -478,12 +478,12 @@ for ii in range(len(train_set)):
     n_test = len(iY) - n_val
     print('Trainset= {:}'.format(train_set[ii]))
     chdir(current_dir)
-    os.chdir(current_dir + '/withdft/kcv/eq/PureRandom')
+    os.chdir(current_dir + '/withdft/kcv/eq/PureRandom/')
     try:
         os.mkdir(str(train_set[ii]))
     except:
         pass
-    os.chdir(current_dir + '/withdft/kcv/eq/PureRandom' + str(train_set[ii]))
+    os.chdir(current_dir + '/withdft/kcv/eq/PureRandom/' + str(train_set[ii]))
 
     split = splits[ii]
     n_train = int(train_set[ii])
