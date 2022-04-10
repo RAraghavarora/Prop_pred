@@ -308,7 +308,7 @@ class EarlyStopping():
     certain epochs.
     """
 
-    def __init__(self, patience=1000, min_delta=0.001):
+    def __init__(self, patience=5000, min_delta=0.001):
         """
         :param patience: how many epochs to wait before stopping when loss is
                not improving
