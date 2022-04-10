@@ -2,8 +2,8 @@
 #SBATCH --time=144:00:00
 #SBATCH --partition=haswell                        # specify ml partition or gpu2 partition
 #SBATCH --nodes=4                        # request 1 node
-#SBATCH --ntasks=8
-#SBATCH -J sdftb-eq
+#SBATCH --ntasks=16
+#SBATCH -J sdftb-eq-kcv
 #SBATCH --output=dip.out
 #SBATCH --error=dip.err
 #SBATCH -A p_biomolecules
@@ -48,6 +48,7 @@ echo "training starts"
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
 work=/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred
+mkdir /withdft/split/eq/slatm/PureRandom/
 python3 $work/split_eat_eq.py
 
 echo "training is over :-)"
