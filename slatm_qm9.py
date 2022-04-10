@@ -464,7 +464,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
         plotting_results(model, test_loader, fold)
 
 
-train_set = ['500', '4000', '8000']
+train_set = ['2000', '16000', '25000']
 splits = {
     500: 22,
     1000: 12,
