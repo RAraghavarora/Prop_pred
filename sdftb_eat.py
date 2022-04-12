@@ -533,4 +533,5 @@ for ii in range(len(train_set)):
         pass
     os.chdir(current_dir + '/withdft/split/eat/eq/slatm/PureRandom/' + str(train_set[ii]))
 
-    fit_model_dense(int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience)
+    split = splits[int(train_set[ii])]
+    fit_model_dense(int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience, split)
