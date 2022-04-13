@@ -205,6 +205,8 @@ def split_data(n_train, n_val, n_test, Repre, Target, seed):
     p10b = np.array(p10b)
     p11b = np.array(p11b)
 
+    Target = np.array(Target)
+
     idx = np.arange(len(Target))
     np.random.seed(seed)
     idx2 = np.random.permutation(idx)
