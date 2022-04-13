@@ -9,6 +9,7 @@ from qml.representations import (
     get_slatm_mbtypes,
     generate_slatm,
 )
+import warnings
 from sklearn.preprocessing import StandardScaler
 
 
@@ -199,6 +200,41 @@ def test_nn(dataloader, model, loss_fn):
     return test_loss, mae
 
 
+class EarlyStopping():
+    """
+    Early stopping to stop the training when the loss does not improve after
+    certain epochs.
+    """
+
+    def __init__(self, patience=3000, min_delta=0.005):
+        """
+        :param patience: how many epochs to wait before stopping when loss is
+               not improving
+        :param min_delta: minimum difference between new loss and old loss for
+               new loss to be considered as an improvement
+        """
+        self.patience = patience
+        self.min_delta = min_delta
+        self.counter = 0
+        self.best_loss = None
+        self.early_stop = False
+
+    def __call__(self, val_loss):
+        if self.best_loss is None:
+            self.best_loss = val_loss
+        elif self.best_loss - val_loss > self.min_delta:
+            self.best_loss = val_loss
+            # reset counter if validation loss improves
+            self.counter = 0
+        elif self.best_loss - val_loss < self.min_delta:
+            self.counter += 1
+            print(
+                f"INFO: Early stopping counter {self.counter} of {self.patience}")
+            if self.counter >= self.patience:
+                print('INFO: Early stopping')
+                self.early_stop = True
+
+
 def split_data(n_train, n_val, n_test, Repre, Target):
     # Training
     print("Perfoming training")
@@ -259,6 +295,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
 
+    early_stopping = EarlyStopping()
+
     epochs = 20000
     val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
@@ -270,6 +308,10 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
         val_losses.append(valid_loss)
         val_errors.append(valid_mae)
         lrates.append(optimizer.param_groups[0]['lr'])
+        early_stopping(valid_mae)
+        if early_stopping.early_stop:
+            warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+            break
 
     test_mae = test_nn(test_loader, model, loss_fn)
     print(
