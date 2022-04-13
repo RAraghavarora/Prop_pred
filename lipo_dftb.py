@@ -61,26 +61,19 @@ def prepare_data():
     np.random.seed(2314)
     idx2 = np.random.permutation(idx)
 
-    p1b, p2b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b, p11b = (
-        [] for i in range(11))
+    p11 = complete_array(p11)
 
-    for nn1 in idx2[:n]:
-        p1b.append(p1[nn1])
-        p2b.append(p2[nn1])
-        p3b.append(p3[nn1])
-        p4b.append(p4[nn1])
-        p5b.append(p5[nn1])
-        p6b.append(p6[nn1])
-        p7b.append(p7[nn1])
-        p8b.append(p8[nn1])
-        p9b.append(p9[nn1])
-        p10b.append(p10[nn1])
-        p11b.append(p11[nn1])
-
-    p11b = complete_array(p11)
+    mbtypes = get_slatm_mbtypes([Z[mol] for mol in idx2[:n]])
+    slatm = [
+        generate_slatm(mbtypes=mbtypes,
+                       nuclear_charges=Z[mol], coordinates=xyz[mol])
+        for mol in idx[:n]
+    ]
+    slatm_len = len(slatm[0])
+    print(slatm_len)
 
     temp = []
-    for var in [p1b, p2b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b, p11b]:
+    for var in [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11]:
         var2 = np.array(var)
         try:
             _ = var2.shape[1]
@@ -91,14 +84,6 @@ def prepare_data():
         temp.append(var3)
 
     p1b, p2b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b, p11b = temp
-
-    mbtypes = get_slatm_mbtypes([Z[mol] for mol in idx2[:n]])
-    slatm = [
-        generate_slatm(mbtypes=mbtypes,
-                       nuclear_charges=Z[mol], coordinates=xyz[mol])
-        for mol in idx2[:n]
-    ]
-    slatm_len = len(slatm[0])
 
     reps2 = []
     for ii in range(len(idx2[:n])):
@@ -116,7 +101,6 @@ def prepare_data():
                     p8b[ii],
                     np.linalg.norm(p9b[ii]),
                     p10b[ii],
-                    p11b[ii],
                 ),
                 axis=None,
             )
@@ -137,7 +121,7 @@ class NeuralNetwork(nn.Module):
 
         self.slatm_len = slatm_len
         self.lin1 = nn.Linear(slatm_len, 16)
-        self.lin2 = nn.Linear(16 + 107, 4)
+        self.lin2 = nn.Linear(16 + 107 - 90, 4)
         self.lin4 = nn.Linear(4, 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
