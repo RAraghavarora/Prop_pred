@@ -41,7 +41,7 @@ def prepare_data():
             continue
         Z.append(molecule['Z'])
         xyz.append(molecule['XYZ'])
-        target.append(molecule['target'])
+        target.append(float(molecule['target']))
         p1.append(float(molecule['EFermi']))
         p2.append(float(molecule['EBand']))
         p3.append(float(molecule['NE']))
@@ -92,7 +92,8 @@ def prepare_data():
         var3 = scaler.fit_transform(var2)
         temp.append(var3)
 
-    p1b, p2b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b, p11b = temp
+    # Not standardizing the charges, because a lot of them are 0
+    p1b, p2b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b, _ = temp
 
     mbtypes = get_slatm_mbtypes([Z[mol] for mol in idx2[:n]])
     slatm = [
@@ -138,9 +139,9 @@ class NeuralNetwork(nn.Module):
         super(NeuralNetwork, self).__init__()
 
         self.slatm_len = slatm_len
-        self.lin1 = nn.Linear(slatm_len, 16)
-        self.lin2 = nn.Linear(16 + 107, 4)
-        self.lin4 = nn.Linear(4, 1)
+        self.lin1 = nn.Linear(slatm_len, 128)
+        self.lin2 = nn.Linear(128 + 107, 16)
+        self.lin4 = nn.Linear(16, 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
