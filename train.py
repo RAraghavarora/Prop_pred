@@ -363,7 +363,7 @@ def split_data(n_train, n_val, n_test, Repre, Target, seed):
     return X_train, Y_train, X_val, Y_val, X_test, Y_test
 
 
-def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split, slatm_len):
     batch_size = 32
     device = "cpu"
     if torch.cuda.is_available():
@@ -401,7 +401,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
         test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
         valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
 
-        model = NeuralNetwork().to(device)
+        prop_len = trainX.shape[1] - slatm_len
+        model = NeuralNetwork(slatm_len, prop_len).to(device)
         loss_fn = nn.MSELoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
         scheduler = ReduceLROnPlateau(
@@ -448,9 +449,9 @@ dataset = sys.argv[2]
 directory = sys.argv[3]
 
 if dataset == 'qm9':
-    train_set = [4, 16, 40, 80] * 1000
+    train_set = [i * 1000 for i in [4, 16, 40, 80]]
 else:
-    train_set = [0.5, 4, 16, 40] * 1000
+    train_set = [i * 1000 for i in [0.5, 4, 16, 40]]
 
 splits = {
     500: 22,
