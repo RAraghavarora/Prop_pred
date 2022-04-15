@@ -244,7 +244,7 @@ def plotting_results(model, test_loader):
 
     STD_PROP = float(pred.std())
 
-    out2 = open('errors_test.dat', 'w')
+    out2 = open('errors_test2.dat', 'w')
     out2.write(
         '{:>24}'.format(STD_PROP)
         + '{:>24}'.format(mae)
@@ -256,7 +256,7 @@ def plotting_results(model, test_loader):
     # writing ouput for comparing values
     dtest = np.array(pred.cpu() - y.cpu())
     Y_test = y.reshape(-1, 1)
-    ctest = open('comp-test.dat', 'w')
+    ctest = open('comp-test2.dat', 'w')
     for ii in range(0, len(pred)):
         ctest.write(
             '{}'.format(pred[ii]) + '{}'.format(Y_test[ii]) + '{}'.format(dtest[ii]) + '\n')
@@ -269,15 +269,15 @@ def plotting_results(model, test_loader):
     maxi = max(y).item()
     temp = np.arange(mini, maxi, 0.1)
     plt.plot(temp, temp)
-    plt.xlabel("True EGAP")
-    plt.ylabel("Predicted EGAP")
-    plt.savefig('Result.png')
+    plt.ylabel("True")
+    plt.xlabel("Predicted")
+    plt.savefig('Result2.png')
     plt.close()
 
 
-n_train = 3000
-n_val = 500
-n_test = 592
+n_train = 4000
+n_val = 50
+n_test = 5
 patience = 100
 iX, iY = prepare_data()
 
@@ -290,23 +290,27 @@ except:
     pass
 os.chdir(current_dir + '/slatm/lipo/' + str(n_train))
 
-model, lr, loss, mae, test_loader = fit_model_dense(
-    n_train, n_val, int(n_test), iX, iY, patience
+slatm_len = 40604
+model = NeuralNetwork(slatm_len)
+model.load_state_dict(torch.load(current_dir + '/slatm/lipo/3000/model_dict.pt'))
+
+n_train = 4000
+n_val = 5
+n_test = 10
+trainX, trainY, valX, valY, testX, testY = split_data(
+    n_train, n_val, n_test, iX, iY
 )
-
-lhis = open('learning-history.dat', 'w')
-for ii in range(0, len(lr)):
-    lhis.write(
-        '{:8d}'.format(ii)
-        + '{:16f}'.format(lr[ii])
-        + '{:16f}'.format(loss[ii])
-        + '{:16f}'.format(mae[ii])
-        + '\n'
-    )
-lhis.close()
-
-# Saving NN model
-torch.save(model, 'model.pt')
-
-# Saving results
-plotting_results(model, test_loader)
+X_train, X_val, X_test = (
+    torch.from_numpy(trainX).float(),
+    torch.from_numpy(valX).float(),
+    torch.from_numpy(testX).float(),
+)
+Y_train, Y_val, Y_test = (
+    torch.from_numpy(trainY).float(),
+    torch.from_numpy(valY).float(),
+    torch.from_numpy(testY).float(),
+)
+train = torch.utils.data.TensorDataset(X_train, Y_train)
+train_loader = DataLoader(train, batch_size=batch_size, shuffle=False)
+                                       
+plotting_results(model, train_loader)
