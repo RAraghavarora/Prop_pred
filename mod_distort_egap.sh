@@ -4,9 +4,9 @@
 #SBATCH --gres=gpu:3                      # use 1 GPU per node (i.e. use one GPU per task)
 #SBATCH --nodes=1                        # request 1 node
 #SBATCH --ntasks=8
-#SBATCH -J qm9-egap
-#SBATCH --output=os.out
-#SBATCH --error=os.err
+#SBATCH -J distort-egap
+#SBATCH --output=dist-egap.out
+#SBATCH --error=dist-egap.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com

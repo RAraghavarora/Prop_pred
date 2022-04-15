@@ -5,8 +5,8 @@
 #SBATCH --nodes=1                        # request 1 node
 #SBATCH --ntasks=8
 #SBATCH -J qm9-egap
-#SBATCH --output=os.out
-#SBATCH --error=os.err
+#SBATCH --output=qm9-egap.out
+#SBATCH --error=qm9-egap.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
