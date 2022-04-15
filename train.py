@@ -114,7 +114,7 @@ def prepare_data(op, dataset):
                        nuclear_charges=Z[mol], coordinates=xyz[mol])
         for mol in idx2
     ]
-    slatm_len = slatm[0].shape
+    slatm_len = len(slatm[0])
 
     TPROP2 = []
     p1b, p2b, p11b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b = (
