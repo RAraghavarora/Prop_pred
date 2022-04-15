@@ -79,7 +79,7 @@ def prepare_data(op, dataset):
     # computing predicted property
     logging.info("get predicted property")
     AE, xyz, Z = [], [], []
-    EGAP, TPROP = [], [], []
+    EGAP, TPROP = [], []
     p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 = ([] for i in range(11))
 
     ATOMS = []
