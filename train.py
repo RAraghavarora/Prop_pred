@@ -487,4 +487,4 @@ for ii in range(len(train_set)):
     n_train = int(train_set[ii])
 
     fit_model_dense(int(n_train), int(n_val), int(
-        n_test), iX, iY, patience, split)
+        n_test), iX, iY, patience, split, slatm_len)
