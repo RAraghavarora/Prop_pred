@@ -22,18 +22,18 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from sklearn.model_selection import KFold
 
 
 # monitor the learning rate
-def complete_array(Aprop):
+def complete_array(Aprop, dataset):
+    max_size = 29 if dataset == 'qm9' else 23
     Aprop2 = []
     for ii in range(len(Aprop)):
         n1 = len(Aprop[ii])
-        if n1 == 29:
+        if n1 == max_size:
             Aprop2.append(Aprop[ii])
         else:
-            n2 = 29 - n1
+            n2 = max_size - n1
             Aprop2.append(np.concatenate((Aprop[ii], np.zeros(n2)), axis=None))
 
     return Aprop2
@@ -134,7 +134,7 @@ def prepare_data(op, dataset):
         p11b.append(p11[nn1].numpy())
         TPROP2.append(TPROP[nn1])
 
-    p11b = complete_array(p11b)
+    p11b = complete_array(p11b, dataset)
 
     # Standardize the data property wise
     temp = []
