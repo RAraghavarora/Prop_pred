@@ -119,7 +119,7 @@ def prepare_data():
                     p8b[ii],
                     np.linalg.norm(p9b[ii]),
                     p10b[ii],
-                    p11b[ii],
+                    # p11b[ii],
                 ),
                 axis=None,
             )
@@ -139,8 +139,8 @@ class NeuralNetwork(nn.Module):
         super(NeuralNetwork, self).__init__()
 
         self.slatm_len = slatm_len
-        self.lin1 = nn.Linear(slatm_len, 128)
-        self.lin2 = nn.Linear(128 + 107, 16)
+        self.lin1 = nn.Linear(slatm_len, 32)
+        self.lin2 = nn.Linear(32 + 107 - 90, 16)
         self.lin4 = nn.Linear(16, 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
@@ -245,12 +245,12 @@ def split_data(n_train, n_val, n_test, Repre, Target):
     X_train, X_val, X_test = (
         np.array(Repre[:n_train]),
         np.array(Repre[n_train: n_train + n_val]),
-        np.array(Repre[n_train + n_val:]),
+        np.array(Repre[:]),
     )
     Y_train, Y_val, Y_test = (
         np.array(Target[:n_train]),
         np.array(Target[n_train: n_train + n_val]),
-        np.array(Target[n_train + n_val:]),
+        np.array(Target[:]),
     )
 
     Y_train = Y_train.reshape(-1, 1)
