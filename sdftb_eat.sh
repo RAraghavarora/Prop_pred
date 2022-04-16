@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --time=96:00:00
 #SBATCH --partition=haswell                        # specify ml partition or gpu2 partition
-#SBATCH --nodes=4                        # request 1 node
-#SBATCH --ntasks=8
+#SBATCH --nodes=8                        # request 1 node
+#SBATCH --ntasks=20
 #SBATCH -J sdftb-eat-kcv
 #SBATCH --output=eat2.out
 #SBATCH --error=eat2.err
