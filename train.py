@@ -187,7 +187,7 @@ class NeuralNetwork(nn.Module):
         super(NeuralNetwork, self).__init__()
         self.slatm_len = slatm_len
         self.lin1 = nn.Linear(slatm_len, 16)
-        self.lin2 = nn.Linear(slatm_len + prop_len, 2)
+        self.lin2 = nn.Linear(16 + prop_len, 2)
         self.lin4 = nn.Linear(2, 1)
         self.apply(init_weights)
 
@@ -363,7 +363,7 @@ def split_data(n_train, n_val, n_test, Repre, Target, seed):
     return X_train, Y_train, X_val, Y_val, X_test, Y_test
 
 
-def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split, slatm_len):
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split, slatm_len, op):
     batch_size = 32
     device = "cpu"
     if torch.cuda.is_available():
@@ -441,7 +441,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split, slatm_len):
                 + '\n'
             )
         lhis.close()
-        plotting_results(model, test_loader, fold)
+        plotting_results(model, test_loader, fold, op)
 
 
 op = sys.argv[1]
@@ -488,4 +488,4 @@ for ii in range(len(train_set)):
     n_train = int(train_set[ii])
 
     fit_model_dense(int(n_train), int(n_val), int(
-        n_test), iX, iY, patience, split, slatm_len)
+        n_test), iX, iY, patience, split, slatm_len, op)
