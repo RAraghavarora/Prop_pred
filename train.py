@@ -479,7 +479,8 @@ for ii in range(len(train_set)):
     os.chdir(current_dir + '/' + directory)
     try:
         os.mkdir(str(train_set[ii]))
-    except:
+    except FileExistsError as e:
+        print("Dir exists", e)
         pass
     os.chdir(current_dir + '/' + directory + str(train_set[ii]))
 
