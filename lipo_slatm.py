@@ -291,8 +291,9 @@ except:
 os.chdir(current_dir + '/slatm/lipo/' + str(n_train))
 
 slatm_len = 40604
-model = NeuralNetwork(slatm_len)
-model.load_state_dict(torch.load(current_dir + '/slatm/lipo/3000/model_dict.pt'))
+model = torch.load(current_dir + '/slatm/lipo/3000/model_dict.pt')
+
+batch_size=16
 
 n_train = 4000
 n_val = 5
