@@ -464,7 +464,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
         plotting_results(model, test_loader, fold)
 
 
-train_set = ['2000', '16000', '25000']
+train_set = ['25000', '40000', '80000']
 splits = {
     500: 22,
     1000: 12,
@@ -472,6 +472,7 @@ splits = {
     4000: 8,
     8000: 4,
     16000: 2,
+    25000: 2,
     40000: 1,
     60000: 1,
     80000: 1
@@ -497,7 +498,10 @@ for ii in range(len(train_set)):
         pass
     os.chdir(current_dir + '/withdft/slatm/qm9/PureRandom/' + str(train_set[ii]))
 
-    split = splits[int(train_set[ii])]
+    try:
+        split = splits[int(train_set[ii])]
+    except:
+        split = 1
     n_train = int(train_set[ii])
 
     fit_model_dense(int(n_train), int(n_val), int(n_test), iX, iY, patience, split)
