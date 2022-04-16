@@ -42,7 +42,7 @@ def complete_array(Aprop, dataset):
 # prepare train and test dataset
 
 
-def prepare_data(op, dataset):
+def prepare_data(op, dataset_op):
     data_dir = '/scratch/ws/1/medranos-TUDprojects/raghav/data/'
     dataset_dir = {
         'distort': 'distort.db',
@@ -68,7 +68,7 @@ def prepare_data(op, dataset):
     logging.info("get dataset")
 
     dataset = spk.data.AtomsData(
-        data_dir + dataset_dir[dataset], load_only=properties)
+        data_dir + dataset_dir[dataset_op], load_only=properties)
 
     n = len(dataset)
     print(n)
@@ -134,7 +134,7 @@ def prepare_data(op, dataset):
         p11b.append(p11[nn1].numpy())
         TPROP2.append(TPROP[nn1])
 
-    p11b = complete_array(p11b, dataset)
+    p11b = complete_array(p11b, dataset_op)
 
     # Standardize the data property wise
     temp = []
