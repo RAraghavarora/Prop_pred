@@ -108,7 +108,7 @@ def prepare_data():
         reps2.append(
             np.concatenate(
                 (
-                    slatm[ii],
+                    # slatm[ii],
                     p1b[ii],
                     p2b[ii],
                     p3b[ii],
@@ -119,7 +119,7 @@ def prepare_data():
                     p8b[ii],
                     np.linalg.norm(p9b[ii]),
                     p10b[ii],
-                    # p11b[ii],
+                    p11b[ii],
                 ),
                 axis=None,
             )
@@ -139,22 +139,18 @@ class NeuralNetwork(nn.Module):
         super(NeuralNetwork, self).__init__()
 
         self.slatm_len = slatm_len
-        self.lin1 = nn.Linear(slatm_len, 32)
-        self.lin2 = nn.Linear(32 + 107 - 90, 16)
+        self.lin1 = nn.Linear(107, 32)
+        self.lin2 = nn.Linear(32, 16)
         self.lin4 = nn.Linear(16, 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
     def forward(self, x):
-        slatm = x[:, :self.slatm_len]
-        elec = x[:, self.slatm_len:]
-        layer1 = self.lin1(slatm)
+
+        layer1 = self.lin1(x)
         layer1 = nn.functional.leaky_relu(layer1)
 
-        concat = torch.cat([layer1, elec], dim=1)
-        # concat = nn.functional.elu(concat)
-
-        layer2 = self.lin2(concat)
+        layer2 = self.lin2(layer1)
         layer2 = nn.functional.leaky_relu(layer2)
         layer4 = self.lin4(layer2)
 
@@ -380,12 +376,12 @@ iX, iY, slatm_len = prepare_data()
 
 current_dir = os.getcwd()
 
-os.chdir(current_dir + '/withdft/slatm/lipo/')
+os.chdir(current_dir + '/only_dft/lipo/')
 try:
     os.mkdir(str(n_train))
 except:
     pass
-os.chdir(current_dir + '/withdft/slatm/lipo/' + str(n_train))
+os.chdir(current_dir + '/only_dft/lipo/' + str(n_train))
 
 model, lr, loss, mae, test_loader = fit_model_dense(
     n_train, n_val, int(n_test), iX, iY, patience, slatm_len
