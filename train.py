@@ -287,7 +287,8 @@ def plotting_results(model, test_loader, fold, op):
     # writing ouput for comparing values
     dtest = np.array(pred.cpu() - y.cpu())
     Y_test = y.reshape(-1, 1)
-    format_list1 = ['{:16f}' for item1 in Y_test[0]]
+    print("Y_test shape", Y_test.shape)
+    format_list1 = ['{:16f}']
     s = ' '.join(format_list1)
     ctest = open(f'comp-test_{fold}.dat', 'w')
     for ii in range(0, len(pred)):
