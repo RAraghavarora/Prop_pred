@@ -402,17 +402,17 @@ def plotting_results(model, test_loader):
     maxi = max(y).item()
     temp = np.arange(mini, maxi, 0.1)
     plt.plot(temp, temp)
-    plt.xlabel("True EGAP")
-    plt.ylabel("Predicted EGAP")
+    plt.ylabel("True EGAP")
+    plt.xlabel("Predicted EGAP")
     plt.savefig('Result.png')
     plt.close()
 
 
 # prepare dataset
 train_set = ['20000']
-op = 'EAT'
+op = 'EGAP'
 n_val = 6000
-slatm_lens = [128, 256, 512]
+slatm_lens = [16, 32, 64, 128, 256, 512]
 
 iX, iY = prepare_data(op)
 
@@ -425,12 +425,12 @@ for slatm_len in slatm_lens:
     n_test = len(iY) - n_val
     print('Trainset= {:}'.format(train_set[0]))
     chdir(current_dir)
-    os.chdir(current_dir + '/withdft/slatm/eq/validation/20k/')
+    os.chdir(current_dir + '/withdft/slatm/eq/validation/egap/20k/')
     try:
         os.mkdir(str(slatm_len))
     except:
         pass
-    os.chdir(current_dir + '/withdft/slatm/eq/validation/20k/' + str(slatm_len))
+    os.chdir(current_dir + '/withdft/slatm/eq/validation/egap/20k/' + str(slatm_len))
 
     model, lr, loss, mae, test_loader = fit_model_dense(
         int(train_set[0]), int(n_val), int(n_test), iX, iY, patience, slatm_len
