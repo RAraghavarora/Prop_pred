@@ -485,7 +485,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     )
 
 
-train_set = [25000, 30000]
+train_set = [30000]
 splits = [1]
 op = 'EAT'
 n_val = 6000
