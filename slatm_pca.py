@@ -408,9 +408,9 @@ def plotting_results(model, test_loader):
 
 # prepare dataset
 train_set = ['20000']
-op = 'EAT'
+op = 'EGAP'
 n_val = 6000
-reduction = [64, 128, 256]
+reduction = [16, 32, 64, 128, 256]
 
 current_dir = os.getcwd()
 for red in reduction:
@@ -424,13 +424,13 @@ for red in reduction:
         n_test = len(iY) - n_val
         print('Trainset= {:}'.format(train_set[ii]))
         chdir(current_dir)
-        os.chdir(current_dir + '/withdft/slatm/eq/pca/')
+        os.chdir(current_dir + '/withdft/slatm/eq/pca/egap/')
         try:
             os.mkdir(str(red))
             # os.mkdir(str(train_set[ii]))
         except:
             pass
-        os.chdir(current_dir + '/withdft/slatm/eq/pca/' + str(red))
+        os.chdir(current_dir + '/withdft/slatm/eq/pca/egap/' + str(red))
 
         model, lr, loss, mae, test_loader = fit_model_dense(
             int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience, red
