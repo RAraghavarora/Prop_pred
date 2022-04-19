@@ -300,7 +300,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, model, trial):
 
     early_stopping = EarlyStopping()
 
-    epochs = 1
+    epochs = 10000
     val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
