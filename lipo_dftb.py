@@ -1,3 +1,4 @@
+import optuna
 import os
 import numpy as np
 import torch
@@ -5,10 +6,10 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import matplotlib.pyplot as plt
-from qml.representations import (
-    get_slatm_mbtypes,
-    generate_slatm,
-)
+# from qml.representations import (
+#     get_slatm_mbtypes,
+#     generate_slatm,
+# )
 import warnings
 from sklearn.preprocessing import StandardScaler
 
@@ -27,8 +28,12 @@ def complete_array(Aprop, maxsize=90):
 
 
 def prepare_data():
-    npzdir = '/scratch/ws/1/medranos-TUDprojects/raghav/data/lipo/npz/'
-    files = [f for f in os.listdir(npzdir) if os.path.isfile(npzdir + f)]
+    try:
+        npzdir = '/scratch/ws/1/medranos-TUDprojects/raghav/data/lipo/npz/'
+        files = [f for f in os.listdir(npzdir) if os.path.isfile(npzdir + f)]
+    except:
+        npzdir = './data/lipo/npz/'
+        files = [f for f in os.listdir(npzdir) if os.path.isfile(npzdir + f)]
     target, xyz, Z = [], [], []
     p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 = ([] for i in range(11))
 
@@ -95,13 +100,13 @@ def prepare_data():
     # Not standardizing the charges, because a lot of them are 0
     p1b, p2b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b, _ = temp
 
-    mbtypes = get_slatm_mbtypes([Z[mol] for mol in idx2[:n]])
-    slatm = [
-        generate_slatm(mbtypes=mbtypes,
-                       nuclear_charges=Z[mol], coordinates=xyz[mol])
-        for mol in idx2[:n]
-    ]
-    slatm_len = len(slatm[0])
+    # mbtypes = get_slatm_mbtypes([Z[mol] for mol in idx2[:n]])
+    # slatm = [
+    #     generate_slatm(mbtypes=mbtypes,
+    #                    nuclear_charges=Z[mol], coordinates=xyz[mol])
+    #     for mol in idx2[:n]
+    # ]
+    # slatm_len = len(slatm[0])
 
     reps2 = []
     for ii in range(len(idx2[:n])):
@@ -125,7 +130,7 @@ def prepare_data():
             )
         )
 
-    return np.array(reps2), np.array(target2), slatm_len
+    return np.array(reps2), np.array(target2)
 
 
 def init_weights(m):
@@ -135,13 +140,12 @@ def init_weights(m):
 
 
 class NeuralNetwork(nn.Module):
-    def __init__(self, slatm_len):
+    def __init__(self, params):
         super(NeuralNetwork, self).__init__()
 
-        self.slatm_len = slatm_len
-        self.lin1 = nn.Linear(107, 32)
-        self.lin2 = nn.Linear(32, 16)
-        self.lin4 = nn.Linear(16, 1)
+        self.lin1 = nn.Linear(107, params['l1'])
+        self.lin2 = nn.Linear(params['l1'], params['l2'])
+        self.lin4 = nn.Linear(params['l2'], 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
@@ -241,12 +245,12 @@ def split_data(n_train, n_val, n_test, Repre, Target):
     X_train, X_val, X_test = (
         np.array(Repre[:n_train]),
         np.array(Repre[n_train: n_train + n_val]),
-        np.array(Repre[:]),
+        np.array(Repre[n_train + n_val:]),
     )
     Y_train, Y_val, Y_test = (
         np.array(Target[:n_train]),
         np.array(Target[n_train: n_train + n_val]),
-        np.array(Target[:]),
+        np.array(Target[n_train + n_val:]),
     )
 
     Y_train = Y_train.reshape(-1, 1)
@@ -256,7 +260,7 @@ def split_data(n_train, n_val, n_test, Repre, Target):
     return X_train, Y_train, X_val, Y_val, X_test, Y_test
 
 
-def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
+def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, model, trial):
     batch_size = 32
     trainX, trainY, valX, valY, testX, testY = split_data(
         n_train, n_val, n_test, iX, iY
@@ -285,7 +289,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
     device = "cpu"
     if torch.cuda.is_available():
         device = "cuda:0"
-    model = NeuralNetwork(slatm_len).to(device)
+    model = model.to(device)
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(
@@ -296,7 +300,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
 
     early_stopping = EarlyStopping()
 
-    epochs = 20000
+    epochs = 1
     val_losses, val_errors, lrates = [], [], []
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
@@ -311,95 +315,49 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
         if early_stopping.early_stop:
             warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
             break
+        trial.report(valid_mae, t)
+
+        if trial.should_prune():
+            print("Pruning")
+            raise optuna.TrialPruned()
 
     test_mae = test_nn(test_loader, model, loss_fn)
     print(
         f"Finished training on train_size={n_train}\n Testing MAE = {test_mae}")
 
-    return (
-        model,
-        lrates,
-        val_losses,
-        val_errors,
-        test_loader
-    )
+    return test_mae
 
 
-def plotting_results(model, test_loader):
-    # applying nn model
-    with torch.no_grad():
-        x = test_loader.dataset.tensors[0].cuda()
-        pred = model(x)
-        y = test_loader.dataset.tensors[1].cuda()
-        loss_fn = nn.MSELoss()
-        test_loss = loss_fn(pred, y).item()
-        mae_loss = torch.nn.L1Loss(reduction='mean')
-        mae = mae_loss(pred, y)
+def objective(trial):
 
-    STD_PROP = float(pred.std())
+    iX, iY = prepare_data()
 
-    out2 = open('errors_test.dat', 'w')
-    out2.write(
-        '{:>24}'.format(STD_PROP)
-        + '{:>24}'.format(mae)
-        + '{:>24}'.format(test_loss)
-        + "\n"
-    )
-    out2.close()
+    params = {'l1': trial.suggest_categorical("l1", [4, 8, 16, 32, 64, 128]),
+              'l2': trial.suggest_categorical("l2", [4, 8, 16, 32, 64]),
+              }
 
-    # writing ouput for comparing values
-    dtest = np.array(pred.cpu() - y.cpu())
-    Y_test = y.reshape(-1, 1)
-    ctest = open('comp-test.dat', 'w')
-    for ii in range(0, len(pred)):
-        ctest.write(
-            '{}'.format(pred[ii]) + '{}'.format(Y_test[ii]) + '{}'.format(dtest[ii]) + '\n')
-    ctest.close()
+    model = NeuralNetwork(params)
+    n_train = 2000
+    n_val = 500
+    n_test = 1592
+    patience = 100
 
-    # Save as a plot
-    plt.plot(pred.cpu(), y.cpu(), '.')
-    mini = min(y).item()
-    maxi = max(y).item()
-    temp = np.arange(mini, maxi, 0.1)
-    plt.plot(temp, temp)
-    plt.ylabel("True")
-    plt.xlabel("Predicted")
-    plt.savefig('Result.png')
-    plt.close()
+    test_mae = fit_model_dense(
+        n_train, n_val, n_test, iX, iY, patience, model, trial)
+
+    return test_mae[1]
 
 
-n_train = 3000
-n_val = 500
-n_test = 592
-patience = 100
-iX, iY, slatm_len = prepare_data()
-
-current_dir = os.getcwd()
-
-os.chdir(current_dir + '/only_dft/lipo/')
-try:
-    os.mkdir(str(n_train))
-except:
-    pass
-os.chdir(current_dir + '/only_dft/lipo/' + str(n_train))
-
-model, lr, loss, mae, test_loader = fit_model_dense(
-    n_train, n_val, int(n_test), iX, iY, patience, slatm_len
+study = optuna.create_study(
+    study_name="lipo",
+    direction="minimize",
+    sampler=optuna.samplers.TPESampler(),
+    pruner=optuna.pruners.MedianPruner(
+        n_startup_trials=2, n_warmup_steps=30, interval_steps=10)
 )
+study.optimize(objective, n_trials=30, n_jobs=-1, timeout=86400)
 
-lhis = open('learning-history.dat', 'w')
-for ii in range(0, len(lr)):
-    lhis.write(
-        '{:8d}'.format(ii)
-        + '{:16f}'.format(lr[ii])
-        + '{:16f}'.format(loss[ii])
-        + '{:16f}'.format(mae[ii])
-        + '\n'
-    )
-lhis.close()
+best_trial = study.best_trial
 
-# Saving NN model
-torch.save(model.state_dict(), 'model_dict.pt')
-
-# Saving results
-plotting_results(model, test_loader)
+for key, value in best_trial.params.items():
+    print("{}: {}".format(key, value))
