@@ -452,7 +452,7 @@ directory = sys.argv[3]
 if dataset == 'qm9':
     train_set = [i * 1000 for i in [4, 16, 40, 80]]
 else:
-    train_set = [i * 1000 for i in [0.5, 4, 16, 40]]
+    train_set = [i * 1000 for i in [4, 16, 40]]
 
 splits = {
     500: 22,
