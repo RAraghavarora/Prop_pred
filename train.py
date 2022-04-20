@@ -485,7 +485,10 @@ for ii in range(len(train_set)):
         pass
     os.chdir(current_dir + '/' + directory + str(train_set[ii]))
 
-    split = splits[int(train_set[ii])]
+    try:
+        split = splits[int(train_set[ii])]
+    else:
+        split = 1
     n_train = int(train_set[ii])
 
     fit_model_dense(int(n_train), int(n_val), int(
