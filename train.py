@@ -487,7 +487,7 @@ for ii in range(len(train_set)):
 
     try:
         split = splits[int(train_set[ii])]
-    else:
+    except:
         split = 1
     n_train = int(train_set[ii])
 
