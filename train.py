@@ -349,12 +349,12 @@ def split_data(n_train, n_val, n_test, Repre, Target, seed):
     X_train, X_val, X_test = (
         Repre[idx2[:n_train]],
         Repre[idx2[n_train: n_train + n_val]],
-        Repre[idx2[n_train + n_val: test_size]],
+        Repre[idx2[n_train + n_val: n_train + n_val + test_size]],
     )
     Y_train, Y_val, Y_test = (
         Target[idx2[:n_train]],
         Target[idx2[n_train: n_train + n_val]],
-        Target[idx2[n_train + n_val: test_size]],
+        Target[idx2[n_train + n_val: n_train + n_val + test_size]],
     )
 
     Y_train = Y_train.reshape(-1, 1)
