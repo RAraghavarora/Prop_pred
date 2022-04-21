@@ -49,7 +49,7 @@ echo "training starts"
 #export DFTB_PREFIX='/home/medranos/SK-files/3ob-3-1/'
 
 work=/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred
-python3 $work/train.py EGAP qm9 withdft/slatm/egap/qm9/
+python3 $work/train_qm9.py
 
 echo "training is over :-)"
 EXTSTAT=$?
