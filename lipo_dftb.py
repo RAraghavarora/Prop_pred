@@ -108,7 +108,7 @@ def prepare_data():
         reps2.append(
             np.concatenate(
                 (
-                    # slatm[ii],
+                    slatm[ii],
                     p1b[ii],
                     p2b[ii],
                     p3b[ii],
