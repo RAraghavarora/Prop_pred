@@ -140,7 +140,7 @@ class NeuralNetwork(nn.Module):
 
         self.slatm_len = slatm_len
         self.lin1 = nn.Linear(107, 16)
-        self.lin2 = nn.Linear(32, 16)
+        self.lin2 = nn.Linear(16, 16)
         self.lin4 = nn.Linear(16, 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
