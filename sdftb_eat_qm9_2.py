@@ -28,10 +28,10 @@ def complete_array(Aprop):
     Aprop2 = []
     for ii in range(len(Aprop)):
         n1 = len(Aprop[ii])
-        if n1 == 23:
+        if n1 == 29:
             Aprop2.append(Aprop[ii])
         else:
-            n2 = 23 - n1
+            n2 = 29 - n1
             Aprop2.append(np.concatenate((Aprop[ii], np.zeros(n2)), axis=None))
 
     return Aprop2
@@ -266,11 +266,11 @@ class NeuralNetwork(nn.Module):
     def __init__(self, l0=16, l1=16, l2=2, l3=16, l4=2, l5=16):
         super(NeuralNetwork, self).__init__()
 
-        self.lin0 = nn.Linear(17895, l0)
+        self.lin0 = nn.Linear(11960, l0)
         self.lin1 = nn.Linear(8, l1)
         self.lin2 = nn.Linear(3, l2)
         self.lin3 = nn.Linear(8, l3)
-        self.lin4 = nn.Linear(23, l4)
+        self.lin4 = nn.Linear(29, l4)
 
         self.lin5 = nn.Linear(l0 + l1 + l2 + l3 + l4, l5)
         self.lin6 = nn.Linear(l5, 1)
@@ -280,7 +280,7 @@ class NeuralNetwork(nn.Module):
 
     def forward(self, x):
         # x = self.flatten(x)
-        dlen = 17895
+        dlen = 11960
         desc, global_features, p9b, p10b, p11b = (
             x[:, 0:dlen],
             x[:, dlen:dlen + 8],
