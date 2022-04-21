@@ -299,7 +299,7 @@ def split_data(n_train, n_val, n_test, Repre, Target):
 def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
     batch_size = 32
     X_train, Y_train, X_val, Y_val, X_test, Y_test = split_data(
-        n_train, n_val, n_test, iX, iY, seed
+        n_train, n_val, n_test, iX, iY
     )
 
     train = torch.utils.data.TensorDataset(torch.cat(X_train, dim=1), Y_train)
