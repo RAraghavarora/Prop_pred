@@ -95,13 +95,13 @@ def prepare_data():
     # Not standardizing the charges, because a lot of them are 0
     p1b, p2b, p3b, p4b, p5b, p6b, p7b, p8b, p9b, p10b, _ = temp
 
-    # mbtypes = get_slatm_mbtypes([Z[mol] for mol in idx2[:n]])
-    # slatm = [
-    #     generate_slatm(mbtypes=mbtypes,
-    #                    nuclear_charges=Z[mol], coordinates=xyz[mol])
-    #     for mol in idx2[:n]
-    # ]
-    # slatm_len = len(slatm[0])
+    mbtypes = get_slatm_mbtypes([Z[mol] for mol in idx2[:n]])
+    slatm = [
+        generate_slatm(mbtypes=mbtypes,
+                       nuclear_charges=Z[mol], coordinates=xyz[mol])
+        for mol in idx2[:n]
+    ]
+    slatm_len = len(slatm[0])
 
     reps2 = []
     for ii in range(len(idx2[:n])):
@@ -125,7 +125,7 @@ def prepare_data():
             )
         )
 
-    return np.array(reps2), np.array(target2), 40000
+    return np.array(reps2), np.array(target2), slatm_len
 
 
 def init_weights(m):
@@ -139,8 +139,8 @@ class NeuralNetwork(nn.Module):
         super(NeuralNetwork, self).__init__()
 
         self.slatm_len = slatm_len
-        self.lin1 = nn.Linear(slatm_len, 128)
-        self.lin2 = nn.Linear(128 + 107, 16)
+        self.lin1 = nn.Linear(slatm_len, 32)
+        self.lin2 = nn.Linear(32 + 107, 16)
         self.lin4 = nn.Linear(16, 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
@@ -291,7 +291,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
         device = "cuda:0"
     model = NeuralNetwork(slatm_len).to(device)
     loss_fn = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
     scheduler = ReduceLROnPlateau(
         optimizer, factor=0.50, patience=50, min_lr=1e-6)
 
@@ -372,9 +372,9 @@ def plotting_results(model, test_loader):
     plt.close()
 
 
-n_train = 3000
-n_val = 500
-n_test = 592
+n_train = 3258
+n_val = 408
+n_test = 407
 patience = 100
 iX, iY, slatm_len = prepare_data()
 
