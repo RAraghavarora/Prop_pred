@@ -4,13 +4,13 @@
 #SBATCH --gres=gpu:3                      # use 1 GPU per node (i.e. use one GPU per task)
 #SBATCH --nodes=2                        # request 1 node
 #SBATCH --ntasks=16
-#SBATCH -J sdftb-egap
+#SBATCH -J sdftb-egap_di
 #SBATCH --output=egap.out
 #SBATCH --error=egap.err
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
-#SBATCH --mem-per-gpu=16GB
+#SBATCH --mem-per-gpu=20GB
 ulimit -s unlimited
 echo Starting Program
 module purge                                 # purge if you already have modules loaded

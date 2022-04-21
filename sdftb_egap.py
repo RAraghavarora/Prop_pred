@@ -63,7 +63,7 @@ def prepare_data(op):
     try:
         data_dir = '/scratch/ws/1/medranos-TUDprojects/raghav/data/'
         dataset = spk.data.AtomsData(
-            data_dir + 'qm7x-eq-n1.db', load_only=properties)
+            data_dir + 'distort.db', load_only=properties)
     except:
         data_dir = '../'
         dataset = spk.data.AtomsData(
@@ -502,7 +502,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
 print("Device count: ", torch.cuda.device_count())
 
 # prepare dataset
-train_set = ['2000', '8000', '16000', '500']
+train_set = ['30000', '8000', '2000']
 op = 'EGAP'
 splits = {
     500: 22,
@@ -511,6 +511,7 @@ splits = {
     4000: 8,
     8000: 4,
     16000: 2,
+    30000: 1,
     40000: 1,
     60000: 1,
     80000: 1
@@ -528,12 +529,12 @@ for ii in range(len(train_set)):
     n_test = len(iY) - n_val
     print('Trainset= {:}'.format(train_set[ii]))
     chdir(current_dir)
-    os.chdir(current_dir + '/withdft/split/egap/eq/slatm/PureRandom/')
+    os.chdir(current_dir + '/withdft/split/egap/distort/slatm/PureRandom/')
     try:
         os.mkdir(str(train_set[ii]))
     except:
         pass
-    os.chdir(current_dir + '/withdft/split/egap/eq/slatm/PureRandom/' + str(train_set[ii]))
+    os.chdir(current_dir + '/withdft/split/egap/distort/slatm/PureRandom/' + str(train_set[ii]))
 
     split = splits[int(train_set[ii])]
     fit_model_dense(int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience, split)
