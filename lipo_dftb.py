@@ -148,6 +148,7 @@ class NeuralNetwork(nn.Module):
     def forward(self, x):
         slatm = x[:, :self.slatm_len]
         elec = x[:, self.slatm_len:]
+        print(slatm.shape)
         layer1 = self.lin1(slatm)
         layer1 = nn.functional.leaky_relu(layer1)
 
