@@ -502,7 +502,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
 print("Device count: ", torch.cuda.device_count())
 
 # prepare dataset
-train_set = ['40000']
+train_set = ['25000', '8000', '60000']
 op = 'EAT'
 splits = {
     500: 22,
@@ -535,5 +535,8 @@ for ii in range(len(train_set)):
         pass
     os.chdir(current_dir + '/withdft/split/eat/qm9/slatm/PureRandom/' + str(train_set[ii]))
 
-    split = splits[int(train_set[ii])]
+    try:
+        split = splits[int(train_set[ii])]
+    except:
+        split = 1
     fit_model_dense(int(train_set[ii]), int(n_val), int(n_test), iX, iY, patience, split)
