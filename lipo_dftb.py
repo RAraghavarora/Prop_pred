@@ -139,18 +139,22 @@ class NeuralNetwork(nn.Module):
         super(NeuralNetwork, self).__init__()
 
         self.slatm_len = slatm_len
-        self.lin1 = nn.Linear(107, 16)
-        self.lin2 = nn.Linear(16, 16)
+        self.lin1 = nn.Linear(slatm_len, 128)
+        self.lin2 = nn.Linear(128 + 107, 16)
         self.lin4 = nn.Linear(16, 1)
         self.apply(init_weights)
         # self.flatten = nn.Flatten(-1,0)
 
     def forward(self, x):
-
-        layer1 = self.lin1(x)
+        slatm = x[:, :self.slatm_len]
+        elec = x[:, self.slatm_len:]
+        layer1 = self.lin1(slatm)
         layer1 = nn.functional.leaky_relu(layer1)
 
-        layer2 = self.lin2(layer1)
+        concat = torch.cat([layer1, elec], dim=1)
+        # concat = nn.functional.elu(concat)
+
+        layer2 = self.lin2(concat)
         layer2 = nn.functional.leaky_relu(layer2)
         layer4 = self.lin4(layer2)
 
@@ -241,12 +245,12 @@ def split_data(n_train, n_val, n_test, Repre, Target):
     X_train, X_val, X_test = (
         np.array(Repre[:n_train]),
         np.array(Repre[n_train: n_train + n_val]),
-        np.array(Repre[:]),
+        np.array(Repre[n_train + n_val:]),
     )
     Y_train, Y_val, Y_test = (
         np.array(Target[:n_train]),
         np.array(Target[n_train: n_train + n_val]),
-        np.array(Target[:]),
+        np.array(Target[n_train + n_val:]),
     )
 
     Y_train = Y_train.reshape(-1, 1)
@@ -376,12 +380,12 @@ iX, iY, slatm_len = prepare_data()
 
 current_dir = os.getcwd()
 
-os.chdir(current_dir + '/only_dft/lipo/')
+os.chdir(current_dir + '/withdft/slatm/lipo/')
 try:
     os.mkdir(str(n_train))
 except:
     pass
-os.chdir(current_dir + '/only_dft/lipo/' + str(n_train))
+os.chdir(current_dir + '/withdft/slatm/lipo/' + str(n_train))
 
 model, lr, loss, mae, test_loader = fit_model_dense(
     n_train, n_val, int(n_test), iX, iY, patience, slatm_len
