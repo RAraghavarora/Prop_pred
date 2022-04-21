@@ -310,14 +310,6 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
     valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
 
-    train = torch.utils.data.TensorDataset(X_train, Y_train)
-    test = torch.utils.data.TensorDataset(X_test, Y_test)
-    valid = torch.utils.data.TensorDataset(X_val, Y_val)
-    # data loader
-    train_loader = DataLoader(train, batch_size=batch_size, shuffle=False)
-    test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
-    valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
-
     device = "cpu"
     if torch.cuda.is_available():
         device = "cuda:0"
