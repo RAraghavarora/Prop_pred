@@ -301,14 +301,21 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, slatm_len):
     X_train, Y_train, X_val, Y_val, X_test, Y_test = split_data(
         n_train, n_val, n_test, iX, iY
     )
+    print("1")
 
     train = torch.utils.data.TensorDataset(torch.cat(X_train, dim=1), Y_train)
+    print("2")
     test = torch.utils.data.TensorDataset(torch.cat(X_test, dim=1), Y_test)
+    print(3)
     valid = torch.utils.data.TensorDataset(torch.cat(X_val, dim=1), Y_val)
+    print(4)
 
     train_loader = DataLoader(train, batch_size=batch_size, shuffle=False)
+    print(5)
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
+    print(6)
     valid_loader = DataLoader(valid, batch_size=batch_size, shuffle=False)
+    print(7)
 
     device = "cpu"
     if torch.cuda.is_available():
