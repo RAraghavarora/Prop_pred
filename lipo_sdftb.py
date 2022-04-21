@@ -139,7 +139,7 @@ class NeuralNetwork(nn.Module):
 
         self.slatm_len = slatm_len
         self.lin0 = nn.Linear(slatm_len, l0)
-        self.lin1 = nn.Linear(8, l1)
+        self.lin1 = nn.Linear(9, l1)
         self.lin3 = nn.Linear(8, l3)
         self.lin4 = nn.Linear(90, l4)
 
@@ -153,9 +153,9 @@ class NeuralNetwork(nn.Module):
         dlen = self.slatm_len
         desc, global_features, p10b, p11b = (
             x[:, 0:dlen],
-            x[:, dlen:dlen + 8],
-            x[:, dlen + 8:dlen + 16],
-            x[:, dlen + 16:]
+            x[:, dlen:dlen + 9],
+            x[:, dlen + 9:dlen + 17],
+            x[:, dlen + 17:]
         )
         print(desc.shape)
         print(global_features.shape)
