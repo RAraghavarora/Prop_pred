@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --time=168:00:00
 #SBATCH --partition=gpu2                        # specify ml partition or gpu2 partition
-#SBATCH --gres=gpu:6                      # use 1 GPU per node (i.e. use one GPU per task)
-#SBATCH --nodes=1                        # request 1 node
+#SBATCH --gres=gpu:8                      # use 1 GPU per node (i.e. use one GPU per task)
+#SBATCH --nodes=3                        # request 1 node
 #SBATCH --ntasks=10
 #SBATCH -J dist-rand-30
 #SBATCH --output=drand2.out

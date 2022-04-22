@@ -310,7 +310,7 @@ class EarlyStopping():
     certain epochs.
     """
 
-    def __init__(self, patience=7000, min_delta=0.001):
+    def __init__(self, patience=7000, min_delta=0.0001):
         """
         :param patience: how many epochs to wait before stopping when loss is
                not improving
@@ -324,9 +324,10 @@ class EarlyStopping():
         self.early_stop = False
 
     def __call__(self, val_loss):
-        if self.best_loss == None:
+        if self.best_loss is None:
             self.best_loss = val_loss
         elif self.best_loss - val_loss > self.min_delta:
+            # Validation loss is better than the best loss by at least the min delta
             self.best_loss = val_loss
             # reset counter if validation loss improves
             self.counter = 0
@@ -485,8 +486,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     )
 
 
-train_set = [16000]
-splits = [2]
+train_set = [16000, 30000, 500, 2000, 4000, 8000]
+splits = [2, 1, 22, 10, 8, 4]
 op = 'EAT'
 n_val = 6000
 
