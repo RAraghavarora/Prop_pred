@@ -486,6 +486,7 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, split):
     )
 
 
+print("Device count: ", torch.cuda.device_count())
 train_set = [16000, 30000, 500, 2000, 4000, 8000]
 splits = [2, 1, 22, 10, 8, 4]
 op = 'EAT'
