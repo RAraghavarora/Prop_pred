@@ -134,7 +134,7 @@ def init_weights(m):
 
 
 class NeuralNetwork(nn.Module):
-    def __init__(self, slatm_len, l0=16, l1=16, l2=2, l3=16, l4=2, l5=16):
+    def __init__(self, slatm_len, l0=128, l1=16, l2=2, l3=16, l4=2, l5=16):
         super(NeuralNetwork, self).__init__()
 
         self.slatm_len = slatm_len
