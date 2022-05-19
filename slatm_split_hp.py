@@ -360,8 +360,8 @@ def fit_model_dense(n_train, n_val, n_test, iX, iY, patience, parmas, model):
 
 def objective(trial):
 
-    params = {'l1': trial.suggest_categorical("l1", [16, 32, 64, 128]),
-              'l2': trial.suggest_categorical("l2", [2, 4, 8, 16, 32, 64]),
+    params = {'l1': trial.suggest_categorical("l1", [16, 32, 64]),
+              'l2': trial.suggest_categorical("l2", [2, 16]),
               }
 
     model = NeuralNetwork(params)
@@ -379,12 +379,13 @@ def objective(trial):
 
 
 study = optuna.create_study(
+    study_name="slatm_hp",
     direction="minimize",
-    sampler=optuna.samplers.RandomSampler(),
+    sampler=optuna.samplers.TPESampler(),
     pruner=optuna.pruners.MedianPruner(
-        n_startup_trials=5, n_warmup_steps=30, interval_steps=10, n_min_trials=500)
+        n_startup_trials=2, n_warmup_steps=30, interval_steps=10)
 )
-study.optimize(objective, n_trials=15)
+study.optimize(objective, n_trials=15, timeout=172800)
 
 best_trial = study.best_trial
 

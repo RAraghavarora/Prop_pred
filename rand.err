@@ -1,0 +1,7 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) modenv/scs5
+Module Python/3.6.4-intel-2018a and 18 dependencies loaded.
+Module cuDNN/8.0.4.30-CUDA-11.1.1 and 1 dependency loaded.
+slurmstepd: error: *** JOB 24887549 ON taurusi2090 CANCELLED AT 2022-04-17T12:24:52 DUE TO TIME LIMIT ***

@@ -1,0 +1,80 @@
+import numpy as np
+import torch
+from torch.autograd import Variable
+import logging
+import schnetpack as spk
+from sklearn.preprocessing import StandardScaler
+from qml.math import cho_solve
+from qml.kernels import gaussian_kernel
+
+data_dir = 'C:/raghav/Prop_pred/data/'
+Repre = np.load(data_dir + 'slatm_in.npy')
+Target = np.load(data_dir + 'slatm_out.npy')
+
+def objective(params):
+    global Repre
+    global Target
+    sigma, gamma = params
+    print("sigma=", sigma)
+    print("gamma=", gamma)
+
+    n_test = 31000
+    n_val = 5000
+
+    train_set = [1000, 2000, 4000, 8000, 10000, 20000, 30000]
+
+    # try:
+    #     indices = np.arange(desc.shape[0])
+    #     np.random.shuffle(indices)
+    #     desc = desc[indices]
+    #     dftb = dftb[indices]
+    #     Target = Target[indices]
+    # except Exception as e:
+    #     print(e)
+    #     pdb.set_trace()
+
+    for n_train in train_set:
+        X_train = np.array(Repre[:n_train])
+        X_test = np.array(Repre[-n_test:])
+
+        Y_train, Y_val, Y_test = (
+            np.array(Target[:n_train]),
+            np.array(Target[-n_test - n_val: -n_test]),
+            np.array(Target[-n_test:]),
+        )
+
+        K = gaussian_kernel(X_train, X_train, sigma)
+        K[np.diag_indices_from(K)] += gamma  # Regularizer
+        alpha = cho_solve(K, Y_train)  # α=(K+λI)−1y
+        Ks = gaussian_kernel(X_test, X_train, sigma)
+        Y_predicted = np.dot(Ks, alpha)
+
+        # Writing the true and predicted EAT values
+        dtest = np.array(Y_test - Y_predicted)
+
+        ctest = open('comp-test_%s.dat' % n_train, 'w')
+        for ii in range(0, len(Y_test)):
+            ctest.write(str(Y_test[ii]) + '\t' + str(Y_predicted[ii]) + '\t' + str(dtest[ii]) + '\n'
+                        )
+        ctest.close()
+
+        MAE_PROP = float(mean_absolute_error(Y_test, Y_predicted))
+        MSE_PROP = float(mean_squared_error(Y_test, Y_predicted))
+        STD_PROP = float(Y_test.std())
+
+        out2 = open('errors_test%s.dat' % n_train, 'w')
+        out2.write(
+            str(STD_PROP) + "\t"
+            + str(MAE_PROP) + "\t"
+            + str(MSE_PROP) + "\t"
+            + "\n"
+        )
+        out2.close()
+
+    res = np.mean(np.abs(Y_predicted - Y_test))
+    print(res)
+    return res
+
+sigma, gamma = [1.54383770e+02, 4.86297071e-05]
+objective([sigma, gamma])
+

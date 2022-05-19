@@ -291,7 +291,7 @@ except:
 os.chdir(current_dir + '/slatm/lipo/' + str(n_train))
 
 slatm_len = 40604
-model = torch.load(current_dir + '/slatm/lipo/3000/model_dict.pt')
+model = torch.load(current_dir + '/slatm/lipo/3000/model.pt')
 
 batch_size=16
 

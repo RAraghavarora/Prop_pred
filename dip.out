@@ -1,11 +1,11 @@
 Starting Program
 training starts
-*** JOB 'fchl-ra' (ID: 23118233) ***
-*** taurusi2046: 1 node(s),  8 core(s) in total ***
-*** Submitted in: /lustre/scratch2/ws/1/medranos-DFTBprojects/raghav/Prop_pred ***
+*** JOB 'sdftb-eq-kcv' (ID: 24887605) ***
+*** taurusi[4217,6541,6551,6557]: 4 node(s),  16 core(s) in total ***
+*** Submitted in: /lustre/scratch2/ws/1/medranos-TUDprojects/raghav/Prop_pred ***
 
-*** [TIMING] start Jan 20, 16:29:52 ***
-*** [TIMING] walltime 3-23:59:55 [95:59:55] ends Jan 24, 16:29:47 ***
+*** [TIMING] start Apr 11, 01:28:58 ***
+*** [TIMING] walltime 5-23:59:54 [143:59:54] ends Apr 17, 01:28:52 ***
 
 
 
@@ -13,3 +13,13 @@ JOB OUTPUT:
 ###########################################################################
 
 training starts
+Device count:  0
+41537
+Trainset= 500
+training is over :-)
+
+###########################################################################
+
+*** [TIMING] end Apr 11, 01:40:44 ***
+*** [TIMING] duration 11:52[0:11:46] ***
+

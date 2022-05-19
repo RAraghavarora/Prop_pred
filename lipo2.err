@@ -1,0 +1,8 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) modenv/scs5
+Module Python/3.6.4-intel-2018a and 18 dependencies loaded.
+Module cuDNN/8.0.4.30-CUDA-11.1.1 and 1 dependency loaded.
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/lipo_sdftb.py:344: UserWarning: Stopping early after 3056 epochs for 3258
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")

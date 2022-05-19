@@ -1,0 +1,25 @@
+Starting Program
+training starts
+*** JOB 'k_egap' (ID: 24327748) ***
+*** taurusi[4191-4192]: 2 node(s),  8 core(s) in total ***
+*** Submitted in: /lustre/scratch2/ws/1/medranos-DFTBprojects/raghav/Prop_pred ***
+
+*** [TIMING] start Mar 07, 14:23:22 ***
+*** [TIMING] walltime 3-23:59:55 [95:59:55] ends Mar 11, 14:23:17 ***
+
+
+
+JOB OUTPUT:
+###########################################################################
+
+training starts
+sigma= 162.851934
+gamma= 1e-05
+3.7500395254446617
+training is over :-)
+
+###########################################################################
+
+*** [TIMING] end Mar 07, 15:07:28 ***
+*** [TIMING] duration 44:11[0:44:06] ***
+

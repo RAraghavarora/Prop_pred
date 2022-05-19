@@ -1,13 +1,13 @@
 #!/bin/bash
-#SBATCH --time=96:00:00
+#SBATCH --time=144:00:00
 #SBATCH --partition=haswell
 #SBATCH -J k2
 #SBATCH --output=kslatm.out
 #SBATCH --error=kslatm.err
 #SBATCH -A p_biomolecules
-#SBATCH -N 2
+#SBATCH -N 4
 
-#SBATCH -n 8
+#SBATCH -n 16
 #SBATCH --ntasks-per-node=4
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com

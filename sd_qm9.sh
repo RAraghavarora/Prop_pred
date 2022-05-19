@@ -10,7 +10,7 @@
 #SBATCH -A p_biomolecules
 #SBATCH --mail-type=all
 #SBATCH        --mail-user=reepicheep_logs@protonmail.com
-#SBATCH --mem-per-cpu=16000MB
+#SBATCH --mem-per-gpu=10GB
 ulimit -s unlimited
 echo Starting Program
 module purge                                 # purge if you already have modules loaded

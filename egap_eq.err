@@ -1,0 +1,5 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) modenv/scs5
+slurmstepd: error: *** JOB 24360208 ON taurusi2088 CANCELLED AT 2022-03-09T17:01:28 ***

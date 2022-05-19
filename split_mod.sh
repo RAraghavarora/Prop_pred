@@ -3,8 +3,8 @@
 #SBATCH --partition=gpu2                        # specify ml partition or gpu2 partition
 #SBATCH --nodes=4                        # request 1 node
 #SBATCH --ntasks=8
-#SBATCH -J split-ra
-#SBATCH --gres=gpu:2
+#SBATCH -J split_bob_qm9
+#SBATCH --gres=gpu:1
 #SBATCH --output=split_eat.out
 #SBATCH --error=split_eat.err
 #SBATCH -A p_biomolecules

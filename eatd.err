@@ -1,0 +1,142 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) modenv/scs5
+Module Python/3.6.4-intel-2018a and 18 dependencies loaded.
+Module cuDNN/8.0.4.30-CUDA-11.1.1 and 1 dependency loaded.
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/schnetpack/data/atoms.py:327: UserWarning: The given NumPy array is not writeable, and PyTorch does not support non-writeable tensors. This means you can write to the underlying (supposedly non-writeable) NumPy array using the tensor. You may want to copy the array to protect its data or make it writeable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at  /pytorch/torch/csrc/utils/tensor_numpy.cpp:143.)
+  properties[pname] = torch.FloatTensor(prop)
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 1168 epochs for 16000
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 1287 epochs for 16000
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2879 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2082 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2642 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 3013 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2261 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 3393 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2728 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2149 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2739 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2526 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2258 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2787 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2446 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2604 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2652 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2600 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2843 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 3288 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2631 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2663 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 3040 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 2681 epochs for 500
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 1333 epochs for 4000
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 1364 epochs for 4000
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 1308 epochs for 4000
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 1579 epochs for 4000
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 1457 epochs for 4000
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 1301 epochs for 4000
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 1437 epochs for 4000
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 1211 epochs for 4000
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:261: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/scratch/ws/1/medranos-TUDprojects/raghav/Prop_pred/sdftb_eat_dist.py:485: UserWarning: Stopping early after 4482 epochs for 25000
+  warnings.warn(f"Stopping early after {t+1} epochs for {n_train}")

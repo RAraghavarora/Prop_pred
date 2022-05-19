@@ -4,3 +4,29 @@ The following modules were not unloaded:
   1) modenv/scs5
 Module Python/3.6.4-intel-2018a and 18 dependencies loaded.
 Module cuDNN/8.0.4.30-CUDA-11.1.1 and 1 dependency loaded.
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/schnetpack/data/atoms.py:327: UserWarning: The given NumPy array is not writeable, and PyTorch does not support non-writeable tensors. This means you can write to the underlying (supposedly non-writeable) NumPy array using the tensor. You may want to copy the array to protect its data or make it writeable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at  /pytorch/torch/csrc/utils/tensor_numpy.cpp:143.)
+  properties[pname] = torch.FloatTensor(prop)
+/home/h3/medranos/vdftb20/lib/python3.6/site-packages/ase/atoms.py:968: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+Traceback (most recent call last):
+  File "/scratch/ws/1/medranos-DFTBprojects/raghav/Prop_pred/get_error.py", line 283, in <module>
+    pred = model(x)
+  File "/home/h3/medranos/vdftb20/lib/python3.6/site-packages/torch/nn/modules/module.py", line 889, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/home/h3/medranos/vdftb20/lib/python3.6/site-packages/torch/nn/parallel/data_parallel.py", line 157, in forward
+    inputs, kwargs = self.scatter(inputs, kwargs, self.device_ids)
+  File "/home/h3/medranos/vdftb20/lib/python3.6/site-packages/torch/nn/parallel/data_parallel.py", line 174, in scatter
+    return scatter_kwargs(inputs, kwargs, device_ids, dim=self.dim)
+  File "/home/h3/medranos/vdftb20/lib/python3.6/site-packages/torch/nn/parallel/scatter_gather.py", line 44, in scatter_kwargs
+    inputs = scatter(inputs, target_gpus, dim) if inputs else []
+  File "/home/h3/medranos/vdftb20/lib/python3.6/site-packages/torch/nn/parallel/scatter_gather.py", line 36, in scatter
+    res = scatter_map(inputs)
+  File "/home/h3/medranos/vdftb20/lib/python3.6/site-packages/torch/nn/parallel/scatter_gather.py", line 23, in scatter_map
+    return list(zip(*map(scatter_map, obj)))
+  File "/home/h3/medranos/vdftb20/lib/python3.6/site-packages/torch/nn/parallel/scatter_gather.py", line 19, in scatter_map
+    return Scatter.apply(target_gpus, None, dim, obj)
+  File "/home/h3/medranos/vdftb20/lib/python3.6/site-packages/torch/nn/parallel/_functions.py", line 93, in forward
+    outputs = comm.scatter(input, target_gpus, chunk_sizes, ctx.dim, streams)
+  File "/home/h3/medranos/vdftb20/lib/python3.6/site-packages/torch/nn/parallel/comm.py", line 189, in scatter
+    return tuple(torch._C._scatter(tensor, devices, chunk_sizes, dim, streams))
+RuntimeError: CUDA error: invalid device ordinal

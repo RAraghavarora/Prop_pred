@@ -1,11 +1,11 @@
 Starting Program
 training starts
-*** JOB 'try' (ID: 23145692) ***
-*** taurusi[2074-2075]: 2 node(s),  8 core(s) in total ***
+*** JOB 'try-comp' (ID: 24364771) ***
+*** taurusi2098: 1 node(s),  1 core(s) in total ***
 *** Submitted in: /lustre/scratch2/ws/1/medranos-DFTBprojects/raghav/Prop_pred ***
 
-*** [TIMING] start Jan 21, 14:28:00 ***
-*** [TIMING] walltime 3-23:59:49 [95:59:49] ends Jan 25, 14:27:49 ***
+*** [TIMING] start Mar 10, 00:50:47 ***
+*** [TIMING] walltime 3-23:59:54 [95:59:54] ends Mar 14, 00:50:41 ***
 
 
 
@@ -13,11 +13,18 @@ JOB OUTPUT:
 ###########################################################################
 
 training starts
-2
+41537
+extracted the properties
+Perfoming training
+True
+0
+<torch.cuda.device object at 0x2ac436222b00>
+1
+Tesla K80
 training is over :-)
 
 ###########################################################################
 
-*** [TIMING] end Jan 21, 14:28:08 ***
-*** [TIMING] duration 0:19[0:00:08] ***
+*** [TIMING] end Mar 10, 01:04:52 ***
+*** [TIMING] duration 14:11[0:14:05] ***
 
