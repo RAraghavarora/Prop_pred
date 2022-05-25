@@ -1,3 +1,4 @@
 # Specify filepatterns you want git to ignore.
 data/
+__pycache__
 # PureRandom/
